@@ -4,16 +4,19 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.framing.Framedata;
@@ -23,20 +26,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.three_stack.maximum_alpha.backend.game.Game;
+import com.three_stack.maximum_alpha.backend.game.GameAction;
 import com.three_stack.maximum_alpha.backend.game.GameParameters;
 import com.three_stack.maximum_alpha.backend.game.GameState;
 
 public class Server extends WebSocketServer {
 	
-	final int MAX_ROOM_SIZE = 2;
-	static char code = 'a';
-	
-	Vector<Player> waitingPlayers = new Vector<Player>(); //vector for synchronization
-	Map<String, GameState> gameStates = new HashMap<String, GameState>();
-	
-	Queue<Player> matchPool = new LinkedBlockingQueue<Player>();
-	
+	static char code = 'a';	
 	ExecutorService executor = newBoundedFixedThreadPool(8);
+	
+	Map<String, GameState> gameStates = new HashMap<String, GameState>();
+	Runnable matchmaking = new Matchmaking(2);
+	LinkedBlockingQueue<Player> pool = new LinkedBlockingQueue<Player>();
 	
 	public static ExecutorService newBoundedFixedThreadPool(int nThreads) {
 		return new ThreadPoolExecutor(nThreads, nThreads,
@@ -60,15 +61,28 @@ public class Server extends WebSocketServer {
 				JSONObject json = new JSONObject(message);
 				String type = json.getString("type");
 				//todo: add more events
-				//todo: make real matchmaking (see Matchmaking.java)
-				if(type.equals("find game")) {
-					waitingPlayers.add(new Player(socket, json.getInt("pid"), json.getInt("did")));
+				if(type.equals("login")) {
 					
-					if(waitingPlayers.size() >= MAX_ROOM_SIZE) {
-						createGame();
+				}
+				if(type.equals("find game")) 
+				{
+					synchronized(pool) {
+						pool.add(new Player(socket, json.getInt("pid"), json.getInt("did")));
+						pool.notify();
 					}
-				} else if (type.equals("stop finding")) {
-					waitingPlayers.remove(new Player(socket, json.getInt("pid"), json.getInt("did")));
+				} 
+				else if (type.equals("stop finding")) 
+				{
+					synchronized(pool) {
+						pool.remove(new Player(socket, json.getInt("pid"), json.getInt("did")));
+					}
+				} 
+				else if (type.equals("action")) 
+				{
+					String gameCode = json.getString("gameCode");
+					GameState game = gameStates.get(gameCode);
+					GameAction action = Game.stringToAction(json.getString("action"));
+					updateGame(gameCode, game, action);
 				}
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -77,14 +91,49 @@ public class Server extends WebSocketServer {
 		}
 	}
 	
-	public void createGame() {
-		List<Player> players = waitingPlayers.subList(0, MAX_ROOM_SIZE);
+	public class Matchmaking implements Runnable {
+		
+		private int MAX_ROOM_SIZE;
+		
+		public Matchmaking(int size) {
+			MAX_ROOM_SIZE = size;
+		}
+		
+		public void run() {
+			while(true) {
+				try {
+					synchronized(pool) {
+						if(pool.size() < MAX_ROOM_SIZE)
+							pool.wait();
+						
+						List<Player> match = new ArrayList<Player>();
+						for(int i = 0; i < MAX_ROOM_SIZE; i++) {
+							match.add(pool.take());
+						}
+						createGame(match);
+					}
+				}
+				catch(InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	public void createGame(List<Player> players) {
 		GameParameters gp = new GameParameters(players);
 		GameState newGame = Game.newGame(gp);
 		gameStates.put(nextCode(), newGame);
 		
 		sendToAll("game created", players);
-		waitingPlayers = (Vector<Player>) waitingPlayers.subList(MAX_ROOM_SIZE, waitingPlayers.size());
+	}
+
+	public void updateGame(String gameCode, GameState game, GameAction action) {
+		if(game.isLegalAction(action)) {
+			game.processAction(action);
+			
+			sendToGame(game);
+		}
 	}
 	
 	//todo: make real code generation
@@ -98,6 +147,12 @@ public class Server extends WebSocketServer {
 
 	public Server( InetSocketAddress address ) {
 		super( address );
+	}
+	
+	@Override
+	public void start() {
+		super.start();
+		matchmaking.run();
 	}
 
 	@Override
@@ -169,19 +224,17 @@ public class Server extends WebSocketServer {
 		}
 	}
 
-	/**
-	 * Sends <var>text</var> to all currently connected WebSocket clients.
-	 * 
-	 * @param text
-	 *            The String to send across the network.
-	 * @throws InterruptedException
-	 *             When socket related I/O errors occur.
-	 */
 	public void sendToAll( String text , Collection<Player> con ) {
 		synchronized ( con ) {
 			for( Player p : con ) {
 				p.socket.send( text );
 			}
+		}
+	}
+	
+	public void sendToGame(GameState game) {
+		for (Player p : game.players) {
+			p.socket.send(game.toString());
 		}
 	}
 }

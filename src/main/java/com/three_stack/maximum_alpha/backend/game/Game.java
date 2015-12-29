@@ -11,11 +11,11 @@ public final class Game {
 		return null;
 	}
 
-	public static GameState processAction(GameState state, GameAction action) {
+	public static GameState processAction(GameState state, GameEvent event) {
 		return null;
 	}
 
-	public static boolean isMoveLegal(GameState state, GameAction action) {
+	public static boolean isLegalAction(GameState state, GameAction action) {
 		return false;
 	}
 
@@ -24,6 +24,10 @@ public final class Game {
 	}
 
 	public static Card loadCard(int cardId) {
+		return null;
+	}
+	
+	public static GameAction stringToAction(String action) {
 		return null;
 	}
 }
