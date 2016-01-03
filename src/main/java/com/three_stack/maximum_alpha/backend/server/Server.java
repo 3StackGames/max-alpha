@@ -7,16 +7,13 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.framing.Framedata;
@@ -32,12 +29,14 @@ import com.three_stack.maximum_alpha.backend.game.GameState;
 
 public class Server extends WebSocketServer {
 	
+	final int ROOM_SIZE = 2;
 	static char code = 'a';	
 	ExecutorService executor = newBoundedFixedThreadPool(8);
 	
 	Map<String, GameState> gameStates = new HashMap<String, GameState>();
-	Runnable matchmaking = new Matchmaking(2);
+	Runnable matchmaking = new Matchmaking(ROOM_SIZE);
 	LinkedBlockingQueue<Player> pool = new LinkedBlockingQueue<Player>();
+	Collection<Player> playersInGame = new HashSet<Player>();
 	
 	public static ExecutorService newBoundedFixedThreadPool(int nThreads) {
 		return new ThreadPoolExecutor(nThreads, nThreads,
@@ -46,7 +45,7 @@ public class Server extends WebSocketServer {
 				new ThreadPoolExecutor.DiscardPolicy());
 	}
 
-	public class HandleRequestRunnable implements Runnable {
+	private class HandleRequestRunnable implements Runnable {
 
 		final WebSocket socket;
 		final String message;
@@ -64,10 +63,12 @@ public class Server extends WebSocketServer {
 				if(type.equals("login")) {
 					
 				}
-				if(type.equals("find game")) 
+				else if(type.equals("find game")) 
 				{
 					synchronized(pool) {
+						System.out.println("adding to pool....");
 						pool.add(new Player(socket, json.getInt("pid"), json.getInt("did")));
+						System.out.println("added");
 						pool.notify();
 					}
 				} 
@@ -79,6 +80,7 @@ public class Server extends WebSocketServer {
 				} 
 				else if (type.equals("action")) 
 				{
+					System.out.println("action: "+json.getString("action"));
 					String gameCode = json.getString("gameCode");
 					GameState game = gameStates.get(gameCode);
 					GameAction action = Game.stringToAction(json.getString("action"));
@@ -91,26 +93,28 @@ public class Server extends WebSocketServer {
 		}
 	}
 	
-	public class Matchmaking implements Runnable {
+	private class Matchmaking implements Runnable {
 		
-		private int MAX_ROOM_SIZE;
+		int size;
 		
 		public Matchmaking(int size) {
-			MAX_ROOM_SIZE = size;
+			this.size = size;
 		}
 		
 		public void run() {
 			while(true) {
 				try {
 					synchronized(pool) {
-						if(pool.size() < MAX_ROOM_SIZE)
-							pool.wait();
-						
-						List<Player> match = new ArrayList<Player>();
-						for(int i = 0; i < MAX_ROOM_SIZE; i++) {
-							match.add(pool.take());
+						if(pool.size() >= size) 
+						{				
+							System.out.println("in loop");
+							List<Player> match = new ArrayList<Player>();
+							for(int i = 0; i < size; i++) {
+								match.add(pool.take());
+							}
+							createGame(match);
 						}
-						createGame(match);
+						pool.wait();
 					}
 				}
 				catch(InterruptedException e) {
@@ -122,7 +126,7 @@ public class Server extends WebSocketServer {
 	
 	public void createGame(List<Player> players) {
 		GameParameters gp = new GameParameters(players);
-		GameState newGame = Game.newGame(gp);
+		GameState newGame = new GameState(gp);
 		gameStates.put(nextCode(), newGame);
 		
 		sendToAll("game created", players);
@@ -154,10 +158,15 @@ public class Server extends WebSocketServer {
 		super.start();
 		matchmaking.run();
 	}
+	
+	//necessary?
+	public void close() {
+		
+	}
 
 	@Override
 	public void onOpen( WebSocket conn, ClientHandshake handshake ) {
-		this.sendToAll( "new connection: " + handshake.getResourceDescriptor() );
+		this.sendToAll( "new connection");
 	}
 
 	@Override
