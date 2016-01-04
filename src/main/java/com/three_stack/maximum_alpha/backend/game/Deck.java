@@ -1,5 +1,7 @@
 package com.three_stack.maximum_alpha.backend.game;
 
+import com.three_stack.maximum_alpha.backend.game.cards.Card;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

@@ -10,6 +10,7 @@ public class ResourceList {
 	public int white;
 	public int yellow;
 	public int blue;
+	public int colorless;
 	
 	Map<String, Integer> custom = new HashMap<String, Integer>();
 	
@@ -20,15 +21,17 @@ public class ResourceList {
 		white = 0;
 		yellow = 0;
 		blue = 0;
+		colorless = 0;
 	}
 	
-	public ResourceList(int r, int bk, int g, int w, int y, int b) {
+	public ResourceList(int r, int bk, int g, int w, int y, int b, int c) {
 		red = r;
 		black = bk;
 		green = g;
 		white = w;
 		yellow = y;
 		blue = b;
+		colorless = c;
 	}
 	
 	public int getCustom(String name) {
@@ -42,6 +45,7 @@ public class ResourceList {
 		white += other.white;
 		yellow += other.yellow;
 		blue += other.blue;
+		colorless += other.colorless;
 		
 		for (Map.Entry<String, Integer> kv : other.custom.entrySet()) {
 			String key = kv.getKey();

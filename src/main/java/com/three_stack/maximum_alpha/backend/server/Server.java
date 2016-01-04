@@ -1,7 +1,5 @@
 package com.three_stack.maximum_alpha.backend.server;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -35,8 +33,8 @@ public class Server extends WebSocketServer {
 	
 	Map<String, GameState> gameStates = new HashMap<String, GameState>();
 	Runnable matchmaking = new Matchmaking(ROOM_SIZE);
-	LinkedBlockingQueue<Player> pool = new LinkedBlockingQueue<Player>();
-	Collection<Player> playersInGame = new HashSet<Player>();
+	LinkedBlockingQueue<Connection> pool = new LinkedBlockingQueue<Connection>();
+	Collection<Connection> playersInGame = new HashSet<Connection>();
 	
 	public static ExecutorService newBoundedFixedThreadPool(int nThreads) {
 		return new ThreadPoolExecutor(nThreads, nThreads,
@@ -67,7 +65,7 @@ public class Server extends WebSocketServer {
 				{
 					synchronized(pool) {
 						System.out.println("adding to pool....");
-						pool.add(new Player(socket, json.getInt("pid"), json.getInt("did")));
+						pool.add(new Connection(socket, json.getInt("pid"), json.getInt("did")));
 						System.out.println("added");
 						pool.notify();
 					}
@@ -75,7 +73,7 @@ public class Server extends WebSocketServer {
 				else if (type.equals("stop finding")) 
 				{
 					synchronized(pool) {
-						pool.remove(new Player(socket, json.getInt("pid"), json.getInt("did")));
+						pool.remove(new Connection(socket, json.getInt("pid"), json.getInt("did")));
 					}
 				} 
 				else if (type.equals("action")) 
@@ -108,7 +106,7 @@ public class Server extends WebSocketServer {
 						if(pool.size() >= size) 
 						{				
 							System.out.println("in loop");
-							List<Player> match = new ArrayList<Player>();
+							List<Connection> match = new ArrayList<Connection>();
 							for(int i = 0; i < size; i++) {
 								match.add(pool.take());
 							}
@@ -124,7 +122,7 @@ public class Server extends WebSocketServer {
 		}
 	}
 	
-	public void createGame(List<Player> players) {
+	public void createGame(List<Connection> players) {
 		GameParameters gp = new GameParameters(players);
 		GameState newGame = new GameState(gp);
 		gameStates.put(nextCode(), newGame);
@@ -234,16 +232,16 @@ public class Server extends WebSocketServer {
 		}
 	}
 
-	public void sendToAll( String text , Collection<Player> con ) {
+	public void sendToAll( String text , Collection<Connection> con ) {
 		synchronized ( con ) {
-			for( Player p : con ) {
+			for( Connection p : con ) {
 				p.socket.send( text );
 			}
 		}
 	}
 	
 	public void sendToGame(GameState game) {
-		for (Player p : game.players) {
+		for (Connection p : game.players) {
 			p.socket.send(game.toString());
 		}
 	}

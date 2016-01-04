@@ -3,6 +3,8 @@ package com.three_stack.maximum_alpha.backend.game;
 
 //GameState will have a history as one of its fields (?)
 
+import com.three_stack.maximum_alpha.backend.game.cards.Card;
+
 public final class Game {
 	
 	private Game() {}
