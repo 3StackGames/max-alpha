@@ -217,8 +217,33 @@ public class State {
 	//Major functions
 	
 	public void processAction(Action action) {
-		if(action.getType() == Action.ActionType.CHANGE_PHASE) {
+		switch(action.getType()) {
+		case CHANGE_PHASE: 
 			nextPhase();
+			break;
+		case ACTIVATE_EFFECT:
+			break;
+		case ASSIGN_CARD:
+			break;
+		case BUILD_STRUCTURE:
+			break;
+		case CHOOSE_EFFECT:
+			break;
+		case DECLARE_ATTACKER:
+			break;
+		case DECLARE_BLOCKER:
+			break;
+		case PLAY_CARD:
+			break;
+		case PULL_CARD:
+			break;
+		case SKIP_COMBAT:
+			skipCombat();
+			break;
+		case TARGET_EFFECT:
+			break;
+		default:
+			break;				
 		}
 	}
 	
