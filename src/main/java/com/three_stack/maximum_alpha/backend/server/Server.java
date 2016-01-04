@@ -194,7 +194,7 @@ public class Server extends WebSocketServer {
 		s.start();
 		System.out.println( "Server started on port: " + s.getPort() );
 
-		BufferedReader sysin = new BufferedReader( new InputStreamReader( System.in ) );
+		/*BufferedReader sysin = new BufferedReader( new InputStreamReader( System.in ) );
 		while ( true ) {
 			String in = sysin.readLine();
 			//s.sendToAll( in );
@@ -206,8 +206,9 @@ public class Server extends WebSocketServer {
 				s.start();
 				break;
 			}
-		}
+		}*/
 	}
+	
 	@Override
 	public void onError( WebSocket conn, Exception ex ) {
 		ex.printStackTrace();

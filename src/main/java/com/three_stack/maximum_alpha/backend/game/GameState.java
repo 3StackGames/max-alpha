@@ -28,13 +28,15 @@ public class GameState {
 	public Map<Player, Deck> decks;
 	public Map<Player, List<Card>> fields;
 	public Map<Player, List<Card>> graves;
-	public Map<Player, List<Card>> workers;
+	public Map<Player, List<Worker>> workers;
 	public Map<Player, List<Card>> structures;
 	public Map<Player, ResourceList> resources;
 	public Map<Player, Integer> lifes;
 	
 	public List<Card> cardsPlayed;
 	public GameParameters gp;
+	
+	//game over: winningPlayers, losingPlayers, tiedPlayers
 	
 	public GameState(GameParameters gp) {
 		this.gp = gp;
@@ -53,7 +55,7 @@ public class GameState {
 			initialDraw();
 			
 			fields.put(p, new ArrayList<Card>());
-			workers.put(p, new ArrayList<Card>());
+			workers.put(p, new ArrayList<Worker>());
 			structures.put(p, new ArrayList<Card>());
 			graves.put(p, new ArrayList<Card>());
 			resources.put(p, new ResourceList());
@@ -145,8 +147,8 @@ public class GameState {
 	
 	public void gatherResources(Player p) {
 		ResourceList rlist = resources.get(p);
-		List<Card> wlist = workers.get(p);
-		for(Card worker : wlist) {
+		List<Worker> wlist = workers.get(p);
+		for(Worker worker : wlist) {
 			ResourceList resourceChange = worker.work(this);
 			rlist.add(resourceChange);
 		}
