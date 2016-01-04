@@ -74,11 +74,11 @@ public class Server extends WebSocketServer {
 				} 
 				else if (type.equals("Game Action"))
 				{
-					System.out.println("action: "+json.getString("action"));
+					/*System.out.println("action: "+json.getString("action"));
 					String gameCode = json.getString("gameCode");
 					State game = gameStates.get(gameCode);
 					Action action = Game.stringToAction(json.getString("action"));
-					updateGame(gameCode, game, action);
+					updateGame(gameCode, game, action);*/
 				}
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -124,13 +124,14 @@ public class Server extends WebSocketServer {
 		gameStates.put(nextCode(), newGame);
 		
 		sendToAll("Game Found", players);
+        stateUpdate(newGame);
 	}
 
 	public void updateGame(String gameCode, State game, Action action) {
 		if(game.isLegalAction(action)) {
 			game.processAction(action);
 			
-			sendToGame(game);
+			stateUpdate(game);
 		}
 	}
 	
@@ -222,9 +223,13 @@ public class Server extends WebSocketServer {
 		}
 	}
 	
-	public void sendToGame(State game) {
-		for (Player player : game.players) {
-			player.getConnection().socket.send(game.toString());
+	public void stateUpdate(State state) {
+        JSONObject stateJson = new JSONObject(state.toString());
+        JSONObject message = new JSONObject();
+        message.append("state", stateJson);
+        message.append("type", "State Update");
+		for (Player player : state.players) {
+			player.getConnection().socket.send(message.toString());
 		}
 	}
 }

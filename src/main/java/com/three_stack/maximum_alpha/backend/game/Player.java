@@ -9,7 +9,8 @@ import java.util.List;
 
 public class Player implements Damageable {
     private String username;
-    private Connection connection;
+
+    private transient Connection connection;
     private List<Card> hand;
     private Deck deck;
     private List<Creature> field;

@@ -1,5 +1,7 @@
 package com.three_stack.maximum_alpha.backend.game.event;
 
+import com.three_stack.maximum_alpha.backend.game.utility.Serializer;
+
 public class Event {
 	protected final String description;
 
@@ -12,5 +14,10 @@ public class Event {
 
     public static Event joinEvents (Event a, Event b) {
         return new Event(a.getDescription() + " and " + b.getDescription());
+    }
+
+    @Override
+    public String toString() {
+        return Serializer.toJson(this);
     }
 }

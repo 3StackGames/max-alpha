@@ -8,39 +8,38 @@ import java.util.List;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.foobar.test.FieldCleric;
 import com.three_stack.maximum_alpha.backend.game.cards.foobar.test.MilitiaMinuteman;
-import com.three_stack.maximum_alpha.backend.game.cards.foobar.test.PilotRecruit;
 import com.three_stack.maximum_alpha.backend.game.cards.foobar.test.TravelingMerchant;
 
 public class Deck {
-	List<Card> deck = new ArrayList<>();
+	List<Card> cards = new ArrayList<>();
 
 	public Deck(List<Card> cards) {
-		this.deck = cards;
+		this.cards = cards;
 	}
 	
 	public void shuffle() {
-		Collections.shuffle(deck);
+		Collections.shuffle(cards);
 	}
 	
 	public Card draw() {
-		Card draw = deck.get(0);
-		deck.remove(0);
+		Card draw = cards.get(0);
+		cards.remove(0);
 		return draw;
 	}
 	
 	public List<Card> drawCards(int numCards) {
-		List<Card> subDeck = deck.subList(0, numCards);
-		deck.removeAll(subDeck);
+		List<Card> subDeck = cards.subList(0, numCards);
+		cards.removeAll(subDeck);
 		return subDeck;
 	}
 	
 	public List<Card> topCards(int numCards) {
-		return deck.subList(0, numCards);
+		return cards.subList(0, numCards);
 	}
 	
 	public Card takeCard(Card c) {
 		if(contains(c)) {
-			deck.remove(c);
+			cards.remove(c);
 			return c;
 		}
 		
@@ -49,7 +48,7 @@ public class Deck {
 	
 	public Collection<Card> takeCards(Collection<Card> c) {
 		if(containsAll(c)) {
-			deck.removeAll(c);
+			cards.removeAll(c);
 			return c;
 		}
 		
@@ -58,21 +57,21 @@ public class Deck {
 	
 	public void placeAtBottom(Card c) {
 		if(contains(c)) {
-			deck.remove(c);
-			deck.add(c);
+			cards.remove(c);
+			cards.add(c);
 		}
 		
 	}
 	
 	public void placeAtBottom(Collection<Card> c) {
 		if(containsAll(c)) {
-			deck.removeAll(c);
-			deck.addAll(c);
+			cards.removeAll(c);
+			cards.addAll(c);
 		}
 	}
 	
 	public boolean contains(Card c) {
-		if(!deck.contains(c)) {
+		if(!cards.contains(c)) {
 			//ERROR report
 			return false;
 		}
@@ -81,7 +80,7 @@ public class Deck {
 	}
 	
 	public boolean containsAll(Collection<Card> c) {
-		if(!deck.contains(c)) {
+		if(!cards.contains(c)) {
 			//ERROR report
 			return false;
 		}

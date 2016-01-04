@@ -4,14 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import com.google.gson.annotations.SerializedName;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.effects.Effect;
 import com.three_stack.maximum_alpha.backend.game.event.Event;
+import com.three_stack.maximum_alpha.backend.game.utility.Serializer;
 import com.three_stack.maximum_alpha.backend.server.Connection;
 
 public class State {
 	public enum Phase {
-		DRAW, MAIN, COMBAT, END	
+        START,
+        MAIN,
+        COMBAT,
+        END
 	}
 
     public enum TriggerPoint {
@@ -68,14 +73,15 @@ public class State {
     public Stack<Effect> effectStack;
 
 	public List<Card> cardsPlayed;
-	public Parameters parameters;
+	public transient Parameters parameters;
 	
 	//game over: winningPlayers, losingPlayers, tiedPlayers
 	
 	public State(Parameters parameters) {
 		this.parameters = parameters;
 		this.players = new ArrayList<>();
-		
+		this.eventHistory = new ArrayList<>();
+
 		setupGame();
 	}
 	
@@ -89,7 +95,7 @@ public class State {
         }
 
 		initialDraw();
-
+        drawStart();
 		//do other things here
 	}
 	
@@ -105,7 +111,7 @@ public class State {
 	
 	public State nextPhase() {
 		switch(currentPhase) {
-		case DRAW:
+		case START:
 			drawEnd();
 			break;
 		case MAIN:
@@ -123,7 +129,7 @@ public class State {
 	}
 	
 	public void drawStart() {
-		currentPhase = Phase.DRAW;
+		currentPhase = Phase.START;
 		
 		if(turnCount > 0) {
 			draw();
@@ -202,4 +208,9 @@ public class State {
     private Player getTurnPlayer() {
         return players.get(turn);
     }
+
+	@Override
+	public String toString() {
+		return Serializer.toJson(this);
+	}
 }
