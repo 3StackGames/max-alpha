@@ -1,5 +1,6 @@
 package com.three_stack.maximum_alpha.backend.game.cards;
 
+import com.three_stack.maximum_alpha.backend.game.Counter;
 import com.three_stack.maximum_alpha.backend.game.GameEvent;
 import com.three_stack.maximum_alpha.backend.game.GameState;
 import com.three_stack.maximum_alpha.backend.game.ResourceList;
@@ -12,6 +13,7 @@ public abstract class Card {
     private String name;
     private ResourceList cost;
     private String flavorText;
+    private List<Counter> counters;
 
     private List<Runnable> triggers;
 
