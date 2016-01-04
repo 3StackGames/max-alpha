@@ -16,6 +16,11 @@ public abstract class Card {
     protected final String flavorText;
     protected List<Counter> counters;
 
+    /**
+     * ONLY FOR GSON. DON'T TOUCH.
+     */
+    private boolean playable;
+
     protected Map<State.TriggerPoint, Trigger> triggers;
 
     protected Card() {
@@ -80,5 +85,13 @@ public abstract class Card {
 
     public String getFlavorText() {
         return flavorText;
+    }
+
+    public boolean isPlayable() {
+        return playable;
+    }
+
+    public void setPlayable(boolean playable) {
+        this.playable = playable;
     }
 }

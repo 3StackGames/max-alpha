@@ -6,15 +6,22 @@ import com.three_stack.maximum_alpha.backend.game.events.Event;
 
 import java.util.List;
 
+/**
+ * Damageable, Buffable, Refreshable / Exhaustable
+ */
 public abstract class DamageableCard extends Card implements Damageable {
     protected final int health;
     protected int damageTaken;
+
+    protected boolean exhausted;
+    protected boolean refreshable;
 
     protected List<Buff> buffs;
 
     protected DamageableCard(String name, ResourceList cost, String text, String flavorText, int health) {
         super(name, cost, text, flavorText);
         this.health = health;
+        this.refreshable = true;
     }
 
     public Event takeDamage(int damage, Card source) {
@@ -34,5 +41,41 @@ public abstract class DamageableCard extends Card implements Damageable {
         return getCurrentHealth() <= 0;
     }
 
+    public void exhaust() {
+        exhausted = true;
+    }
 
+    public void attemptRefresh() {
+        if(refreshable) {
+            exhausted = false;
+        }
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public boolean isExhausted() {
+        return exhausted;
+    }
+
+    public void setExhausted(boolean exhausted) {
+        this.exhausted = exhausted;
+    }
+
+    public boolean isRefreshable() {
+        return refreshable;
+    }
+
+    public void setRefreshable(boolean refreshable) {
+        this.refreshable = refreshable;
+    }
+
+    public List<Buff> getBuffs() {
+        return buffs;
+    }
+
+    public void setBuffs(List<Buff> buffs) {
+        this.buffs = buffs;
+    }
 }

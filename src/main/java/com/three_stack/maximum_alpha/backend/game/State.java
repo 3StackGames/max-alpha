@@ -2,12 +2,16 @@ package com.three_stack.maximum_alpha.backend.game;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
+import com.three_stack.maximum_alpha.backend.game.cards.Creature;
+import com.three_stack.maximum_alpha.backend.game.cards.Structure;
 import com.three_stack.maximum_alpha.backend.game.effects.Effect;
 import com.three_stack.maximum_alpha.backend.game.events.Action;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
+import com.three_stack.maximum_alpha.backend.game.phases.StartPhase;
 import com.three_stack.maximum_alpha.backend.game.utilities.Serializer;
 import com.three_stack.maximum_alpha.backend.server.Connection;
 
@@ -55,6 +59,12 @@ public class State {
         ON_BLOCK_PHASE_END,
         ON_END_PHASE_START,
         ON_END_PHASE_END
+    }
+
+    private static Map<Phase, com.three_stack.maximum_alpha.backend.game.phases.Phase> phaseMap;
+
+    static {
+        phaseMap.put(Phase.START, new StartPhase());
     }
 
 	private List<Player> players;
@@ -127,12 +137,16 @@ public class State {
 		
 		return this;
 	}
+
+    public com.three_stack.maximum_alpha.backend.game.phases.Phase getPhase(Phase phaseName) {
+
+    }
 	
 	public void startStart() {
 		currentPhase = Phase.START;
 		
 		if(turnCount > 0) {
-			draw();
+			turnPlayerDraw();
 		}
 		
 		gatherResources();
@@ -174,7 +188,7 @@ public class State {
 	
 	//Phase utilities
 
-	public void draw() {
+	public void turnPlayerDraw() {
 		getTurnPlayer().draw();
 	}
 	
@@ -195,7 +209,11 @@ public class State {
 		combatEnded = true;
 		mainEnd();
 	}
-	
+
+    public void turnPlayerRefresh() {
+        for(Structure )
+    }
+
 	//Major functions
 	
 	public void processAction(Action action) {
@@ -208,8 +226,20 @@ public class State {
 		return true;
 	}
 
-    private Player getTurnPlayer() {
+    public Player getTurnPlayer() {
         return players.get(turn);
+    }
+
+    public void refreshTurnPlayerCards() {
+        Player player = getTurnPlayer();
+        //look through field
+        for(Creature creature : player.getField()) {
+            creature.attemptRefresh();
+        }
+        //look through structures
+        for(Structure structure : player.getStructures()) {
+            structure.attemptRefresh();
+        }
     }
 
 	@Override
