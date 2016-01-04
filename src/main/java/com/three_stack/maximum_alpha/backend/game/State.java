@@ -6,7 +6,7 @@ import java.util.Stack;
 
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.effects.Effect;
-import com.three_stack.maximum_alpha.backend.game.event.Action;
+import com.three_stack.maximum_alpha.backend.game.events.Action;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
 import com.three_stack.maximum_alpha.backend.game.utilities.Serializer;
 import com.three_stack.maximum_alpha.backend.server.Connection;

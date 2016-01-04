@@ -1,4 +1,4 @@
-package com.three_stack.maximum_alpha.backend.game.event;
+package com.three_stack.maximum_alpha.backend.game.events;
 
 import java.util.HashSet;
 import java.util.List;
@@ -8,7 +8,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
-import com.three_stack.maximum_alpha.backend.game.events.Event;
 
 /**
  * Always player Input
