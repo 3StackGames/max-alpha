@@ -4,6 +4,10 @@ import com.three_stack.maximum_alpha.backend.game.utility.Serializer;
 
 public class Event {
 	protected final String description;
+	
+	public Event() {
+		description = "";
+	}
 
     public Event(String description) {
         this.description = description;

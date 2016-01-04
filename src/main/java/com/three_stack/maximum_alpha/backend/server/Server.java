@@ -14,6 +14,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import com.three_stack.maximum_alpha.backend.game.*;
+import com.three_stack.maximum_alpha.backend.game.event.Action;
+
 import org.java_websocket.WebSocket;
 import org.java_websocket.framing.Framedata;
 import org.java_websocket.handshake.ClientHandshake;
@@ -31,6 +33,8 @@ public class Server extends WebSocketServer {
 	Runnable matchmaking = new Matchmaking(ROOM_SIZE);
 	LinkedBlockingQueue<Connection> pool = new LinkedBlockingQueue<>();
 	Collection<Connection> playersInGame = new HashSet<>();
+	
+	public final String EVENT_TYPE = "eventType";
 	
 	public static ExecutorService newBoundedFixedThreadPool(int nThreads) {
 		return new ThreadPoolExecutor(nThreads, nThreads,
@@ -52,37 +56,35 @@ public class Server extends WebSocketServer {
 		public void run() {
 			try {
 				JSONObject json = new JSONObject(message);
-				String type = json.getString("type");
+				String eventType = json.getString(EVENT_TYPE);
 				//todo: add more events
-				if(type.equals("login")) {
+				if(eventType.equals("login")) {
 					
 				}
-				else if(type.equals("Find Game"))
+				else if(eventType.equals("Find Game"))
 				{
 					synchronized(pool) {
 						System.out.println("adding to pool....");
 						pool.add(new Connection(socket, json.getInt("playerId"), json.getInt("deckId")));
-						System.out.println("added");
 						pool.notify();
 					}
 				} 
-				else if (type.equals("Stop Find Game"))
+				else if (eventType.equals("Stop Find Game"))
 				{
 					synchronized(pool) {
 						pool.remove(new Connection(socket, json.getInt("playerId"), json.getInt("deckId")));
 					}
 				} 
-				else if (type.equals("Game Action"))
+				else if (eventType.equals("Game Action"))
 				{
-					/*System.out.println("action: "+json.getString("action"));
 					String gameCode = json.getString("gameCode");
 					State game = gameStates.get(gameCode);
-					Action action = Game.stringToAction(json.getString("action"));
-					updateGame(gameCode, game, action);*/
+					Action action = new Action(json.getJSONObject("action"));
+					updateGame(gameCode, game, action);
 				}
 			} catch (JSONException e) {
 				e.printStackTrace();
-				socket.send("Invalid json");
+				sendError(socket, "Invalid JSON", message);
 			}
 		}
 	}
@@ -101,7 +103,6 @@ public class Server extends WebSocketServer {
 					synchronized(pool) {
 						if(pool.size() >= size) 
 						{				
-							System.out.println("in loop");
 							List<Connection> match = new ArrayList<Connection>();
 							for(int i = 0; i < size; i++) {
 								match.add(pool.take());
@@ -223,11 +224,18 @@ public class Server extends WebSocketServer {
 		}
 	}
 	
+	public void sendError(WebSocket socket, String code, String message) {
+		JSONObject error = new JSONObject();
+		error.append(EVENT_TYPE, "Error");
+		error.append("code", code);
+		error.append("message", message);
+		socket.send(error.toString());
+	}
+	
 	public void stateUpdate(State state) {
-        JSONObject stateJson = new JSONObject(state.toString());
         JSONObject message = new JSONObject();
-        message.append("state", stateJson);
-        message.append("type", "State Update");
+        message.append(EVENT_TYPE, "State Update");
+        message.append("state", new JSONObject(state.toString()));
 		for (Player player : state.players) {
 			player.getConnection().socket.send(message.toString());
 		}

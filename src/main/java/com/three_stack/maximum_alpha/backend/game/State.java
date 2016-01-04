@@ -7,6 +7,7 @@ import java.util.Stack;
 import com.google.gson.annotations.SerializedName;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.effects.Effect;
+import com.three_stack.maximum_alpha.backend.game.event.Action;
 import com.three_stack.maximum_alpha.backend.game.event.Event;
 import com.three_stack.maximum_alpha.backend.game.utility.Serializer;
 import com.three_stack.maximum_alpha.backend.server.Connection;
@@ -198,7 +199,10 @@ public class State {
 	
 	//Major functions
 	
-	public void processAction(Event event) {
+	public void processAction(Action action) {
+		if(action.getType() == Action.ActionType.CHANGE_PHASE) {
+			nextPhase();
+		}
 	}
 	
 	public boolean isLegalAction(Action action) {
