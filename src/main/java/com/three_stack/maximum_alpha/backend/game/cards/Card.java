@@ -1,10 +1,9 @@
 package com.three_stack.maximum_alpha.backend.game.cards;
 
-import com.three_stack.maximum_alpha.backend.game.Counter;
-import com.three_stack.maximum_alpha.backend.game.GameEvent;
-import com.three_stack.maximum_alpha.backend.game.GameState;
-import com.three_stack.maximum_alpha.backend.game.ResourceList;
+import com.three_stack.maximum_alpha.backend.game.*;
+import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,10 +14,11 @@ public abstract class Card {
     private String flavorText;
     private List<Counter> counters;
 
-    private List<Runnable> triggers;
+    private Map<GameState.Breakpoint, Trigger> triggers;
 
     protected Card() {
         id = -1;
+        triggers = new HashMap<>();
 	}
 	
 	/**
@@ -30,7 +30,7 @@ public abstract class Card {
 	 */
 	public abstract GameEvent effect(GameState state, GameEvent event);
 
-    public void addTrigger(Runnable runnable) {
-        triggers.add(runnable);
+    public void addTrigger(GameState.Breakpoint breakpoint, Trigger trigger) {
+        triggers.put(breakpoint, trigger);
     }
 }
