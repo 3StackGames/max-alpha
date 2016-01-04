@@ -13,6 +13,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import com.three_stack.maximum_alpha.backend.game.*;
 import org.java_websocket.WebSocket;
 import org.java_websocket.framing.Framedata;
 import org.java_websocket.handshake.ClientHandshake;
@@ -20,21 +21,16 @@ import org.java_websocket.server.WebSocketServer;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.three_stack.maximum_alpha.backend.game.Game;
-import com.three_stack.maximum_alpha.backend.game.GameAction;
-import com.three_stack.maximum_alpha.backend.game.GameParameters;
-import com.three_stack.maximum_alpha.backend.game.GameState;
-
 public class Server extends WebSocketServer {
 	
 	final int ROOM_SIZE = 2;
 	static char code = 'a';	
 	ExecutorService executor = newBoundedFixedThreadPool(8);
 	
-	Map<String, GameState> gameStates = new HashMap<String, GameState>();
+	Map<String, GameState> gameStates = new HashMap<>();
 	Runnable matchmaking = new Matchmaking(ROOM_SIZE);
-	LinkedBlockingQueue<Connection> pool = new LinkedBlockingQueue<Connection>();
-	Collection<Connection> playersInGame = new HashSet<Connection>();
+	LinkedBlockingQueue<Connection> pool = new LinkedBlockingQueue<>();
+	Collection<Connection> playersInGame = new HashSet<>();
 	
 	public static ExecutorService newBoundedFixedThreadPool(int nThreads) {
 		return new ThreadPoolExecutor(nThreads, nThreads,
@@ -65,7 +61,7 @@ public class Server extends WebSocketServer {
 				{
 					synchronized(pool) {
 						System.out.println("adding to pool....");
-						pool.add(new Connection(socket, json.getInt("pid"), json.getInt("did")));
+						pool.add(new Connection(socket, json.getInt("playerId"), json.getInt("deckId")));
 						System.out.println("added");
 						pool.notify();
 					}
@@ -73,7 +69,7 @@ public class Server extends WebSocketServer {
 				else if (type.equals("stop finding")) 
 				{
 					synchronized(pool) {
-						pool.remove(new Connection(socket, json.getInt("pid"), json.getInt("did")));
+						pool.remove(new Connection(socket, json.getInt("playerId"), json.getInt("deckId")));
 					}
 				} 
 				else if (type.equals("action")) 
@@ -123,8 +119,8 @@ public class Server extends WebSocketServer {
 	}
 	
 	public void createGame(List<Connection> players) {
-		GameParameters gp = new GameParameters(players);
-		GameState newGame = new GameState(gp);
+		GameParameters gameParameters = new GameParameters(players);
+		GameState newGame = new GameState(gameParameters);
 		gameStates.put(nextCode(), newGame);
 		
 		sendToAll("game created", players);
@@ -178,7 +174,7 @@ public class Server extends WebSocketServer {
 		System.out.println(message);
 	}
 
-	public void onFragment( WebSocket conn, Framedata fragment ) {
+	public void onFragment( WebSocket socket, Framedata fragment ) {
 		System.out.println( "received fragment: " + fragment );
 	}
 
@@ -186,31 +182,17 @@ public class Server extends WebSocketServer {
 		int port = 8080;
 		try {
 			port = Integer.parseInt( args[ 0 ] );
-		} catch ( Exception ex ) {
+		} catch ( Exception e ) {
 		}
-		Server s = new Server( port );
-		s.start();
-		System.out.println( "Server started on port: " + s.getPort() );
-
-		/*BufferedReader sysin = new BufferedReader( new InputStreamReader( System.in ) );
-		while ( true ) {
-			String in = sysin.readLine();
-			//s.sendToAll( in );
-			if( in.equals( "exit" ) ) {
-				s.stop();
-				break;
-			} else if( in.equals( "restart" ) ) {
-				s.stop();
-				s.start();
-				break;
-			}
-		}*/
+		Server server = new Server( port );
+		server.start();
+		System.out.println( "Server started on port: " + server.getPort() );
 	}
 	
 	@Override
-	public void onError( WebSocket conn, Exception ex ) {
-		ex.printStackTrace();
-		if( conn != null ) {
+	public void onError( WebSocket socket, Exception e ) {
+		e.printStackTrace();
+		if( socket != null ) {
 			// some errors like port binding failed may not be assignable to a specific websocket
 		}
 	}
@@ -224,25 +206,25 @@ public class Server extends WebSocketServer {
 	 *             When socket related I/O errors occur.
 	 */
 	public void sendToAll( String text) {
-		Collection<WebSocket> con = connections();
-		synchronized ( con ) {
-			for( WebSocket s : con ) {
-				s.send( text );
+		Collection<WebSocket> sockets = connections();
+		synchronized ( sockets ) {
+			for( WebSocket socket : sockets ) {
+				socket.send( text );
 			}
 		}
 	}
 
-	public void sendToAll( String text , Collection<Connection> con ) {
-		synchronized ( con ) {
-			for( Connection p : con ) {
-				p.socket.send( text );
+	public void sendToAll( String text , Collection<Connection> connections ) {
+		synchronized ( connections ) {
+			for( Connection connection : connections ) {
+				connection.socket.send( text );
 			}
 		}
 	}
 	
 	public void sendToGame(GameState game) {
-		for (Connection p : game.players) {
-			p.socket.send(game.toString());
+		for (Player player : game.players) {
+			player.getConnection().socket.send(game.toString());
 		}
 	}
 }

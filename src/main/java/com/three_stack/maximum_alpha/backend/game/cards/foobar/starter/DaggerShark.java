@@ -17,6 +17,4 @@ public class DaggerShark {
         card.addTrigger(onAttack);
         return card;
     }
-
-
 }

@@ -14,31 +14,31 @@ public class GameState {
 	public List<Player> players;
 	public List<GameEvent> eventHistory;
 	public Phase currentPhase;
-	public boolean combatEnded = false;
+	public boolean combatEnded;
 	//corresponds to player indexes in the list
-	public int turn = 0;
+	public int turn;
     //two players each taking 1 turn is turnCount + 2
-	public int turnCount = 0;
+	public int turnCount;
 	
 	public List<Card> cardsPlayed;
-	public GameParameters gp;
+	public GameParameters gameParameters;
 	
 	//game over: winningPlayers, losingPlayers, tiedPlayers
 	
-	public GameState(GameParameters gp) {
-		this.gp = gp;
+	public GameState(GameParameters gameParameters) {
+		this.gameParameters = gameParameters;
 		this.players = new ArrayList<>();
 		
 		setupGame();
 	}
 	
 	public void setupGame() {
-        for(Connection c : gp.players) {
-            Player p = new Player(c, gp.TOTAL_HEALTH);
-            players.add(p);
-            Deck d = Game.loadDeck(p.getConnection().did);
-            d.shuffle();
-            p.setDeck(d);
+        for(Connection connection : gameParameters.players) {
+            Player player = new Player(connection, gameParameters.TOTAL_HEALTH);
+            players.add(player);
+            Deck deck = Game.loadDeck(player.getConnection().deckId);
+            deck.shuffle();
+            player.setDeck(deck);
         }
 
 		initialDraw();
@@ -47,9 +47,9 @@ public class GameState {
 	}
 	
 	public void initialDraw() {
-		for (Player p : players) {
-			for(int i = 0; i < gp.INITIAL_DRAW_SIZE; i++) {
-				p.draw();
+		for (Player player : players) {
+			for(int i = 0; i < gameParameters.INITIAL_DRAW_SIZE; i++) {
+				player.draw();
 			}
 		}
 	}
@@ -146,8 +146,8 @@ public class GameState {
 	//Major functions
 	
 	public void runTriggers(GameEvent e) {
-		for(Card c : cardsPlayed) {
-			GameEvent event = c.effect(this, e);
+		for(Card card : cardsPlayed) {
+			GameEvent event = card.effect(this, e);
 			if(event != null) {
 				//apply effect here
 			}

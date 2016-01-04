@@ -6,7 +6,7 @@ import com.three_stack.maximum_alpha.backend.game.cards.Card;
 
 public class Structure extends Card {
     @Override
-    public GameEvent effect(GameState s, GameEvent e) {
+    public GameEvent effect(GameState state, GameEvent event) {
         return null;
     }
 }

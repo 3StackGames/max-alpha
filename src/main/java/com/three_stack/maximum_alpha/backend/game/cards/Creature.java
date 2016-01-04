@@ -11,12 +11,12 @@ public class Creature extends Card implements Worker{
     }
 
     @Override
-    public GameEvent effect(GameState s, GameEvent e) {
+    public GameEvent effect(GameState state, GameEvent event) {
         return null;
     }
 
     @Override
-    public ResourceList work(GameState s) {
+    public ResourceList work(GameState state) {
         return null;
     }
 }

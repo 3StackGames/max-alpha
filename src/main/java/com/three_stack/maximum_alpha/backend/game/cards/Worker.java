@@ -10,5 +10,5 @@ public interface Worker {
 	 * @param s The gamestate in which this card exists
 	 * @return A resource list with resource values equal to the net change in resource quantities
 	 */
-	public ResourceList work(GameState s);
+	ResourceList work(GameState s);
 }

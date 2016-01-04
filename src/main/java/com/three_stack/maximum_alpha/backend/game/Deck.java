@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class Deck {
-	List<Card> deck = new ArrayList<Card>();
+	List<Card> deck = new ArrayList<>();
 	
 	public void shuffle() {
 		Collections.shuffle(deck);

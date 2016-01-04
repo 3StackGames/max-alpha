@@ -9,7 +9,7 @@ public final class Game {
 	
 	private Game() {}
 	
-	public static GameState newGame(GameParameters gp) {
+	public static GameState newGame(GameParameters gameParameters) {
 		return null;
 	}
 

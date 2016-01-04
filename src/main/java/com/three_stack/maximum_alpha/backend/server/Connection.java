@@ -4,12 +4,12 @@ import org.java_websocket.WebSocket;
 
 public class Connection {
 	public WebSocket socket;
-	public int pid;
-	public int did;
+	public int playerId;
+	public int deckId;
 	
-	public Connection(WebSocket socket, int pid, int did) {
+	public Connection(WebSocket socket, int playerId, int deckId) {
 		this.socket = socket;
-		this.pid = pid;
-		this.did = did;
+		this.playerId = playerId;
+		this.deckId = deckId;
 	}
 }
