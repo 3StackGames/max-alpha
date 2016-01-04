@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
+import com.three_stack.maximum_alpha.backend.game.events.Event;
 
 /**
  * Always player Input

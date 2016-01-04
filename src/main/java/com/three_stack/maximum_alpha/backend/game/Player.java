@@ -1,7 +1,7 @@
 package com.three_stack.maximum_alpha.backend.game;
 
 import com.three_stack.maximum_alpha.backend.game.cards.*;
-import com.three_stack.maximum_alpha.backend.game.event.Event;
+import com.three_stack.maximum_alpha.backend.game.events.Event;
 import com.three_stack.maximum_alpha.backend.server.Connection;
 
 import java.util.ArrayList;

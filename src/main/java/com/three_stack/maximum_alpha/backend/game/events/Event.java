@@ -1,6 +1,6 @@
-package com.three_stack.maximum_alpha.backend.game.event;
+package com.three_stack.maximum_alpha.backend.game.events;
 
-import com.three_stack.maximum_alpha.backend.game.utility.Serializer;
+import com.three_stack.maximum_alpha.backend.game.utilities.Serializer;
 
 public class Event {
 	protected final String description;

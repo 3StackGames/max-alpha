@@ -4,12 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-import com.google.gson.annotations.SerializedName;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.effects.Effect;
 import com.three_stack.maximum_alpha.backend.game.event.Action;
-import com.three_stack.maximum_alpha.backend.game.event.Event;
-import com.three_stack.maximum_alpha.backend.game.utility.Serializer;
+import com.three_stack.maximum_alpha.backend.game.events.Event;
+import com.three_stack.maximum_alpha.backend.game.utilities.Serializer;
 import com.three_stack.maximum_alpha.backend.server.Connection;
 
 public class State {
@@ -58,23 +57,23 @@ public class State {
         ON_END_PHASE_END
     }
 
-	public List<Player> players;
-	public List<Event> eventHistory;
-	public Phase currentPhase;
+	private List<Player> players;
+	private List<Event> eventHistory;
+	private Phase currentPhase;
 	/**
 	 * Marks when combat has happened in Main Phase
 	 * Default to false
 	 */
-	public boolean combatEnded;
+	private boolean combatEnded;
 	//corresponds to player indexes in the list
-	public int turn;
+	private int turn;
     //two players each taking 1 turn is turnCount + 2
-	public int turnCount;
+	private int turnCount;
 
-    public Stack<Effect> effectStack;
+    private Stack<Effect> effectStack;
 
-	public List<Card> cardsPlayed;
-	public transient Parameters parameters;
+	private List<Card> cardsPlayed;
+	private final transient Parameters parameters;
 	
 	//game over: winningPlayers, losingPlayers, tiedPlayers
 	
@@ -96,7 +95,7 @@ public class State {
         }
 
 		initialDraw();
-        drawStart();
+        startStart();
 		//do other things here
 	}
 	
@@ -113,7 +112,7 @@ public class State {
 	public State nextPhase() {
 		switch(currentPhase) {
 		case START:
-			drawEnd();
+			startEnd();
 			break;
 		case MAIN:
 			mainEnd();
@@ -129,7 +128,7 @@ public class State {
 		return this;
 	}
 	
-	public void drawStart() {
+	public void startStart() {
 		currentPhase = Phase.START;
 		
 		if(turnCount > 0) {
@@ -139,7 +138,7 @@ public class State {
 		gatherResources();
 	}
 	
-	public void drawEnd() {
+	public void startEnd() {
 		mainStart();
 	}
 	
@@ -170,7 +169,7 @@ public class State {
 	
 	public void endEnd() {
 		newTurn();
-		drawStart();
+		startStart();
 	}
 	
 	//Phase utilities
@@ -217,4 +216,68 @@ public class State {
 	public String toString() {
 		return Serializer.toJson(this);
 	}
+
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(List<Player> players) {
+        this.players = players;
+    }
+
+    public List<Event> getEventHistory() {
+        return eventHistory;
+    }
+
+    public void setEventHistory(List<Event> eventHistory) {
+        this.eventHistory = eventHistory;
+    }
+
+    public Phase getCurrentPhase() {
+        return currentPhase;
+    }
+
+    public void setCurrentPhase(Phase currentPhase) {
+        this.currentPhase = currentPhase;
+    }
+
+    public boolean isCombatEnded() {
+        return combatEnded;
+    }
+
+    public void setCombatEnded(boolean combatEnded) {
+        this.combatEnded = combatEnded;
+    }
+
+    public int getTurn() {
+        return turn;
+    }
+
+    public void setTurn(int turn) {
+        this.turn = turn;
+    }
+
+    public int getTurnCount() {
+        return turnCount;
+    }
+
+    public void setTurnCount(int turnCount) {
+        this.turnCount = turnCount;
+    }
+
+    public Stack<Effect> getEffectStack() {
+        return effectStack;
+    }
+
+    public void setEffectStack(Stack<Effect> effectStack) {
+        this.effectStack = effectStack;
+    }
+
+    public List<Card> getCardsPlayed() {
+        return cardsPlayed;
+    }
+
+    public void setCardsPlayed(List<Card> cardsPlayed) {
+        this.cardsPlayed = cardsPlayed;
+    }
 }

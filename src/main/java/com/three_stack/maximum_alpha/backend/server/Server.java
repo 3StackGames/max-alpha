@@ -236,7 +236,7 @@ public class Server extends WebSocketServer {
         JSONObject message = new JSONObject();
         message.append(EVENT_TYPE, "State Update");
         message.append("state", new JSONObject(state.toString()));
-		for (Player player : state.players) {
+		for (Player player : state.getPlayers()) {
 			player.getConnection().socket.send(message.toString());
 		}
 	}

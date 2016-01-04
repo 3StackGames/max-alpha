@@ -6,9 +6,9 @@ import java.util.Collections;
 import java.util.List;
 
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
-import com.three_stack.maximum_alpha.backend.game.cards.foobar.test.FieldCleric;
-import com.three_stack.maximum_alpha.backend.game.cards.foobar.test.MilitiaMinuteman;
-import com.three_stack.maximum_alpha.backend.game.cards.foobar.test.TravelingMerchant;
+import com.three_stack.maximum_alpha.backend.game.cards.instances.test.FieldCleric;
+import com.three_stack.maximum_alpha.backend.game.cards.instances.test.MilitiaMinuteman;
+import com.three_stack.maximum_alpha.backend.game.cards.instances.test.TravelingMerchant;
 
 public class Deck {
 	List<Card> cards = new ArrayList<>();
