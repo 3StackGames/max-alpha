@@ -1,4 +1,4 @@
-package com.three_stack.maximum_alpha.backend.game.cards.foobar.test;
+package com.three_stack.maximum_alpha.backend.game.cards.instances.test;
 
 import com.three_stack.maximum_alpha.backend.game.ResourceList;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;

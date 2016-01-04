@@ -1,4 +1,4 @@
-package com.three_stack.maximum_alpha.backend.game.utility;
+package com.three_stack.maximum_alpha.backend.game.utilities;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

@@ -4,11 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-import com.google.gson.annotations.SerializedName;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.effects.Effect;
-import com.three_stack.maximum_alpha.backend.game.event.Event;
-import com.three_stack.maximum_alpha.backend.game.utility.Serializer;
+import com.three_stack.maximum_alpha.backend.game.events.Event;
+import com.three_stack.maximum_alpha.backend.game.utilities.Serializer;
 import com.three_stack.maximum_alpha.backend.server.Connection;
 
 public class State {

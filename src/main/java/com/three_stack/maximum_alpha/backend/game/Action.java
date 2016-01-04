@@ -1,6 +1,6 @@
 package com.three_stack.maximum_alpha.backend.game;
 
-import com.three_stack.maximum_alpha.backend.game.event.Event;
+import com.three_stack.maximum_alpha.backend.game.events.Event;
 
 /**
  * Always player Input

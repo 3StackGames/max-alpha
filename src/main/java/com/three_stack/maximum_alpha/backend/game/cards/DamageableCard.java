@@ -2,7 +2,7 @@ package com.three_stack.maximum_alpha.backend.game.cards;
 
 import com.three_stack.maximum_alpha.backend.game.Buff;
 import com.three_stack.maximum_alpha.backend.game.ResourceList;
-import com.three_stack.maximum_alpha.backend.game.event.Event;
+import com.three_stack.maximum_alpha.backend.game.events.Event;
 
 import java.util.List;
 
