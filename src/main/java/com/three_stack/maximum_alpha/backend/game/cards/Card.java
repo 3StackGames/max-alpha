@@ -8,29 +8,77 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class Card {
-	private final long id;
-    private String name;
-    private ResourceList cost;
-    private String flavorText;
-    private List<Counter> counters;
+	protected final long id;
+    protected final String name;
+    protected final ResourceList defaultCost;
+    protected ResourceList currentCost;
+    protected String text;
+    protected final String flavorText;
+    protected List<Counter> counters;
 
-    private Map<GameState.Breakpoint, Trigger> triggers;
+    protected Map<State.TriggerPoint, Trigger> triggers;
 
     protected Card() {
         id = -1;
-        triggers = new HashMap<>();
-	}
-	
-	/**
-	 * Called whenever any GameEvent occurs in a GameState. May or may not trigger another GameEvent in response.
-	 * 
-	 * @param state The gamestate in which this card exists
-	 * @param event The event which may or may not trigger this card'state effect(state)
-	 * @return The resulting GameEvent corresponding to this card'state effect, or null if not triggered
-	 */
-	public abstract GameEvent effect(GameState state, GameEvent event);
+        name = null;
+        defaultCost = null;
+        flavorText = null;
+    }
 
-    public void addTrigger(GameState.Breakpoint breakpoint, Trigger trigger) {
-        triggers.put(breakpoint, trigger);
+    protected Card(String name, ResourceList defaultCost, String text, String flavorText) {
+        id = -1;
+        triggers = new HashMap<>();
+        this.name = name;
+        this.defaultCost = defaultCost;
+        this.flavorText = flavorText;
+	}
+
+    public void addTrigger(State.TriggerPoint triggerPoint, Trigger trigger) {
+        triggers.put(triggerPoint, trigger);
+    }
+
+    public ResourceList.Color getDominantColor() {
+        int max = 0;
+        ResourceList.Color dominant = ResourceList.Color.COLORLESS;
+        for(ResourceList.Color color : ResourceList.Color.values()) {
+            int value = defaultCost.getColor(color);
+            if(value > max) {
+                max = value;
+                dominant = color;
+            }
+        }
+        return dominant;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public ResourceList getDefaultCost() {
+        return defaultCost;
+    }
+
+    public ResourceList getCurrentCost() {
+        return currentCost;
+    }
+
+    public void setCurrentCost(ResourceList currentCost) {
+        this.currentCost = currentCost;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public String getFlavorText() {
+        return flavorText;
     }
 }

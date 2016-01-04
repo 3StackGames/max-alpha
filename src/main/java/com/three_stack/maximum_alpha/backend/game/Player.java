@@ -1,15 +1,14 @@
 package com.three_stack.maximum_alpha.backend.game;
 
-import com.three_stack.maximum_alpha.backend.game.cards.Card;
-import com.three_stack.maximum_alpha.backend.game.cards.Creature;
-import com.three_stack.maximum_alpha.backend.game.cards.Structure;
-import com.three_stack.maximum_alpha.backend.game.cards.Worker;
+import com.three_stack.maximum_alpha.backend.game.cards.*;
+import com.three_stack.maximum_alpha.backend.game.event.Event;
 import com.three_stack.maximum_alpha.backend.server.Connection;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Player {
+public class Player implements Damageable {
+    private String username;
     private Connection connection;
     private List<Card> hand;
     private Deck deck;
@@ -42,12 +41,13 @@ public class Player {
         hand.add(deck.draw());
     }
 
-    public int takeDamage(int damage) {
+    @Override
+    public Event takeDamage(int damage, Card source) {
         life -= damage;
-        return life;
+        return new Event(username + " took " + damage + " damage from " + source.getName() + ".");
     }
 
-    public void gatherResources(GameState state) {
+    public void gatherResources(State state) {
         for(Worker worker : workers) {
             ResourceList resourceChange = worker.work(state);
             resources.add(resourceChange);

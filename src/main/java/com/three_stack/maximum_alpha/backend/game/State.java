@@ -6,14 +6,15 @@ import java.util.Stack;
 
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.effects.Effect;
+import com.three_stack.maximum_alpha.backend.game.event.Event;
 import com.three_stack.maximum_alpha.backend.server.Connection;
 
-public class GameState {	
+public class State {
 	public enum Phase {
 		DRAW, MAIN, COMBAT, END	
 	}
 
-    public enum Breakpoint {
+    public enum TriggerPoint {
         ON_EVENT,
         ON_RESOURCE_GENERATE,
         ON_RESOURCE_SPEND,
@@ -52,8 +53,12 @@ public class GameState {
     }
 
 	public List<Player> players;
-	public List<GameEvent> eventHistory;
+	public List<Event> eventHistory;
 	public Phase currentPhase;
+	/**
+	 * Marks when combat has happened in Main Phase
+	 * Default to false
+	 */
 	public boolean combatEnded;
 	//corresponds to player indexes in the list
 	public int turn;
@@ -63,22 +68,22 @@ public class GameState {
     public Stack<Effect> effectStack;
 
 	public List<Card> cardsPlayed;
-	public GameParameters gameParameters;
+	public Parameters parameters;
 	
 	//game over: winningPlayers, losingPlayers, tiedPlayers
 	
-	public GameState(GameParameters gameParameters) {
-		this.gameParameters = gameParameters;
+	public State(Parameters parameters) {
+		this.parameters = parameters;
 		this.players = new ArrayList<>();
 		
 		setupGame();
 	}
 	
 	public void setupGame() {
-        for(Connection connection : gameParameters.players) {
-            Player player = new Player(connection, gameParameters.TOTAL_HEALTH);
+        for(Connection connection : parameters.players) {
+            Player player = new Player(connection, parameters.TOTAL_HEALTH);
             players.add(player);
-            Deck deck = Game.loadDeck(player.getConnection().deckId);
+            Deck deck = Deck.loadDeck(player.getConnection().deckId);
             deck.shuffle();
             player.setDeck(deck);
         }
@@ -90,7 +95,7 @@ public class GameState {
 	
 	public void initialDraw() {
 		for (Player player : players) {
-			for(int i = 0; i < gameParameters.INITIAL_DRAW_SIZE; i++) {
+			for(int i = 0; i < parameters.INITIAL_DRAW_SIZE; i++) {
 				player.draw();
 			}
 		}
@@ -98,7 +103,7 @@ public class GameState {
 	
 	//Phases
 	
-	public GameState nextPhase() {
+	public State nextPhase() {
 		switch(currentPhase) {
 		case DRAW:
 			drawEnd();
@@ -187,19 +192,10 @@ public class GameState {
 	
 	//Major functions
 	
-	public void runTriggers(GameEvent e) {
-		for(Card card : cardsPlayed) {
-			GameEvent event = card.effect(this, e);
-			if(event != null) {
-				//apply effect here
-			}
-		}
+	public void processAction(Event event) {
 	}
 	
-	public void processAction(GameEvent event) {
-	}
-	
-	public boolean isLegalAction(GameAction action) {
+	public boolean isLegalAction(Action action) {
 		return true;
 	}
 

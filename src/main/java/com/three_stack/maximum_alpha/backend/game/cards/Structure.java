@@ -1,12 +1,11 @@
 package com.three_stack.maximum_alpha.backend.game.cards;
 
-import com.three_stack.maximum_alpha.backend.game.GameEvent;
-import com.three_stack.maximum_alpha.backend.game.GameState;
-import com.three_stack.maximum_alpha.backend.game.cards.Card;
+import com.three_stack.maximum_alpha.backend.game.event.Event;
+import com.three_stack.maximum_alpha.backend.game.State;
 
 public class Structure extends Card {
     @Override
-    public GameEvent effect(GameState state, GameEvent event) {
+    public Event effect(State state, Event event) {
         return null;
     }
 }

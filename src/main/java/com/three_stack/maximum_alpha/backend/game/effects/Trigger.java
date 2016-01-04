@@ -1,18 +1,19 @@
 package com.three_stack.maximum_alpha.backend.game.effects;
 
-import com.three_stack.maximum_alpha.backend.game.GameEvent;
-import com.three_stack.maximum_alpha.backend.game.GameState;
+import com.three_stack.maximum_alpha.backend.game.State;
+import com.three_stack.maximum_alpha.backend.game.event.Event;
+import com.three_stack.maximum_alpha.backend.game.cards.Card;
 
 public abstract class Trigger {
-    protected long sourceId;
+    protected Card source;
 
-    abstract protected void run(GameState state, GameEvent event);
+    abstract protected void run(State state, Event event);
 
-    public long getSourceId() {
-        return sourceId;
+    public Card getSource() {
+        return source;
     }
 
-    public void setSourceId(long sourceId) {
-        this.sourceId = sourceId;
+    public void setSource(Card source) {
+        this.source = source;
     }
 }
