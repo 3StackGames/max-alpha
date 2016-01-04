@@ -13,6 +13,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import com.google.gson.Gson;
 import com.three_stack.maximum_alpha.backend.game.*;
 import com.three_stack.maximum_alpha.backend.game.events.Action;
 
@@ -79,7 +80,7 @@ public class Server extends WebSocketServer {
 				{
 					String gameCode = json.getString("gameCode");
 					State game = gameStates.get(gameCode);
-					Action action = new Action(json.getJSONObject("action"));
+					Action action = (Action) new Gson().fromJson(json.getString("action"), Action.class);
 					updateGame(gameCode, game, action);
 				}
 			} catch (JSONException e) {

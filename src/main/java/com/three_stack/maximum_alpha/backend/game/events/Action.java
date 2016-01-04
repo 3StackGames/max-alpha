@@ -1,12 +1,11 @@
 package com.three_stack.maximum_alpha.backend.game.events;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.three_stack.maximum_alpha.backend.game.ResourceList;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 
 /**
@@ -22,17 +21,30 @@ public class Action extends Event {
 	public List<Long> targets;
 	public long actionCardId;
 	public ActionType type;
-	
-    public Action(JSONObject action) throws JSONException {
-		type = ActionType.valueOf(action.getString("type"));
-		if(hasActionCardId(type)) {
-			actionCardId = action.getLong("actionCard");
+	public ResourceList cost;
+    
+    public static boolean isValidAction(JSONObject action) throws JSONException {
+    	try {
+			ActionType type = ActionType.valueOf(action.getString("type"));
+	    	if(hasActionCardId(type)) {
+				action.getLong("actionCard");
+			}
+			if(hasCost(type)) {
+				action.getString("cost");
+			}
+			return true;
+    	}
+		catch (JSONException e) {
+			return false;
 		}
-		//other types here
     }
 
-	public boolean hasActionCardId(ActionType type) {
+	public static boolean hasActionCardId(ActionType type) {
     	return type == ActionType.PLAY_CARD || type == ActionType.ASSIGN_CARD || type == ActionType.PULL_CARD || type == ActionType.ACTIVATE_EFFECT || type == ActionType.DECLARE_ATTACKER || type == ActionType.DECLARE_BLOCKER;
+    }
+	
+	public static boolean hasCost(ActionType type) {
+    	return type == ActionType.PLAY_CARD || type == ActionType.ACTIVATE_EFFECT;
     }
     
     public List<Card> getChoices() {
