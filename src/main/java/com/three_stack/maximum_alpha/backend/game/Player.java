@@ -1,9 +1,6 @@
 package com.three_stack.maximum_alpha.backend.game;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
@@ -28,7 +25,7 @@ public class Player implements Damageable {
 	}
 
 	private transient Connection connection;
-    private long playerId;
+    private final UUID playerId;
     private CardList<Card> hand;
     private Deck deck;
     private CardList<Creature> field;
@@ -44,7 +41,7 @@ public class Player implements Damageable {
         this.connection = connection;
         this.maxLife = maxLife;
         life = this.maxLife;
-        playerId = connection.playerId;
+        playerId = UUID.randomUUID();
         username = "Player " + usernameCounter++;
 
         resources = new ResourceList();
@@ -118,12 +115,8 @@ public class Player implements Damageable {
         this.connection = connection;
     }
 
-    public long getPlayerId() {
+    public UUID getPlayerId() {
         return playerId;
-    }
-
-    public void setPlayerId(long playerId) {
-        this.playerId = playerId;
     }
 
     public CardList<Card> getHand() {
