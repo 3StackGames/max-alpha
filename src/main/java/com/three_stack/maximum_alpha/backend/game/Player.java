@@ -44,7 +44,7 @@ public class Player implements Damageable {
         playerId = UUID.randomUUID();
         username = "Player " + usernameCounter++;
 
-        resources = new ResourceList();
+        resources = new ResourceList(Parameters.INITIAL_COLORLESS_MANA);
         hand = new CardList<>();
         field = new CardList<>();
         grave = new CardList<>();
