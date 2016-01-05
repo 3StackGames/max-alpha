@@ -2,7 +2,6 @@ package com.three_stack.maximum_alpha.backend.game;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Stack;
 
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
@@ -11,18 +10,11 @@ import com.three_stack.maximum_alpha.backend.game.cards.Structure;
 import com.three_stack.maximum_alpha.backend.game.effects.Effect;
 import com.three_stack.maximum_alpha.backend.game.events.Action;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
-import com.three_stack.maximum_alpha.backend.game.phases.StartPhase;
+import com.three_stack.maximum_alpha.backend.game.phases.*;
 import com.three_stack.maximum_alpha.backend.game.utilities.Serializer;
 import com.three_stack.maximum_alpha.backend.server.Connection;
 
 public class State {
-	public enum Phase {
-        START,
-        MAIN,
-        COMBAT,
-        END
-	}
-
     public enum TriggerPoint {
         ON_EVENT,
         ON_RESOURCE_GENERATE,
@@ -59,12 +51,6 @@ public class State {
         ON_BLOCK_PHASE_END,
         ON_END_PHASE_START,
         ON_END_PHASE_END
-    }
-
-    private static Map<Phase, com.three_stack.maximum_alpha.backend.game.phases.Phase> phaseMap;
-
-    static {
-        phaseMap.put(Phase.START, new StartPhase());
     }
 
 	private List<Player> players;
@@ -105,7 +91,7 @@ public class State {
         }
 
 		initialDraw();
-        startStart();
+        StartPhase.getInstance().start(this);
 		//do other things here
 	}
 	
@@ -118,72 +104,8 @@ public class State {
 	}
 	
 	//Phases
-	
-	public State nextPhase() {
-		switch(currentPhase) {
-		case START:
-			startEnd();
-			break;
-		case MAIN:
-			mainEnd();
-			break;
-		case COMBAT:
-			combatEnd();
-			break;
-		case END:
-			endEnd();
-			break;
-		}
-		
-		return this;
-	}
-
-    public com.three_stack.maximum_alpha.backend.game.phases.Phase getPhase(Phase phaseName) {
-
-    }
-	
-	public void startStart() {
-		currentPhase = Phase.START;
-		
-		if(turnCount > 0) {
-			turnPlayerDraw();
-		}
-		
-		gatherResources();
-	}
-	
-	public void startEnd() {
-		mainStart();
-	}
-	
-	public void mainStart() {
-		currentPhase = Phase.MAIN;
-	}
-	
-	public void mainEnd() {
-		if(combatEnded) {
-			endStart();
-		}
-		else {
-			combatStart();
-		}
-	}
-	
-	public void combatStart() {
-		currentPhase = Phase.COMBAT;
-	}
-	
-	public void combatEnd() {
-		combatEnded = true;
-	}
-	
-	public void endStart() {
-		currentPhase = Phase.END;	
-	}
-	
-	public void endEnd() {
-		newTurn();
-		startStart();
+	public void endPhase() {
+        currentPhase.end(this);
 	}
 	
 	//Phase utilities
@@ -207,19 +129,15 @@ public class State {
 	
 	public void skipCombat() {
 		combatEnded = true;
-		mainEnd();
+		MainPhase.getInstance().end(this);
 	}
-
-    public void turnPlayerRefresh() {
-        for(Structure )
-    }
 
 	//Major functions
 	
 	public void processAction(Action action) {
 		switch(action.getType()) {
 		case CHANGE_PHASE: 
-			nextPhase();
+			endPhase();
 			break;
 		case ACTIVATE_EFFECT:
 			break;
