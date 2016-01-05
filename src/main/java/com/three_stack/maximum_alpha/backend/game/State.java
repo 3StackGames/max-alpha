@@ -8,6 +8,7 @@ import java.util.Stack;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
+import com.three_stack.maximum_alpha.backend.game.cards.Worker;
 import com.three_stack.maximum_alpha.backend.game.effects.Effect;
 import com.three_stack.maximum_alpha.backend.game.events.Action;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
@@ -79,9 +80,7 @@ public class State {
 	private int turn;
     //two players each taking 1 turn is turnCount + 2
 	private int turnCount;
-
     private Stack<Effect> effectStack;
-
 	private List<Card> cardsPlayed;
 	private final transient Parameters parameters;
 	
@@ -213,10 +212,71 @@ public class State {
     public void turnPlayerRefresh() {
         for(Structure )
     }
+    
+    public Card findCard(long id) {
+        return null;
+    }
+    
+    public Player findPlayer(long id) {
+        return players.get((int)id);
+    }
+    
+    public void assign(long cardId, long pid) {
+        Card card = findCard(cardId);
+        if(card instanceof Worker) {
+            Worker worker = (Worker) card;
+            Player p = findPlayer(pid);
+            eventHistory.add(worker.assign(this, p));
+        }
+    }
+    
+    public void playCard(long cardId, long pid) {
+        Card card = findCard(cardId);
+        if(card.isPlayable()) {
+            Player p = findPlayer(pid);
+            ResourceList cost = card.getCurrentCost();
+            if(p.hasResources(cost)) {
+                if(card instanceof Creature) {
+                	if(p.playCreature((Creature) card)) {
+                		eventHistory.add(new Event ("Player " + p.getUsername() + " played " + card.getId()));
+                	}
+                } else {
+                    //spell stuff
+                }
+            }
+            
+        }
+    }
+    
+    public void declareAttacker(long cardId, long pid, long combatTargetId) {
+        Card card = findCard(cardId);
+        if(card instanceof Creature) {
+        	Creature creature = (Creature) card;
+            Card target = findCard(combatTargetId);
+        	if(creature.canAttack()) {
+        		creature.setAttackTarget(target);
+        		eventHistory.add(new Event(creature.getId() + " is attacking " + target.getId()));
+        	}    	
+        }
+    }
+    
+    public void declareBlocker(long cardId, long pid, long combatTargetId) {
+    	Card card = findCard(cardId);
+        if(card instanceof Creature) {
+        	Creature creature = (Creature) card;
+            Card target = findCard(combatTargetId);
+        	if(creature.canBlock()) {
+        		creature.setBlockTarget(target);
+        		eventHistory.add(new Event(creature.getId() + " is blocking " + target.getId()));
+        	}    	
+        }
+    }
 
 	//Major functions
 	
 	public void processAction(Action action) {
+		eventHistory.clear();
+		
 		switch(action.getType()) {
 		case CHANGE_PHASE: 
 			nextPhase();
@@ -224,16 +284,21 @@ public class State {
 		case ACTIVATE_EFFECT:
 			break;
 		case ASSIGN_CARD:
+			assign(action.getActionCardId(), action.getPlayerId());
 			break;
 		case BUILD_STRUCTURE:
 			break;
 		case CHOOSE_EFFECT:
 			break;
 		case DECLARE_ATTACKER:
+			declareAttacker(action.getActionCardId(), action.getPlayerId(), action.getCombatTargetId());
 			break;
 		case DECLARE_BLOCKER:
+			declareBlocker(action.getActionCardId(), action.getPlayerId(), action.getCombatTargetId());
 			break;
 		case PLAY_CARD:
+		    //if isValid(action)
+			playCard(action.getActionCardId(), action.getPlayerId());
 			break;
 		case PULL_CARD:
 			break;

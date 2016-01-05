@@ -10,7 +10,15 @@ import java.util.List;
 public class Player implements Damageable {
     private String username;
 
-    private transient Connection connection;
+    public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	private transient Connection connection;
     private List<Card> hand;
     private Deck deck;
     private List<Creature> field;
@@ -53,6 +61,24 @@ public class Player implements Damageable {
             ResourceList resourceChange = worker.work(state);
             resources.add(resourceChange);
         }
+    }
+    
+    public void pay(ResourceList cost) {
+        resources.lose(cost);
+    }
+    
+    public boolean hasResources(ResourceList other) {
+        return resources.hasResources(other);
+    }
+    
+    public boolean playCreature(Creature c) {
+        if (hand.remove(c)) {
+            pay(c.getCurrentCost());
+            field.add(c);
+            return true;
+        }
+        
+        return false;
     }
 
     public void setConnection(Connection connection) {

@@ -163,7 +163,7 @@ public class Server extends WebSocketServer {
 
 	@Override
 	public void onOpen( WebSocket conn, ClientHandshake handshake ) {
-		this.sendToAll( "new connection");
+		sendMessage(conn, "you connected! yay");
 	}
 
 	@Override
@@ -240,5 +240,12 @@ public class Server extends WebSocketServer {
 		for (Player player : state.getPlayers()) {
 			player.getConnection().socket.send(message.toString());
 		}
+	}
+	
+	public void sendMessage(WebSocket socket, String message) {
+		JSONObject messageJson = new JSONObject();
+		messageJson.append(EVENT_TYPE, "Server Message");
+		messageJson.append("message", message);
+		socket.send(messageJson.toString());
 	}
 }

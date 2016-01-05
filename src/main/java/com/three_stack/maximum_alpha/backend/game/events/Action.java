@@ -17,20 +17,57 @@ public class Action extends Event {
 		DECLARE_ATTACKER, DECLARE_BLOCKER, CHANGE_PHASE, SKIP_COMBAT, BUILD_STRUCTURE
 	}
 	
+	public long getCombatTargetId() {
+		return combatTargetId;
+	}
+
+	public void setCombatTargetId(long combatTargetId) {
+		this.combatTargetId = combatTargetId;
+	}
+
 	public List<Card> choices;
 	public List<Long> targets;
 	public long actionCardId;
 	public ActionType type;
 	public ResourceList cost;
+	public long playerId;
+	public long combatTargetId;
     
+	public ResourceList getCost() {
+		return cost;
+	}
+
+	public void setCost(ResourceList cost) {
+		this.cost = cost;
+	}
+
+	public long getPlayerId() {
+		return playerId;
+	}
+
+	public void setPlayerId(long playerId) {
+		this.playerId = playerId;
+	}
+
+	//maybe refactor later
     public static boolean isValidAction(JSONObject action) throws JSONException {
     	try {
 			ActionType type = ActionType.valueOf(action.getString("type"));
+			action.getLong("playerId");
 	    	if(hasActionCardId(type)) {
 				action.getLong("actionCard");
 			}
 			if(hasCost(type)) {
 				action.getString("cost");
+			}
+			if(hasTargets(type)) {
+				action.getString("targets");
+			}
+			if(hasChoices(type)) {
+				action.getString("choices");
+			}
+			if(hasCombatTargetId(type)) {
+				action.getString("combatTarget");
 			}
 			return true;
     	}
@@ -45,6 +82,18 @@ public class Action extends Event {
 	
 	public static boolean hasCost(ActionType type) {
     	return type == ActionType.PLAY_CARD || type == ActionType.ACTIVATE_EFFECT;
+    }
+
+	public static boolean hasChoices(ActionType type) {
+    	return type == ActionType.CHOOSE_EFFECT;
+    }
+
+	public static boolean hasTargets(ActionType type) {
+    	return type == ActionType.TARGET_EFFECT;
+    }
+	
+	public static boolean hasCombatTargetId(ActionType type) {
+    	return type == ActionType.DECLARE_ATTACKER || type == ActionType.DECLARE_BLOCKER;
     }
     
     public List<Card> getChoices() {

@@ -41,6 +41,10 @@ public class ResourceList {
     private void setup() {
         //all colors default to value 0
         colors = new HashMap<>();
+        for (Color c : Color.values()) {
+        	colors.put(c, 0);
+        }
+        
         custom = new HashMap<>();
     }
 
@@ -96,5 +100,52 @@ public class ResourceList {
 			
 			addCustom(key, value);
 		}
+	}
+	
+	public void lose(ResourceList other) {
+	    for (Map.Entry<Color, Integer> color : other.colors.entrySet()) {
+            Color key = color.getKey();
+            int value = color.getValue();
+
+            addColor(key, -value);
+        }
+
+        for (Map.Entry<String, Integer> entry : other.custom.entrySet()) {
+            String key = entry.getKey();
+            int value = entry.getValue();
+            
+            addCustom(key, -value);
+        }
+	}
+	
+	public boolean hasResources(ResourceList other) {	
+		int totalManaReserve = 0;
+	    for (Map.Entry<Color, Integer> color : other.colors.entrySet()) {
+            Color key = color.getKey();
+            int value = color.getValue();
+
+            totalManaReserve += getColor(key);
+            if (key != Color.COLORLESS) {
+                if (value > getColor(key))
+                    return false;
+                
+                totalManaReserve -= value;
+            }
+            else {
+                if (totalManaReserve < value) {
+                	return false;
+                }
+            }
+	    }
+	    
+	    for (Map.Entry<String, Integer> entry : other.custom.entrySet()) {
+            String key = entry.getKey();
+            int value = entry.getValue();
+            
+            if (value > getCustom(key))
+                return false;
+        }
+	    
+	    return true;
 	}
 }
