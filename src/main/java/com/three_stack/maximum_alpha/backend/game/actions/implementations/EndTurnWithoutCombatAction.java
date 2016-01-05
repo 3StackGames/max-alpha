@@ -8,6 +8,7 @@ import com.three_stack.maximum_alpha.backend.game.phases.MainPhase;
 public class EndTurnWithoutCombatAction extends Action {
     @Override
     public void run(State state) {
+        super.run(state);
 		state.setCombatEnded(true);
 		MainPhase.getInstance().end(state);
         state.setCombatEnded(true);

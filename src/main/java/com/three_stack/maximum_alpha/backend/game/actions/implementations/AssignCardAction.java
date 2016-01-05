@@ -10,6 +10,7 @@ public class AssignCardAction extends ExistingCardAction {
 
     @Override
     public void run(State state) {
+        super.run(state);
         Player player = state.getTurnPlayer();
         Card assignCard = player.getHand().takeCard(cardId);
 

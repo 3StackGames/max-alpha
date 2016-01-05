@@ -6,6 +6,6 @@ import com.three_stack.maximum_alpha.backend.game.actions.abstracts.ExistingCard
 public class BuildStructureAction extends ExistingCardAction {
     @Override
     public void run(State state) {
-
+        super.run(state);
     }
 }
