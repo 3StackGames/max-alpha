@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.UUID;
 
-import com.three_stack.maximum_alpha.backend.game.actions.Action;
+import com.three_stack.maximum_alpha.backend.game.actions.abstracts.Action;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;

@@ -1,5 +1,7 @@
 package com.three_stack.maximum_alpha.backend.game.actions;
 
+import com.three_stack.maximum_alpha.backend.game.actions.implementations.*;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,9 +14,9 @@ public class ActionService {
 
     static {
         actionMap = new HashMap<>();
-        actionMap.put("Play Card", PlayCardAction.class);
-        actionMap.put("Assign Card", AssignCardAction.class);
-        actionMap.put("Pull Card", PullCardAction.class);
+        actionMap.put("Play Card", PlayCardAction.class);//done
+        actionMap.put("Assign Card", AssignCardAction.class);//done
+        actionMap.put("Pull Card", PullCardAction.class);//implemented but not tested
         actionMap.put("Activate Effect", ActivateEffectAction.class);
         actionMap.put("Choose", ChooseAction.class);
         actionMap.put("Target", TargetAction.class);
