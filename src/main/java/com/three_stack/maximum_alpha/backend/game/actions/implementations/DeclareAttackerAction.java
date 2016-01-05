@@ -10,15 +10,6 @@ public class DeclareAttackerAction extends ExistingCardAction {
 	
     @Override
     public void run(State state) {
-    	Card attacker = state.findCard(cardId);
-    	if(attacker instanceof Creature) {
-        	Creature creature = (Creature) attacker;
-        	Card target = state.findCard(targetId);
-        	if(creature.canAttack()) {
-        		creature.setAttackTarget(target);
-        		Event event = new Event(creature.getId() + " is attacking " + target.getId());
-        		state.addEvent(event);
-        	}    	
-        }
+    	
     }
 }

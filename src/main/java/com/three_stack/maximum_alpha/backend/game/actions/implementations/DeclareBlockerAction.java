@@ -9,12 +9,6 @@ public class DeclareBlockerAction extends ExistingCardAction {
 
     @Override
     public void run(State state) {
-    	if(blocker instanceof Creature) {
-        	Creature creature = (Creature) blocker;
-        	if(creature.canBlock()) {
-        		creature.setBlockTarget(attacker);
-        		eventHistory.add(new Event(creature.getId() + " is blocking " + attacker.getId()));
-        	}    	
-        }
+    	
     }
 }
