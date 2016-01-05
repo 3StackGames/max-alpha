@@ -12,5 +12,16 @@ public class ActionService {
 
     static {
         actionMap = new HashMap<>();
+        actionMap.put("Play Card", PlayCardAction.class);
+        actionMap.put("Assign Card", AssignCardAction.class);
+        actionMap.put("Pull Card", PullCardAction.class);
+        actionMap.put("Activate Effect", ActivateEffectAction.class);
+        actionMap.put("Choose", ChooseAction.class);
+        actionMap.put("Target", TargetAction.class);
+        actionMap.put("Declare Attacker", DeclareAttackerAction.class);
+        actionMap.put("Declare Blocker", DeclareBlockerAction.class);
+        actionMap.put("Finish Phase", FinishPhaseAction.class);
+        actionMap.put("End Turn Without Combat", EndTurnWithoutCombatAction.class);
+        actionMap.put("Build Structure", BuildStructureAction.class);
     }
 }

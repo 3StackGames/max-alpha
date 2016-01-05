@@ -196,7 +196,7 @@ public class State {
 		eventHistory.clear();
 		
 		switch(action.getType()) {
-		case CHANGE_PHASE: 
+		case FINISH_PHASE:
 			endPhase();
 			break;
 		case ACTIVATE_EFFECT:
@@ -220,7 +220,7 @@ public class State {
 			break;
 		case PULL_CARD:
 			break;
-		case SKIP_COMBAT:
+		case END_TURN_WITHOUT_COMBAT:
 			skipCombat();
 			break;
 		case TARGET_EFFECT:
