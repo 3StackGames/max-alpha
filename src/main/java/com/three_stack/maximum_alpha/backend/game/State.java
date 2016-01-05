@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.Stack;
 import java.util.UUID;
 
 import com.three_stack.maximum_alpha.backend.game.actions.Action;
@@ -194,39 +193,7 @@ public class State {
 	
 	public void processAction(Action action) {
 		eventHistory.clear();
-		
-		switch(action.getType()) {
-		case FINISH_PHASE:
-			endPhase();
-			break;
-		case ACTIVATE_EFFECT:
-			break;
-		case ASSIGN_CARD:
-			//assign(action.getActionCardId(), action.getPlayerId());
-			break;
-		case BUILD_STRUCTURE:
-			break;
-		case CHOOSE_EFFECT:
-			break;
-		case DECLARE_ATTACKER:
-			//declareAttacker(action.getActionCardId(), action.getPlayerId(), action.getCombatTargetId());
-			break;
-		case DECLARE_BLOCKER:
-			//declareBlocker(action.getActionCardId(), action.getPlayerId(), action.getCombatTargetId());
-			break;
-		case PLAY_CARD:
-			//playCard(action.getActionCardId(), action.getPlayerId());
-			break;
-		case PULL_CARD:
-			break;
-		case END_TURN_WITHOUT_COMBAT:
-			skipCombat();
-			break;
-		case TARGET_EFFECT:
-			break;
-		default:
-			break;				
-		}
+		action.run(this);
 	}
 	
 	public boolean isLegalAction(Action action) {

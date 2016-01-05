@@ -1,11 +1,11 @@
 package com.three_stack.maximum_alpha.backend.game.actions;
 
-import com.three_stack.maximum_alpha.backend.game.events.Event;
+import com.three_stack.maximum_alpha.backend.game.State;
 
 public class DeclareBlockerAction extends ExistingPairAction {
 
     @Override
-    public Event run() {
+    public void run(State state) {
         return null;
     }
 }
