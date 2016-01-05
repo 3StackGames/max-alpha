@@ -1,12 +1,6 @@
 package com.three_stack.maximum_alpha.backend.game;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.Action;
@@ -83,7 +77,7 @@ public class State {
 		this.parameters = parameters;
 		this.players = new ArrayList<>();
 		this.eventHistory = new ArrayList<>();
-
+        this.effectQueue = new ArrayDeque<>();
 		setupGame();
 	}
 	
