@@ -17,8 +17,9 @@ public class PlayCardAction extends ExistingCardWithCostAction {
         if(card instanceof Creature) {
             player.pay(card.getCurrentCost());
             player.getField().add((Creature) card);
+            
             Event event = new Event(player.getUsername() + " has played " + card.getName());
-            state.getEventHistory().add(event);
+            state.addEvent(event);
         } else {
             //@Todo: Handle non-creature cards
         }

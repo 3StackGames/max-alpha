@@ -15,6 +15,8 @@ public class AssignCardAction extends ExistingCardAction {
 
         player.getWorkers().add(assignCard);
         player.setHasAssignedOrPulled(true);
-        state.getEventHistory().add(new Event(player.getUsername() + " has assigned " + assignCard.getName() + " as a worker."));
+        
+        Event event = new Event(player.getUsername() + " has assigned " + assignCard.getName() + " as a worker.");
+        state.addEvent(event);
     }
 }

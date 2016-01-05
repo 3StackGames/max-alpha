@@ -7,7 +7,12 @@ import java.util.UUID;
 
 public class CardList<T extends Card> extends ArrayList<T> {
 
-    public T takeCard(UUID cardId) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -7221954969088648948L;
+
+	public T takeCard(UUID cardId) {
         T target = null;
         for(int i = 0; i < size(); i++) {
             if(get(i).getId().equals(cardId)) {
@@ -16,6 +21,6 @@ public class CardList<T extends Card> extends ArrayList<T> {
                 return target;
             }
         }
-        throw new IllegalArgumentException("Card Nout Found");
+        throw new IllegalArgumentException("Card Not Found");
     }
 }

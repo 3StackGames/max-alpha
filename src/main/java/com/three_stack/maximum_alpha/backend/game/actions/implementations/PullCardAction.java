@@ -14,6 +14,8 @@ public class PullCardAction extends ExistingCardAction {
 
         player.getHand().add(pullCard);
         player.setHasAssignedOrPulled(true);
-        state.getEventHistory().add(new Event(player.getUsername() + " has pulled " + pullCard.getName() + " from work"));
+        
+        Event event = new Event(player.getUsername() + " has pulled " + pullCard.getName() + " from work");
+        state.addEvent(event);
     }
 }

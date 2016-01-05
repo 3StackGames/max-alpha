@@ -36,6 +36,8 @@ public class StartPhase extends Phase {
         state.turnPlayerDraw();
         //refresh
         state.refreshTurnPlayerCards();
+        
+        state.getTurnPlayer().setHasAssignedOrPulled(false);
 
         end(state);
     }
