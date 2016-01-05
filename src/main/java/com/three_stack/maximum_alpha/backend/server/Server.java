@@ -243,9 +243,10 @@ public class Server extends WebSocketServer {
 	}
 	
 	public void sendMessage(WebSocket socket, String message) {
-		JSONObject messageJson = new JSONObject();
+		/*JSONObject messageJson = new JSONObject();
 		messageJson.append(EVENT_TYPE, "Server Message");
 		messageJson.append("message", message);
-		socket.send(messageJson.toString());
+		socket.send(messageJson.toString());*/
+		socket.send("{ \"eventType\": \"Server Message\", \"message\": \"test\" }");
 	}
 }
