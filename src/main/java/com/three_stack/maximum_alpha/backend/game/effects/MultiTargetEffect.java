@@ -8,6 +8,12 @@ import java.util.List;
 import java.util.UUID;
 
 public abstract class MultiTargetEffect extends Effect {
+
+    public MultiTargetEffect(Card source, String prompt, List<UUID> targetables) {
+        super(source, prompt);
+        this.targetables = targetables;
+    }
+
     private List<UUID> targetables;
 
     public abstract void resolve(State state, List<Card> targets);

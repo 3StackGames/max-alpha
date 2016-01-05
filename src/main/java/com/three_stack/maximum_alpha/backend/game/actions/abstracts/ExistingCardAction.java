@@ -20,6 +20,7 @@ public abstract class ExistingCardAction extends Action {
 
     @Override
     public void run(State state) {
+        super.run(state);
         card = state.findCard(cardId);
     }
 }

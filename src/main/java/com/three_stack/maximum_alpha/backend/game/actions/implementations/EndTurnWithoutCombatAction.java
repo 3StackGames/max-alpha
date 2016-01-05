@@ -9,8 +9,7 @@ public class EndTurnWithoutCombatAction extends Action {
     @Override
     public void run(State state) {
         super.run(state);
-		state.setCombatEnded(true);
-		MainPhase.getInstance().end(state);
+
         state.setCombatEnded(true);
         state.getCurrentPhase().end(state);
 

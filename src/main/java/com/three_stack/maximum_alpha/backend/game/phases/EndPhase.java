@@ -18,6 +18,7 @@ public class EndPhase extends Phase {
 
     public void start(State state) {
         state.setCurrentPhase(instance);
+        end(state);
     }
 
     public void end(State state) {
