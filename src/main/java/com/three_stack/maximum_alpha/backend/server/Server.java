@@ -35,7 +35,7 @@ public class Server extends WebSocketServer {
 	LinkedBlockingQueue<Connection> pool = new LinkedBlockingQueue<>();
 	Collection<Connection> playersInGame = new HashSet<>();
 	
-	public final String EVENT_TYPE = "eventType";
+	public final static String EVENT_TYPE = "eventType";
 	
 	public static ExecutorService newBoundedFixedThreadPool(int nThreads) {
 		return new ThreadPoolExecutor(nThreads, nThreads,
@@ -227,26 +227,25 @@ public class Server extends WebSocketServer {
 	
 	public void sendError(WebSocket socket, String code, String message) {
 		JSONObject error = new JSONObject();
-		error.append(EVENT_TYPE, "Error");
-		error.append("code", code);
-		error.append("message", message);
+		error.put(EVENT_TYPE, "Error");
+		error.put("code", code);
+		error.put("message", message);
 		socket.send(error.toString());
 	}
 	
 	public void stateUpdate(State state) {
         JSONObject message = new JSONObject();
-        message.append(EVENT_TYPE, "State Update");
-        message.append("state", new JSONObject(state.toString()));
+        message.put(EVENT_TYPE, "State Update");
+        message.put("state", new JSONObject(state.toString()));
 		for (Player player : state.getPlayers()) {
 			player.getConnection().socket.send(message.toString());
 		}
 	}
 	
 	public void sendMessage(WebSocket socket, String message) {
-		/*JSONObject messageJson = new JSONObject();
-		messageJson.append(EVENT_TYPE, "Server Message");
-		messageJson.append("message", message);
-		socket.send(messageJson.toString());*/
-		socket.send("{ \"eventType\": \"Server Message\", \"message\": \"test\" }");
+		JSONObject messageJson = new JSONObject();
+		messageJson.put(EVENT_TYPE, "Server Message");
+		messageJson.put("message", message);
+		socket.send(messageJson.toString());
 	}
 }
