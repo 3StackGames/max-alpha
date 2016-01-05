@@ -132,6 +132,7 @@ public class Server extends WebSocketServer {
     		Connection connection = player.getConnection();
     		if (connection.playerId == playerId) {
     			connection.ready();
+    			
     		}
     		ready &= connection.isReady();
     	}
@@ -174,7 +175,7 @@ public class Server extends WebSocketServer {
         matchmaking.run();
     }
 
-    //necessary?
+    //TODO
     public void close() {
 
     }
@@ -186,7 +187,7 @@ public class Server extends WebSocketServer {
 
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-
+    	System.out.println("player disconnected");
     }
 
     @Override

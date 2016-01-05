@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.Action;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
@@ -185,13 +186,8 @@ public class State {
     //For serialization
     
     public Map<UUID, Card> generateCardList() {
-    	cardList = new HashMap<>();
-    	for (Player player : players) {
-    		Collection<Card> playerCards = player.getAllCards();
-    		playerCards.forEach((card) -> {
-    			cardList.put(card.getId(), card);
-    		});
-    	}
+		//Gets all cards from each player, then collects them into the map
+		cardList = players.stream().map(Player::getAllCards).flatMap(p -> p.stream()).collect(Collectors.toMap(Card::getId, (c)->c));
     	
     	return cardList;
     }
