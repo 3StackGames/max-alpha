@@ -16,6 +16,9 @@ import com.three_stack.maximum_alpha.backend.server.Connection;
 public class Player implements Damageable {
     private String username;
 
+    //@Todo: Actually retrieve their username
+    private static int usernameCounter = 0;
+
     public String getUsername() {
 		return username;
 	}
@@ -26,28 +29,30 @@ public class Player implements Damageable {
 
 	private transient Connection connection;
     private long playerId;
-    private List<Card> hand;
+    private CardList<Card> hand;
     private Deck deck;
-    private List<Creature> field;
-    private List<Card> grave;
-    private List<Card> workers;
-    private List<Structure> structures;
+    private CardList<Creature> field;
+    private CardList<Card> grave;
+    private CardList<Card> workers;
+    private CardList<Structure> structures;
     private ResourceList resources;
     private int life;
     private int maxLife;
+    private boolean hasAssignedOrPulled;
 
     public Player(Connection connection, int maxLife) {
         this.connection = connection;
         this.maxLife = maxLife;
         life = this.maxLife;
         playerId = connection.playerId;
+        username = "Player " + usernameCounter++;
 
         resources = new ResourceList();
-        hand = new ArrayList<>();
-        field = new ArrayList<>();
-        grave = new ArrayList<>();
-        workers = new ArrayList<>();
-        structures = new ArrayList<>();
+        hand = new CardList<>();
+        field = new CardList<>();
+        grave = new CardList<>();
+        workers = new CardList<>();
+        structures = new CardList<>();
     }
     
     public Collection<Card> getAllCards() {
@@ -67,6 +72,10 @@ public class Player implements Damageable {
 
     public Connection getConnection() {
         return connection;
+    }
+
+    public void newTurn() {
+        setHasAssignedOrPulled(false);
     }
 
     public void draw() {
@@ -109,11 +118,19 @@ public class Player implements Damageable {
         this.connection = connection;
     }
 
-    public List<Card> getHand() {
+    public long getPlayerId() {
+        return playerId;
+    }
+
+    public void setPlayerId(long playerId) {
+        this.playerId = playerId;
+    }
+
+    public CardList<Card> getHand() {
         return hand;
     }
 
-    public void setHand(List<Card> hand) {
+    public void setHand(CardList<Card> hand) {
         this.hand = hand;
     }
 
@@ -125,35 +142,35 @@ public class Player implements Damageable {
         this.deck = deck;
     }
 
-    public List<Creature> getField() {
+    public CardList<Creature> getField() {
         return field;
     }
 
-    public void setField(List<Creature> field) {
+    public void setField(CardList<Creature> field) {
         this.field = field;
     }
 
-    public List<Card> getGrave() {
+    public CardList<Card> getGrave() {
         return grave;
     }
 
-    public void setGrave(List<Card> grave) {
+    public void setGrave(CardList<Card> grave) {
         this.grave = grave;
     }
 
-    public List<Card> getWorkers() {
+    public CardList<Card> getWorkers() {
         return workers;
     }
 
-    public void setWorkers(List<Card> workers) {
+    public void setWorkers(CardList<Card> workers) {
         this.workers = workers;
     }
 
-    public List<Structure> getStructures() {
+    public CardList<Structure> getStructures() {
         return structures;
     }
 
-    public void setStructures(List<Structure> structures) {
+    public void setStructures(CardList<Structure> structures) {
         this.structures = structures;
     }
 
@@ -179,5 +196,13 @@ public class Player implements Damageable {
 
     public void setMaxLife(int maxLife) {
         this.maxLife = maxLife;
+    }
+
+    public boolean isHasAssignedOrPulled() {
+        return hasAssignedOrPulled;
+    }
+
+    public void setHasAssignedOrPulled(boolean hasAssignedOrPulled) {
+        this.hasAssignedOrPulled = hasAssignedOrPulled;
     }
 }

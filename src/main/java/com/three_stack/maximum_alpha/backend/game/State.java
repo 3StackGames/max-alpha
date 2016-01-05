@@ -12,7 +12,6 @@ import com.three_stack.maximum_alpha.backend.game.actions.Action;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
-import com.three_stack.maximum_alpha.backend.game.cards.Worker;
 import com.three_stack.maximum_alpha.backend.game.effects.Effect;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
 import com.three_stack.maximum_alpha.backend.game.phases.MainPhase;
@@ -131,6 +130,7 @@ public class State {
 		if (turn >= players.size()) {
 			turn = 0;
 		}
+        players.forEach(Player::newTurn);
 	}
 	
 	public void skipCombat() {

@@ -11,9 +11,9 @@ import com.three_stack.maximum_alpha.backend.game.cards.instances.test.MilitiaMi
 import com.three_stack.maximum_alpha.backend.game.cards.instances.test.TravelingMerchant;
 
 public class Deck {
-	List<Card> cards = new ArrayList<>();
+	CardList<Card> cards = new CardList<>();
 
-	public Deck(List<Card> cards) {
+	public Deck(CardList<Card> cards) {
 		this.cards = cards;
 	}
 	
@@ -93,7 +93,7 @@ public class Deck {
 	}
 
 	public static Deck loadDeck(int deckId) {
-		List<Card> cards = new ArrayList<Card>();
+		CardList<Card> cards = new CardList<>();
 		for(int i = 0; i < 15; i++) {
 			cards.add(new FieldCleric());
 			cards.add(new MilitiaMinuteman());
