@@ -18,7 +18,7 @@ public class AssignCardAction extends ExistingCardAction {
         for(int i = 0; i < hand.size(); i++) {
             Card handCard = player.getHand().get(i);
 
-            if(handCard.getId() == cardId) {
+            if(handCard.getId().equals(cardId)) {
                 assignCard = handCard;
                 hand.remove(i);
                 break;
