@@ -123,17 +123,18 @@ public class Server extends WebSocketServer {
 	public void createGame(List<Connection> players) {
 		Parameters parameters = new Parameters(players);
 		State newGame = new State(parameters);
-		gameStates.put(nextCode(), newGame);
+		String gameCode = nextCode();
+		gameStates.put(gameCode, newGame);
 
 		//sendToAll("Game Found", players);
-        stateUpdate(newGame);
+        sendStateUpdate(gameCode, newGame);
 	}
 
-    public void updateGame(State state, Action action) {
+    public void updateGame(String gameCode, State state, Action action) {
         if (state.isLegalAction(action)) {
             state.processAction(action);
 
-            sendStateUpdate(state);
+            sendStateUpdate(gameCode, state);
         }
     }
 
@@ -233,10 +234,11 @@ public class Server extends WebSocketServer {
         socket.send(error.toString());
     }
 
-    public void sendStateUpdate(State state) {
+    public void sendStateUpdate(String gameCode, State state) {
         JSONObject message = new JSONObject();
         message.put(EVENT_TYPE, "State Update");
         message.put("state", new JSONObject(state.toString()));
+        message.put("gameCode", gameCode);
 		for (Player player : state.getPlayers()) {
 			player.getConnection().socket.send(message.toString());
 		}
