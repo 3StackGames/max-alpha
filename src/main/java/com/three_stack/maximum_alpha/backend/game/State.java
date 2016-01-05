@@ -1,17 +1,24 @@
 package com.three_stack.maximum_alpha.backend.game;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Queue;
 import java.util.Stack;
+import java.util.UUID;
 
+import com.three_stack.maximum_alpha.backend.game.actions.Action;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
 import com.three_stack.maximum_alpha.backend.game.cards.Worker;
 import com.three_stack.maximum_alpha.backend.game.effects.Effect;
-import com.three_stack.maximum_alpha.backend.game.actions.Action;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
-import com.three_stack.maximum_alpha.backend.game.phases.*;
+import com.three_stack.maximum_alpha.backend.game.phases.MainPhase;
+import com.three_stack.maximum_alpha.backend.game.phases.Phase;
+import com.three_stack.maximum_alpha.backend.game.phases.StartPhase;
 import com.three_stack.maximum_alpha.backend.game.utilities.Serializer;
 import com.three_stack.maximum_alpha.backend.server.Connection;
 
@@ -62,13 +69,14 @@ public class State {
 	 * Default to false
 	 */
 	private boolean combatEnded;
-	//corresponds to player indexes in the list
+	//corresponds to player indexes in the list, starts at 0
 	private int turn;
-    //two players each taking 1 turn is turnCount + 2
+    //two players each taking 1 turn is turnCount + 2, starts at 0
 	private int turnCount;
-    private Stack<Effect> effectStack;
+    private Queue<Effect> effectQueue;
 	private List<Card> cardsPlayed;
 	private final transient Parameters parameters;
+	private Map<UUID, Card> cardList;
 	
 	//game over: winningPlayers, losingPlayers, tiedPlayers
 	
@@ -131,16 +139,15 @@ public class State {
 		MainPhase.getInstance().end(this);
 	}
     
-    public Card findCard(long id) {
-        return null;
+    public Card findCard(UUID id) {
+        return cardList.get(id);
     }
     
     public Player findPlayer(long id) {
         return players.get((int)id);
     }
     
-    public void assign(long cardId, long pid) {
-        Card card = findCard(cardId);
+    public void assign(Card card, long pid) {
         if(card instanceof Worker) {
             Worker worker = (Worker) card;
             Player p = findPlayer(pid);
@@ -148,8 +155,7 @@ public class State {
         }
     }
     
-    public void playCard(long cardId, long pid) {
-        Card card = findCard(cardId);
+    public void playCard(Card card, long pid) {
         if(card.isPlayable()) {
             Player p = findPlayer(pid);
             ResourceList cost = card.getCurrentCost();
@@ -166,11 +172,9 @@ public class State {
         }
     }
     
-    public void declareAttacker(long cardId, long pid, long combatTargetId) {
-        Card card = findCard(cardId);
-        if(card instanceof Creature) {
-        	Creature creature = (Creature) card;
-            Card target = findCard(combatTargetId);
+    public void declareAttacker(Card attacker, long pid, Card target) {
+        if(attacker instanceof Creature) {
+        	Creature creature = (Creature) attacker;
         	if(creature.canAttack()) {
         		creature.setAttackTarget(target);
         		eventHistory.add(new Event(creature.getId() + " is attacking " + target.getId()));
@@ -178,19 +182,15 @@ public class State {
         }
     }
     
-    public void declareBlocker(long cardId, long pid, long combatTargetId) {
-    	Card card = findCard(cardId);
-        if(card instanceof Creature) {
-        	Creature creature = (Creature) card;
-            Card target = findCard(combatTargetId);
+    public void declareBlocker(Card blocker, long pid, Card attacker) {
+        if(blocker instanceof Creature) {
+        	Creature creature = (Creature) blocker;
         	if(creature.canBlock()) {
-        		creature.setBlockTarget(target);
-        		eventHistory.add(new Event(creature.getId() + " is blocking " + target.getId()));
+        		creature.setBlockTarget(attacker);
+        		eventHistory.add(new Event(creature.getId() + " is blocking " + attacker.getId()));
         	}    	
         }
     }
-    
-	//Major functions
 	
 	public void processAction(Action action) {
 		eventHistory.clear();
@@ -202,21 +202,20 @@ public class State {
 		case ACTIVATE_EFFECT:
 			break;
 		case ASSIGN_CARD:
-			assign(action.getActionCardId(), action.getPlayerId());
+			//assign(action.getActionCardId(), action.getPlayerId());
 			break;
 		case BUILD_STRUCTURE:
 			break;
 		case CHOOSE_EFFECT:
 			break;
 		case DECLARE_ATTACKER:
-			declareAttacker(action.getActionCardId(), action.getPlayerId(), action.getCombatTargetId());
+			//declareAttacker(action.getActionCardId(), action.getPlayerId(), action.getCombatTargetId());
 			break;
 		case DECLARE_BLOCKER:
-			declareBlocker(action.getActionCardId(), action.getPlayerId(), action.getCombatTargetId());
+			//declareBlocker(action.getActionCardId(), action.getPlayerId(), action.getCombatTargetId());
 			break;
 		case PLAY_CARD:
-		    //if isValid(action)
-			playCard(action.getActionCardId(), action.getPlayerId());
+			//playCard(action.getActionCardId(), action.getPlayerId());
 			break;
 		case PULL_CARD:
 			break;
@@ -245,12 +244,29 @@ public class State {
         //look through structures
         player.getStructures().forEach(Structure::attemptRefresh);
     }
+    
+    //For serialization
+    
+    public Map<UUID, Card> generateCardList() {
+    	cardList = new HashMap<>();
+    	for (Player player : players) {
+    		Collection<Card> playerCards = player.getAllCards();
+    		playerCards.forEach((card) -> {
+    			cardList.put(card.getId(), card);
+    		});
+    	}
+    	
+    	return cardList;
+    }
 
 	@Override
 	public String toString() {
+    	generateCardList();
 		return Serializer.toJson(this);
 	}
 
+	//Getters and setters
+	
     public List<Player> getPlayers() {
         return players;
     }
@@ -299,12 +315,12 @@ public class State {
         this.turnCount = turnCount;
     }
 
-    public Stack<Effect> getEffectStack() {
-        return effectStack;
+    public Queue<Effect> getEffectQueue() {
+        return effectQueue;
     }
 
-    public void setEffectStack(Stack<Effect> effectStack) {
-        this.effectStack = effectStack;
+    public void setEffectStack(Queue<Effect> effectQueue) {
+        this.effectQueue = effectQueue;
     }
 
     public List<Card> getCardsPlayed() {

@@ -1,11 +1,17 @@
 package com.three_stack.maximum_alpha.backend.game;
 
-import com.three_stack.maximum_alpha.backend.game.cards.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+
+import com.three_stack.maximum_alpha.backend.game.cards.Card;
+import com.three_stack.maximum_alpha.backend.game.cards.Creature;
+import com.three_stack.maximum_alpha.backend.game.cards.Damageable;
+import com.three_stack.maximum_alpha.backend.game.cards.Structure;
+import com.three_stack.maximum_alpha.backend.game.cards.Worker;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
 import com.three_stack.maximum_alpha.backend.server.Connection;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Player implements Damageable {
     private String username;
@@ -34,6 +40,7 @@ public class Player implements Damageable {
         this.connection = connection;
         this.maxLife = maxLife;
         life = this.maxLife;
+        playerId = connection.playerId;
 
         resources = new ResourceList();
         hand = new ArrayList<>();
@@ -41,6 +48,21 @@ public class Player implements Damageable {
         grave = new ArrayList<>();
         workers = new ArrayList<>();
         structures = new ArrayList<>();
+    }
+    
+    public Collection<Card> getAllCards() {
+    	Collection<Card> cards = new HashSet<>();
+    	cards.addAll(deck.getDeck());
+    	cards.addAll(hand);
+    	cards.addAll(field);
+    	cards.addAll(grave);
+    	cards.addAll(structures);
+    	workers.forEach((worker) -> {
+    		if (worker instanceof Card) {
+    			cards.add((Card)worker);
+    		}
+    	});
+    	return cards;
     }
 
     public Connection getConnection() {
