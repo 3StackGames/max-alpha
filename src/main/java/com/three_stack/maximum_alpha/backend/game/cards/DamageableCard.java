@@ -1,10 +1,11 @@
 package com.three_stack.maximum_alpha.backend.game.cards;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.three_stack.maximum_alpha.backend.game.Buff;
 import com.three_stack.maximum_alpha.backend.game.ResourceList;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
-
-import java.util.List;
 
 /**
  * Damageable, Buffable, Refreshable / Exhaustable
@@ -22,6 +23,10 @@ public abstract class DamageableCard extends Card implements Damageable {
         super(name, cost, text, flavorText);
         this.health = health;
         this.refreshable = true;
+        this.damageTaken = 0;
+        this.exhausted = false;
+        this.refreshable = true;
+        buffs = new ArrayList<Buff>();
     }
 
     public Event takeDamage(int damage, Card source) {

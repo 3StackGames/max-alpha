@@ -20,6 +20,7 @@ public class DamagePhase extends Phase {
         }
         return instance;
     }
+    
     public void start(State state) {
         state.setCurrentPhase(instance);
 

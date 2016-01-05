@@ -8,8 +8,8 @@ public class FinishPhaseAction extends Action {
     @Override
     public void run(State state) {
         super.run(state);
-        state.getCurrentPhase().end(state);
         Event event = new Event(getPlayer(state).getUsername() + " has ended " + state.getCurrentPhase().getName());
-        state.getEventHistory ().add(event);
+        state.addEvent(event);
+        state.getCurrentPhase().end(state);
     }
 }
