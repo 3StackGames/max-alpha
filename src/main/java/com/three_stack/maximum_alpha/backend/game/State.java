@@ -226,6 +226,10 @@ public class State {
 
 	//Getters and setters
 	
+	public void addEvent(Event event) {
+		eventHistory.add(event);
+	}
+	
     public List<Player> getPlayers() {
         return players;
     }
