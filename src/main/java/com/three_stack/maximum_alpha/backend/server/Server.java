@@ -268,11 +268,11 @@ public class Server extends WebSocketServer {
     }
     
     public void sendGameFound(String gameCode) {
-    	Message gameFound = new Message("Game Found");
-    	gameFound.add("gameCode", gameCode);
-    	
     	State state = unstartedGames.get(gameCode);
         for (Player player : state.getPlayers()) {
+        	Message gameFound = new Message("Game Found");
+        	gameFound.add("gameCode", gameCode);
+        	gameFound.add("playerId", player.getPlayerId());
             player.getConnection().socket.send(gameFound.toString());
         }
     }
