@@ -5,13 +5,13 @@ import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
 
-public class AttackEffect extends SingleTargetEffect {
+public class BlockEffect extends SingleTargetEffect {
     @Override
     public void resolve(State state, Card target) {
-        Creature attacker = (Creature) getSource();
-        attacker.setAttackTarget(target);
+        Creature blocker = (Creature) getSource();
+        blocker.setBlockTarget(target);
 
-        Event event = new Event(attacker.getName() + " is now attacking " + target.getName());
+        Event event = new Event(blocker.getName() + " is now blocking " + target.getName());
         state.addEvent(event);
     }
 }

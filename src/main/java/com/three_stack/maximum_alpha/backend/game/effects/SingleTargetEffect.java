@@ -9,7 +9,7 @@ import java.util.UUID;
 public abstract class SingleTargetEffect extends Effect {
     protected List<UUID> targetables;
 
-    public abstract void resolve(State state, Card targets);
+    public abstract void resolve(State state, Card target);
 
     public List<UUID> getTargetables() {
         return targetables;
