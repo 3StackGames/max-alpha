@@ -7,7 +7,7 @@ import com.three_stack.maximum_alpha.backend.server.Connection;
 public class Parameters {
     final int INITIAL_DRAW_SIZE = 7;
     final int TOTAL_HEALTH = 40;
-    final int INITIAL_COLORLESS_MANA = 1;
+    public final static int INITIAL_COLORLESS_MANA = 1;
 
     public List<Connection> players;
 
