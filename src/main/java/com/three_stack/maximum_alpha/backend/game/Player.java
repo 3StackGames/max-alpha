@@ -30,7 +30,7 @@ public class Player implements Damageable {
     private Deck deck;
     private List<Creature> field;
     private List<Card> grave;
-    private List<Worker> workers;
+    private List<Card> workers;
     private List<Structure> structures;
     private ResourceList resources;
     private int life;
@@ -80,7 +80,8 @@ public class Player implements Damageable {
     }
 
     public void gatherResources(State state) {
-        for(Worker worker : workers) {
+        for(Card workerCard : workers) {
+            Worker worker = (Worker) workerCard;
             ResourceList resourceChange = worker.work(state);
             resources.add(resourceChange);
         }
@@ -140,11 +141,11 @@ public class Player implements Damageable {
         this.grave = grave;
     }
 
-    public List<Worker> getWorkers() {
+    public List<Card> getWorkers() {
         return workers;
     }
 
-    public void setWorkers(List<Worker> workers) {
+    public void setWorkers(List<Card> workers) {
         this.workers = workers;
     }
 

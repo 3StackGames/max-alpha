@@ -146,14 +146,6 @@ public class State {
         return players.get((int)id);
     }
     
-    public void assign(Card card, long pid) {
-        if(card instanceof Worker) {
-            Worker worker = (Worker) card;
-            Player p = findPlayer(pid);
-            eventHistory.add(worker.assign(this, p));
-        }
-    }
-    
     public void playCard(Card card, long pid) {
         if(card.isPlayable()) {
             Player p = findPlayer(pid);
