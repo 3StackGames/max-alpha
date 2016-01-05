@@ -36,6 +36,7 @@ public abstract class Card {
         triggers = new HashMap<>();
         this.name = name;
         this.defaultCost = defaultCost;
+        this.currentCost = defaultCost;
         this.flavorText = flavorText;
 	}
 
