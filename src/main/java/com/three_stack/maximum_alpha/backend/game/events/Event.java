@@ -1,5 +1,6 @@
 package com.three_stack.maximum_alpha.backend.game.events;
 
+import com.three_stack.maximum_alpha.backend.game.Player;
 import com.three_stack.maximum_alpha.backend.game.utilities.Serializer;
 
 public class Event {
@@ -12,6 +13,11 @@ public class Event {
     public Event(String description) {
         this.description = description;
     }
+
+    public Event(Player player, String action) {
+        this.description = player.getUsername() + " has " + action;
+    }
+
     public String getDescription() {
         return description;
     }
