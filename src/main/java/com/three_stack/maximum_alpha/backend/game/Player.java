@@ -1,12 +1,15 @@
 package com.three_stack.maximum_alpha.backend.game;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.UUID;
 
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.cards.Damageable;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
 import com.three_stack.maximum_alpha.backend.game.cards.Worker;
+import com.three_stack.maximum_alpha.backend.game.cards.instances.Base;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
 import com.three_stack.maximum_alpha.backend.server.Connection;
 
@@ -15,14 +18,6 @@ public class Player implements Damageable {
 
     //@Todo: Actually retrieve their username
     private static int usernameCounter = 0;
-
-    public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
 
 	private transient Connection connection;
     private final UUID playerId;
@@ -33,14 +28,14 @@ public class Player implements Damageable {
     private CardList<Card> workers;
     private CardList<Structure> structures;
     private ResourceList resources;
+    private Base base;
     private int life;
     private int maxLife;
     private boolean hasAssignedOrPulled;
 
     public Player(Connection connection, int maxLife) {
         this.connection = connection;
-        this.maxLife = maxLife;
-        life = this.maxLife;
+        base = new Base(maxLife);
         playerId = UUID.randomUUID();
         username = "Player " + usernameCounter++;
 
@@ -51,6 +46,18 @@ public class Player implements Damageable {
         workers = new CardList<>();
         structures = new CardList<>();
     }
+
+    public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public Base getBase() {
+		return base;
+	}
     
     public Collection<Card> getAllCards() {
     	Collection<Card> cards = new HashSet<>();
@@ -64,7 +71,16 @@ public class Player implements Damageable {
     			cards.add((Card)worker);
     		}
     	});
+    	cards.add(base);
     	return cards;
+    }
+    
+    public Collection<Card> getTargets() {
+    	Collection<Card> targets = new HashSet<>();
+    	targets.addAll(structures);
+    	targets.add(base);
+    	
+    	return targets;
     }
 
     public Connection getConnection() {
@@ -81,7 +97,7 @@ public class Player implements Damageable {
 
     @Override
     public Event takeDamage(int damage, Card source) {
-        life -= damage;
+    	base.takeDamage(damage, source);
         return new Event(username + " took " + damage + " damage from " + source.getName() + ".");
     }
 

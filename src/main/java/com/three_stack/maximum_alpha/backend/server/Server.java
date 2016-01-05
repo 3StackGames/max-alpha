@@ -14,17 +14,19 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import com.three_stack.maximum_alpha.backend.game.*;
-import com.three_stack.maximum_alpha.backend.game.actions.abstracts.Action;
-
-import com.three_stack.maximum_alpha.backend.game.actions.ActionService;
-import com.three_stack.maximum_alpha.backend.game.utilities.Serializer;
 import org.java_websocket.WebSocket;
 import org.java_websocket.framing.Framedata;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.three_stack.maximum_alpha.backend.game.Parameters;
+import com.three_stack.maximum_alpha.backend.game.Player;
+import com.three_stack.maximum_alpha.backend.game.State;
+import com.three_stack.maximum_alpha.backend.game.actions.ActionService;
+import com.three_stack.maximum_alpha.backend.game.actions.abstracts.Action;
+import com.three_stack.maximum_alpha.backend.game.utilities.Serializer;
 
 public class Server extends WebSocketServer {
 
@@ -75,10 +77,12 @@ public class Server extends WebSocketServer {
                     }
                 } else if (eventType.equals("Game Action")) {
                     String gameCode = json.getString("gameCode");
-                    State game = gameStates.get(gameCode);
                     String actionName = json.getJSONObject("action").getString("type");
                     Action action = (Action) Serializer.fromJson(json.getJSONObject("action").toString(), ActionService.getAction(actionName));
-                    updateGame(gameCode, game, action);
+                    updateGame(gameCode, action);
+                } else if (eventType.equals("Player Ready")) {
+                    String gameCode = json.getString("gameCode");
+                	readyGame(gameCode, json.getInt("playerId"));
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -121,15 +125,35 @@ public class Server extends WebSocketServer {
         String gameCode = nextCode();
         gameStates.put(gameCode, newGame);
 
-        //sendToAll("Game Found", players);
-        sendStateUpdate(gameCode, newGame);
+        sendGameFound(gameCode);
+    }
+    
+    public void readyGame(String gameCode, int playerId) {
+    	State game = gameStates.get(gameCode);
+    	boolean ready = true;
+    	for(Player player : game.getPlayers()) {
+    		Connection connection = player.getConnection();
+    		if (connection.playerId == playerId) {
+    			connection.ready();
+    		}
+    		ready &= connection.isReady();
+    	}
+    	
+    	if(ready) {
+    		startGame(gameCode);
+    	}
+    }
+    
+    public void startGame(String gameCode) {
+        sendStateUpdate(gameCode);
     }
 
-    public void updateGame(String gameCode, State state, Action action) {
+    public void updateGame(String gameCode, Action action) {
+    	State state = gameStates.get(gameCode);
         if (state.isLegalAction(action)) {
             state.processAction(action);
 
-            sendStateUpdate(gameCode, state);
+            sendStateUpdate(gameCode);
         }
     }
 
@@ -227,13 +251,16 @@ public class Server extends WebSocketServer {
         socket.send(error.toString());
     }
 
-    public void sendStateUpdate(String gameCode, State state) {
-        JSONObject message = new JSONObject();
-        message.put(EVENT_TYPE, "State Update");
-        message.put("state", new JSONObject(state.toString()));
-        message.put("gameCode", gameCode);
+    public void sendStateUpdate(String gameCode) {
+    	State state = gameStates.get(gameCode);
+    	
+        JSONObject stateMessage = new JSONObject();
+        stateMessage.put(EVENT_TYPE, "State Update");
+        stateMessage.put("state", new JSONObject(state.toString()));
+        stateMessage.put("gameCode", gameCode);
+        
         for (Player player : state.getPlayers()) {
-            player.getConnection().socket.send(message.toString());
+            player.getConnection().socket.send(stateMessage.toString());
         }
     }
 
@@ -242,5 +269,16 @@ public class Server extends WebSocketServer {
         messageJson.put(EVENT_TYPE, "Server Message");
         messageJson.put("message", message);
         socket.send(messageJson.toString());
+    }
+    
+    public void sendGameFound(String gameCode) {
+    	JSONObject gameFound = new JSONObject();
+    	gameFound.put(EVENT_TYPE, "Game Found");
+    	gameFound.put("gameCode", gameCode);
+    	
+    	State state = gameStates.get(gameCode);
+        for (Player player : state.getPlayers()) {
+            player.getConnection().socket.send(gameFound.toString());
+        }
     }
 }

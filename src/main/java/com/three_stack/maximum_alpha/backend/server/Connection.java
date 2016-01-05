@@ -6,10 +6,19 @@ public class Connection {
 	public WebSocket socket;
 	public int playerId;
 	public int deckId;
+	public boolean ready = false;
 	
 	public Connection(WebSocket socket, int playerId, int deckId) {
 		this.socket = socket;
 		this.playerId = playerId;
 		this.deckId = deckId;
+	}
+	
+	public void ready() {
+		ready = true;
+	}
+	
+	public boolean isReady() {
+		return ready;
 	}
 }

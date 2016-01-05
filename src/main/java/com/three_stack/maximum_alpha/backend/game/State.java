@@ -132,11 +132,6 @@ public class State {
 		}
         players.forEach(Player::newTurn);
 	}
-	
-	public void skipCombat() {
-		combatEnded = true;
-		MainPhase.getInstance().end(this);
-	}
     
     public Card findCard(UUID id) {
         return cardList.get(id);
@@ -144,23 +139,6 @@ public class State {
     
     public Player findPlayer(long id) {
         return players.get((int)id);
-    }
-    
-    public void playCard(Card card, long pid) {
-        if(card.isPlayable()) {
-            Player p = findPlayer(pid);
-            ResourceList cost = card.getCurrentCost();
-            if(p.hasResources(cost)) {
-                if(card instanceof Creature) {
-                	if(p.playCreature((Creature) card)) {
-                		eventHistory.add(new Event ("Player " + p.getUsername() + " played " + card.getId()));
-                	}
-                } else {
-                    //spell stuff
-                }
-            }
-            
-        }
     }
     
     public void declareAttacker(Card attacker, long pid, Card target) {
@@ -226,10 +204,6 @@ public class State {
 
 	//Getters and setters
 	
-	public void addEvent(Event event) {
-		eventHistory.add(event);
-	}
-	
     public List<Player> getPlayers() {
         return players;
     }
@@ -237,6 +211,10 @@ public class State {
     public void setPlayers(List<Player> players) {
         this.players = players;
     }
+
+	public void addEvent(Event event) {
+		eventHistory.add(event);
+	}
 
     public List<Event> getEventHistory() {
         return eventHistory;
@@ -277,12 +255,16 @@ public class State {
     public void setTurnCount(int turnCount) {
         this.turnCount = turnCount;
     }
+    
+    public void addEffect(Effect effect) {
+    	effectQueue.add(effect);
+    }
 
     public Queue<Effect> getEffectQueue() {
         return effectQueue;
     }
 
-    public void setEffectStack(Queue<Effect> effectQueue) {
+    public void setEffectQueue(Queue<Effect> effectQueue) {
         this.effectQueue = effectQueue;
     }
 
