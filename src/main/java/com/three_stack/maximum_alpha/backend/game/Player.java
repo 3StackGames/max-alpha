@@ -19,6 +19,7 @@ public class Player implements Damageable {
 	}
 
 	private transient Connection connection;
+    private long playerId;
     private List<Card> hand;
     private Deck deck;
     private List<Creature> field;

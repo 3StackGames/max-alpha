@@ -15,4 +15,8 @@ public class Serializer {
     public static String toJson(Object object) {
         return gson.toJson(object);
     }
+
+    public static Object fromJson(String json, Class aClass) {
+        return gson.fromJson(json, aClass);
+    }
 }

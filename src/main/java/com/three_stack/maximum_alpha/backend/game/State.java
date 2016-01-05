@@ -241,13 +241,9 @@ public class State {
     public void refreshTurnPlayerCards() {
         Player player = getTurnPlayer();
         //look through field
-        for(Creature creature : player.getField()) {
-            creature.attemptRefresh();
-        }
+        player.getField().forEach(Creature::attemptRefresh);
         //look through structures
-        for(Structure structure : player.getStructures()) {
-            structure.attemptRefresh();
-        }
+        player.getStructures().forEach(Structure::attemptRefresh);
     }
 
 	@Override

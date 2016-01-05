@@ -6,9 +6,10 @@ import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public abstract class Card {
-	protected final long id;
+	protected final UUID id;
     protected final String name;
     protected final ResourceList defaultCost;
     protected ResourceList currentCost;
@@ -24,14 +25,14 @@ public abstract class Card {
     protected Map<State.TriggerPoint, Trigger> triggers;
 
     protected Card() {
-        id = -1;
+        this.id = UUID.randomUUID();
         name = null;
         defaultCost = null;
         flavorText = null;
     }
 
     protected Card(String name, ResourceList defaultCost, String text, String flavorText) {
-        id = -1;
+        this.id = UUID.randomUUID();
         triggers = new HashMap<>();
         this.name = name;
         this.defaultCost = defaultCost;
@@ -55,7 +56,7 @@ public abstract class Card {
         return dominant;
     }
 
-    public long getId() {
+    public UUID getId() {
         return id;
     }
 
