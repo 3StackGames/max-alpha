@@ -9,7 +9,7 @@ import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
 import com.three_stack.maximum_alpha.backend.game.cards.Worker;
 import com.three_stack.maximum_alpha.backend.game.effects.Effect;
-import com.three_stack.maximum_alpha.backend.game.events.Action;
+import com.three_stack.maximum_alpha.backend.game.actions.Action;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
 import com.three_stack.maximum_alpha.backend.game.phases.*;
 import com.three_stack.maximum_alpha.backend.game.utilities.Serializer;

@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.gson.Gson;
 import com.three_stack.maximum_alpha.backend.game.*;
-import com.three_stack.maximum_alpha.backend.game.events.Action;
+import com.three_stack.maximum_alpha.backend.game.actions.Action;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.framing.Framedata;

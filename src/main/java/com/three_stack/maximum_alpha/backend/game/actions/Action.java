@@ -1,7 +1,8 @@
-package com.three_stack.maximum_alpha.backend.game.events;
+package com.three_stack.maximum_alpha.backend.game.actions;
 
 import java.util.List;
 
+import com.three_stack.maximum_alpha.backend.game.events.Event;
 import org.json.JSONException;
 import org.json.JSONObject;
 
