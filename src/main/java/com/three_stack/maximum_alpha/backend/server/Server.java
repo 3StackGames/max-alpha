@@ -125,7 +125,7 @@ public class Server extends WebSocketServer {
 		State newGame = new State(parameters);
 		gameStates.put(nextCode(), newGame);
 		
-		sendToAll("Game Found", players);
+		//sendToAll("Game Found", players);
         stateUpdate(newGame);
 	}
 
@@ -168,7 +168,7 @@ public class Server extends WebSocketServer {
 
 	@Override
 	public void onClose( WebSocket conn, int code, String reason, boolean remote ) {
-		this.sendToAll( conn + " has left the room!" );
+		
 	}
 
 	@Override
