@@ -77,7 +77,7 @@ public class Server extends WebSocketServer {
                     String gameCode = json.getString("gameCode");
                     State game = gameStates.get(gameCode);
                     String actionName = json.getJSONObject("action").getString("type");
-                    Action action = (Action) Serializer.fromJson(json.getJSONObject("action"), ActionService.getAction(actionName));
+                    Action action = (Action) Serializer.fromJson(json.getJSONObject("action").toString(), ActionService.getAction(actionName));
                     updateGame(gameCode, game, action);
                 }
             } catch (JSONException e) {
