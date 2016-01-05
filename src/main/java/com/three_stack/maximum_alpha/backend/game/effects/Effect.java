@@ -7,6 +7,11 @@ public abstract class Effect {
 
     protected String prompt;
 
+    public Effect(Card source, String prompt) {
+        this.source = source;
+        this.prompt = prompt;
+    }
+
     public Card getSource() {
         return source;
     }

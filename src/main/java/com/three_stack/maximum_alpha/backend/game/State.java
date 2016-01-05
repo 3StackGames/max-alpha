@@ -138,8 +138,31 @@ public class State {
         return cardList.get(id);
     }
     
-    public Player findPlayer(long id) {
-        return players.get((int)id);
+    public Player findPlayer(UUID id) {
+        for(Player player : players) {
+            if(player.getPlayerId().equals(id)) {
+                return player;
+            }
+        }
+        throw new IllegalArgumentException("Player Not Found");
+    }
+
+    public List<Player> getOtherPlayers(Player undesiredPlayer) {
+        List<Player> otherPlayers = players.stream()
+                .filter(player -> !player.equals(undesiredPlayer))
+                .collect(Collectors.toList());
+
+        /*
+        English version of above
+
+        for(Player player : players) {
+            if(!player.equals(undesiredPlayer)) {
+                otherPlayers.add(player);
+            }
+        }
+        */
+
+        return otherPlayers;
     }
     
     public void declareAttacker(Card attacker, long pid, Card target) {

@@ -12,7 +12,11 @@ import java.util.UUID;
 public abstract class Action extends Event {
     protected UUID playerId;
 
-    abstract public void run(State state);
+    protected Player player;
+
+    public void run(State state) {
+        player = state.findPlayer(playerId);
+    }
 
     public UUID getPlayerId() {
         return playerId;
