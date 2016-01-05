@@ -2,16 +2,16 @@ package com.three_stack.maximum_alpha.backend.game.phases;
 
 import com.three_stack.maximum_alpha.backend.game.State;
 
-public class FubarPhase extends Phase {
-    protected static FubarPhase instance;
+public class PreparationPhase extends Phase {
+    protected static PreparationPhase instance;
 
-    protected FubarPhase () {
-        super("Fubar Phase");
+    protected PreparationPhase() {
+        super("Preparation Phase");
     }
 
-    public static FubarPhase getInstance() {
+    public static PreparationPhase getInstance() {
         if(instance == null) {
-            instance = new FubarPhase();
+            instance = new PreparationPhase();
         }
         return instance;
     }

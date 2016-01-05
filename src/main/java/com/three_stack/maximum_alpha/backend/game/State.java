@@ -103,11 +103,6 @@ public class State {
 		}
 	}
 	
-	//Phases
-	public void endPhase() {
-        currentPhase.end(this);
-	}
-	
 	//Phase utilities
 
 	public void turnPlayerDraw() {
@@ -157,26 +152,6 @@ public class State {
         */
 
         return otherPlayers;
-    }
-    
-    public void declareAttacker(Card attacker, long pid, Card target) {
-        if(attacker instanceof Creature) {
-        	Creature creature = (Creature) attacker;
-        	if(creature.canAttack()) {
-        		creature.setAttackTarget(target);
-        		eventHistory.add(new Event(creature.getId() + " is attacking " + target.getId()));
-        	}    	
-        }
-    }
-    
-    public void declareBlocker(Card blocker, long pid, Card attacker) {
-        if(blocker instanceof Creature) {
-        	Creature creature = (Creature) blocker;
-        	if(creature.canBlock()) {
-        		creature.setBlockTarget(attacker);
-        		eventHistory.add(new Event(creature.getId() + " is blocking " + attacker.getId()));
-        	}    	
-        }
     }
 	
 	public void processAction(Action action) {
@@ -273,6 +248,10 @@ public class State {
     	effectQueue.add(effect);
     }
 
+    public Effect takeEffect() {
+        return effectQueue.remove();
+    }
+
     public Queue<Effect> getEffectQueue() {
         return effectQueue;
     }
@@ -288,4 +267,5 @@ public class State {
     public void setCardsPlayed(List<Card> cardsPlayed) {
         this.cardsPlayed = cardsPlayed;
     }
+
 }

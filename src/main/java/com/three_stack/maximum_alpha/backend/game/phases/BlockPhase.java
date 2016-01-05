@@ -6,7 +6,7 @@ public class BlockPhase extends Phase {
     protected static BlockPhase instance;
 
     protected BlockPhase() {
-        super("Attack Phase");
+        super("Block Phase");
     }
 
     public static BlockPhase getInstance() {
@@ -21,6 +21,8 @@ public class BlockPhase extends Phase {
     }
 
     public void end(State state) {
-        FubarPhase.getInstance().start(state);
+        DamagePhase.getInstance().start(state);
+        //@Todo: Implement Preparation Phase
+//        PreparationPhase.getInstance().start(state);
     }
 }

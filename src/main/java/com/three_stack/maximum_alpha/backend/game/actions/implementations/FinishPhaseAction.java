@@ -10,6 +10,6 @@ public class FinishPhaseAction extends Action {
         super.run(state);
         state.getCurrentPhase().end(state);
         Event event = new Event(getPlayer(state).getUsername() + " has ended " + state.getCurrentPhase().getName());
-        state.getEventHistory().add(event);
+        state.getEventHistory ().add(event);
     }
 }

@@ -26,7 +26,7 @@ public abstract class DamageableCard extends Card implements Damageable {
 
     public Event takeDamage(int damage, Card source) {
         damageTaken += damage;
-        return new Event(this.getName() + "took damage from" + source.getName());
+        return new Event(this.getName() + " took " + damage + " damage from" + source.getName());
     }
 
     public int getCurrentHealth() {
@@ -37,8 +37,8 @@ public abstract class DamageableCard extends Card implements Damageable {
         return health;
     }
 
-    public boolean isDead() {
-        return getCurrentHealth() <= 0;
+    public boolean isAlive() {
+        return getCurrentHealth() > 0;
     }
 
     public void exhaust() {

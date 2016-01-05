@@ -9,9 +9,9 @@ public class Creature extends DamageableCard implements Worker {
     //@Todo: Add Classes / Roles
     //@Todo: Add Tags
     protected final int attack;
-    protected Card attackTarget;
+    protected Structure attackTarget;
     protected boolean canAttack;
-    protected Card blockTarget;
+    protected Creature blockTarget;
     protected boolean canBlock;
     protected boolean hasSummoningSickness;
 
@@ -35,7 +35,7 @@ public class Creature extends DamageableCard implements Worker {
     public Event block(Creature aggressor) {
         Event a = this.takeDamage(aggressor.getCurrentAttack(), this);
         Event b = aggressor.takeDamage(this.getCurrentAttack(), aggressor);
-        
+
         aggressor.setAttackTarget(null);
         setBlockTarget(null);
         aggressor.exhaust();
@@ -53,60 +53,59 @@ public class Creature extends DamageableCard implements Worker {
         return getDefaultAttack();
     }
 
-	@Override
-	//@Todo: needs refactoring - player.assign(this)?
-	public Event assign(State state, Player player) {
-		player.getHand().remove(this);
-		player.getWorkers().add(this);
-		return new Event (name + " was assigned to player " + player.getUsername());
-	}
-	
-	public boolean hasSummoningSickness() {
-		return hasSummoningSickness;
-	}
+    @Override
+    //@Todo: needs refactoring - player.assign(this)?
+    public Event assign(State state, Player player) {
+        player.getHand().remove(this);
+        player.getWorkers().add(this);
+        return new Event(name + " was assigned to player " + player.getUsername());
+    }
 
-	public void setHasSummoningSickness(boolean hasSummoningSickness) {
-		this.hasSummoningSickness = hasSummoningSickness;
-	}
-	
-	public Card getAttackTarget() {
-		return attackTarget;
-	}
-	
-	public boolean isAttacking() {
-		return attackTarget == null;
-	}
-	
-	public void setAttackTarget(Card c) {
-		attackTarget = c;
-	}
-	
-	public boolean canAttack() {
-		return !(exhausted || hasSummoningSickness);
-	}
+    public boolean hasSummoningSickness() {
+        return hasSummoningSickness;
+    }
 
-	public void setCanAttack(boolean canAttack) {
-		this.canAttack = canAttack;
-	}
-	
-	public Card getBlockTarget() {
-		return blockTarget;
-	}
-	
-	public boolean isBlocking() {
-		return blockTarget == null;
-	}
-	
-	public void setBlockTarget(Card c) {
-		blockTarget = c;
-	}
-	
-	public boolean canBlock() {
-		return !exhausted;
-	}
-	
-	public void setCanBlock(boolean canBlock) {
-		this.canBlock = canBlock;
-	}
-	
+    public void setHasSummoningSickness(boolean hasSummoningSickness) {
+        this.hasSummoningSickness = hasSummoningSickness;
+    }
+
+    public Structure getAttackTarget() {
+        return attackTarget;
+    }
+
+    public boolean isAttacking() {
+        return attackTarget == null;
+    }
+
+    public void setAttackTarget(Structure c) {
+        attackTarget = c;
+    }
+
+    public boolean canAttack() {
+        return !(exhausted || hasSummoningSickness);
+    }
+
+    public void setCanAttack(boolean canAttack) {
+        this.canAttack = canAttack;
+    }
+
+    public Creature getBlockTarget() {
+        return blockTarget;
+    }
+
+    public boolean isBlocking() {
+        return blockTarget == null;
+    }
+
+    public void setBlockTarget(Creature c) {
+        blockTarget = c;
+    }
+
+    public boolean canBlock() {
+        return !exhausted;
+    }
+
+    public void setCanBlock(boolean canBlock) {
+        this.canBlock = canBlock;
+    }
 }

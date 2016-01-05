@@ -16,7 +16,7 @@ public class BlockEffect extends SingleTargetEffect {
     @Override
     public void resolve(State state, Card target) {
         Creature blocker = (Creature) getSource();
-        blocker.setBlockTarget(target);
+        blocker.setBlockTarget((Creature) target);
 
         Event event = new Event(blocker.getName() + " is now blocking " + target.getName());
         state.addEvent(event);

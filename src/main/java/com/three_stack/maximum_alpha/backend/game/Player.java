@@ -10,6 +10,7 @@ import com.three_stack.maximum_alpha.backend.game.cards.Damageable;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
 import com.three_stack.maximum_alpha.backend.game.cards.Worker;
 import com.three_stack.maximum_alpha.backend.game.cards.instances.Base;
+import com.three_stack.maximum_alpha.backend.game.cards.instances.test.PilotRecruit;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
 import com.three_stack.maximum_alpha.backend.server.Connection;
 
@@ -42,6 +43,12 @@ public class Player implements Damageable {
         resources = new ResourceList(Parameters.INITIAL_COLORLESS_MANA);
         hand = new CardList<>();
         field = new CardList<>();
+
+        //@Todo: REMOVE THIS
+        Creature pilot = new PilotRecruit();
+        pilot.setHasSummoningSickness(false);
+        field.add(pilot);
+
         grave = new CardList<>();
         workers = new CardList<>();
         structures = new CardList<>();
