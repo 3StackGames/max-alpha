@@ -2,7 +2,20 @@ package com.three_stack.maximum_alpha.backend.game.phases;
 
 import com.three_stack.maximum_alpha.backend.game.State;
 
-public class StartPhase implements Phase {
+
+public class StartPhase extends Phase {
+    protected static StartPhase instance;
+
+    protected StartPhase() {
+        super("Start Phase");
+    }
+
+    public static StartPhase getInstance() {
+        if(instance == null) {
+            instance = new StartPhase();
+        }
+        return instance;
+    }
 
     /**
      * Overview
@@ -13,9 +26,8 @@ public class StartPhase implements Phase {
      * 5. Refresh Cards
      * @param state
      */
-    @Override
     public void start(State state) {
-        state.setCurrentPhase(State.Phase.START);
+        state.setCurrentPhase(instance);
         //@Todo: structure complete
         //resources generated
         state.gatherResources();
@@ -24,10 +36,13 @@ public class StartPhase implements Phase {
         state.turnPlayerDraw();
         //refresh
         state.refreshTurnPlayerCards();
+
+        end(state);
     }
 
-    @Override
     public void end(State state) {
-
+        MainPhase.getInstance().start(state);
     }
+
+
 }
