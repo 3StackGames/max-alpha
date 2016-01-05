@@ -6,6 +6,6 @@ public class PlayCardAction extends ExistingCardWithCostAction {
 
     @Override
     public void run(State state) {
-        return null;
+
     }
 }

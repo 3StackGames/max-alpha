@@ -10,6 +10,6 @@ public class TargetAction extends Action {
 
     @Override
     public void run(State state) {
-        return null;
+
     }
 }

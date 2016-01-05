@@ -6,6 +6,6 @@ public class DeclareBlockerAction extends ExistingPairAction {
 
     @Override
     public void run(State state) {
-        return null;
+
     }
 }
