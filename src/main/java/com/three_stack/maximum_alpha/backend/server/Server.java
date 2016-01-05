@@ -15,7 +15,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import com.three_stack.maximum_alpha.backend.game.*;
-import com.three_stack.maximum_alpha.backend.game.actions.Action;
+import com.three_stack.maximum_alpha.backend.game.actions.abstracts.Action;
 
 import com.three_stack.maximum_alpha.backend.game.actions.ActionService;
 import com.three_stack.maximum_alpha.backend.game.utilities.Serializer;

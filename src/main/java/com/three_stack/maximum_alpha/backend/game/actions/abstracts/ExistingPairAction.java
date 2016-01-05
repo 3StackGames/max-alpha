@@ -1,4 +1,4 @@
-package com.three_stack.maximum_alpha.backend.game.actions;
+package com.three_stack.maximum_alpha.backend.game.actions.abstracts;
 
 import java.util.UUID;
 
