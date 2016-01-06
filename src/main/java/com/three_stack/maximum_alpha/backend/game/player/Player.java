@@ -29,8 +29,6 @@ public class Player {
     private CardList<Structure> structures;
     private ResourceList resources;
     private Base base;
-    private int life;
-    private int maxLife;
     private boolean hasAssignedOrPulled;
 
     public Player(Connection connection, int maxLife) {
@@ -189,22 +187,6 @@ public class Player {
 
     public void setResources(ResourceList resources) {
         this.resources = resources;
-    }
-
-    public int getLife() {
-        return life;
-    }
-
-    public void setLife(int life) {
-        this.life = life;
-    }
-
-    public int getMaxLife() {
-        return maxLife;
-    }
-
-    public void setMaxLife(int maxLife) {
-        this.maxLife = maxLife;
     }
 
     public boolean isHasAssignedOrPulled() {
