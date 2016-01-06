@@ -3,6 +3,7 @@ package com.three_stack.maximum_alpha.backend.game.actions.implementations;
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.ExistingCardAction;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
+import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
 
 public class AssignCardAction extends ExistingCardAction {
@@ -11,9 +12,9 @@ public class AssignCardAction extends ExistingCardAction {
     public void run(State state) {
         super.run(state);
 
-        Card assignCard = player.getHand().takeCard(cardId);
+        Creature assignCard = (Creature) player.getHand().takeCard(cardId);
 
-        player.getWorkers().add(assignCard);
+        player.getTown().add(assignCard);
         player.setHasAssignedOrPulled(true);
         
         Event event = new Event(player.getUsername() + " has assigned " + assignCard.getName() + " as a worker.");

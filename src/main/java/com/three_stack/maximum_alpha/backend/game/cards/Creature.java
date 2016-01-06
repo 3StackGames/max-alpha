@@ -74,7 +74,7 @@ public class Creature extends DamageableCard implements Worker {
     }
 
     public boolean canAttack() {
-        return !(exhausted || hasSummoningSickness);
+        return canAttack && !(exhausted || hasSummoningSickness);
     }
 
     public void setCanAttack(boolean canAttack) {
@@ -94,7 +94,7 @@ public class Creature extends DamageableCard implements Worker {
     }
 
     public boolean canBlock() {
-        return !exhausted;
+        return canBlock && !exhausted;
     }
 
     public void setCanBlock(boolean canBlock) {
