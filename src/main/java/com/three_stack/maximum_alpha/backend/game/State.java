@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.Action;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
-import com.three_stack.maximum_alpha.backend.game.cards.DamageableCard;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
 import com.three_stack.maximum_alpha.backend.game.player.Deck;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
@@ -71,7 +70,7 @@ public class State {
     private Queue<Prompt> promptQueue;
 	private List<Card> cardsPlayed;
 	private final transient Parameters parameters;
-	private Map<UUID, Card> cardList;
+	private transient Map<UUID, Card> masterCardList;
 	
 	//game over: winningPlayers, losingPlayers, tiedPlayers
 	
@@ -87,7 +86,7 @@ public class State {
         for(Connection connection : parameters.players) {
             Player player = new Player(connection, parameters.TOTAL_HEALTH);
             players.add(player);
-            Deck deck = Deck.loadDeck(player.getConnection().deckId);
+            Deck<Card> deck = Deck.loadDeck(player.getConnection().deckId);
             deck.shuffle();
             player.setDeck(deck);
         }
@@ -126,7 +125,7 @@ public class State {
 	}
     
     public Card findCard(UUID id) {
-        return cardList.get(id);
+        return masterCardList.get(id);
     }
     
     public Player findPlayer(UUID id) {
@@ -181,12 +180,22 @@ public class State {
     
     public Map<UUID, Card> generateCardList() {
 		//Gets all cards from each player, then collects them into the map
-		cardList = players.stream().map(Player::getAllCards).flatMap(p -> p.stream()).collect(Collectors.toMap(Card::getId, (c)->c));
+		masterCardList = players.stream().map(Player::getAllCards).flatMap(p -> p.stream()).collect(Collectors.toMap(Card::getId, c->c));
     	
-    	return cardList;
+    	return masterCardList;
+    }
+    
+    public Map<UUID, Card> generateVisibleCardList(Player player) {
+    	Map<UUID, Card> visibleCardList = getOtherPlayers(player).stream().
+    										map(Player::getEnemyVisibleCards).
+    											flatMap(p -> p.stream()).
+    												collect(Collectors.toMap(Card::getId, c->c));
+    	
+    	visibleCardList.putAll(player.getSelfVisibleCards().stream().collect(Collectors.toMap(Card::getId, c->c)));
+    	
+    	return visibleCardList;
     }
 
-	@Override
 	public String toString() {
     	generateCardList();
 		return Serializer.toJson(this);

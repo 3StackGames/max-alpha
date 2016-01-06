@@ -250,13 +250,15 @@ public class Server extends WebSocketServer {
     }
 
     public void sendStateUpdate(String gameCode) {
-    	State state = startedGames.get(gameCode);
-    	
-        Message stateUpdate = new Message("State Update");
-        stateUpdate.add("state", new JSONObject(state.toString()));
-        stateUpdate.add("gameCode", gameCode);
+    	State game = startedGames.get(gameCode); 	
+    	String state = game.toString();
         
-        for (Player player : state.getPlayers()) {
+        for (Player player : game.getPlayers()) {     	
+            Message stateUpdate = new Message("State Update");
+            stateUpdate.add("state", new JSONObject(state));
+            stateUpdate.add("gameCode", gameCode);
+            stateUpdate.add("cardList", Serializer.toJson(game.generateVisibleCardList(player)));
+            
             player.getConnection().socket.send(stateUpdate.toString());
         }
     }

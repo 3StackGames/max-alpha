@@ -57,9 +57,32 @@ public class Player {
     	cards.addAll(grave.getCards());
         cards.addAll(town.getCards());
         cards.addAll(courtyard.getCards());
-
     	cards.add(castle);
+    	
     	return cards;
+    }
+    
+    public Collection<Card> getSelfVisibleCards() {
+    	Collection<Card> cards = new HashSet<>();
+    	cards.addAll(hand.getCards());
+    	cards.addAll(field.getCards());
+    	cards.addAll(grave.getCards());
+        cards.addAll(town.getCards());
+        cards.addAll(courtyard.getCards());
+    	cards.add(castle);
+    	
+    	return cards;
+    }
+    
+    public Collection<Card> getEnemyVisibleCards() {
+    	Collection<Card> cards = new HashSet<>();
+    	cards.addAll(field.getCards());
+    	cards.addAll(grave.getCards());
+        cards.addAll(town.getCards());
+        cards.addAll(courtyard.getCards());
+    	cards.add(castle);
+    	
+    	return cards;    	
     }
     
     public Collection<Card> getTargets() {
