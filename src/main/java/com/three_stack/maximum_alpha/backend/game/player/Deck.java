@@ -5,9 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
-import com.three_stack.maximum_alpha.backend.game.cards.instances.test.FieldCleric;
-import com.three_stack.maximum_alpha.backend.game.cards.instances.test.MilitiaMinuteman;
-import com.three_stack.maximum_alpha.backend.game.cards.instances.test.TravelingMerchant;
+import com.three_stack.maximum_alpha.backend.game.cards.instances.test.*;
 
 public class Deck {
 	CardList<Card> cards = new CardList<>();
@@ -93,14 +91,14 @@ public class Deck {
 
 	public static Deck loadDeck(int deckId) {
 		CardList<Card> cards = new CardList<>();
-		for(int i = 0; i < 15; i++) {
-			cards.add(new FieldCleric());
-			cards.add(new MilitiaMinuteman());
-			cards.add(new TravelingMerchant());
-		}
-
-		for(int i = 0; i < 5; i++) {
-			cards.add(new MilitiaMinuteman());
+		for(int i = 0; i < 7; i++) {
+			cards.add(new WhiteCreature());
+            cards.add(new BlackCreature());
+            cards.add(new YellowCreature());
+            cards.add(new RedCreature());
+            cards.add(new BlueCreature());
+            cards.add(new GreenCreature());
+            cards.add(new MilitiaMinuteman());
 		}
 
 		return new Deck(cards);
