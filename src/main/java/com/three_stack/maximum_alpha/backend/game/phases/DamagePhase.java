@@ -24,13 +24,18 @@ public class DamagePhase extends Phase {
     public void start(State state) {
         state.setCurrentPhase(instance);
 
-        //handle blocks
+
         List<Creature> blockers = state.getOtherPlayers(state.getTurnPlayer()).stream()
                 .map( player -> player.getField())
                 .flatMap( cards -> cards.stream())
                 .filter( Creature::isBlocking)
                 .collect(Collectors.toList());
 
+        Set<Creature> blockedAttackers = blockers.stream()
+                .map( blocker -> blocker.getBlockTarget())
+                .collect(Collectors.toSet());
+
+        //handle blocks
         //@Todo: handle blocking order
         for(Creature blocker : blockers) {
             Creature attacker = blocker.getBlockTarget();
@@ -46,9 +51,6 @@ public class DamagePhase extends Phase {
         List<Creature> attackers = state.getTurnPlayer().getField().stream()
                 .filter( Creature::isAttacking)
                 .collect(Collectors.toList());
-        Set<Creature> blockedAttackers = blockers.stream()
-                .map( blocker -> blocker.getBlockTarget())
-                .collect(Collectors.toSet());
 
         attackers.forEach((attacker) -> {
             if(!blockedAttackers.contains(attacker)) {

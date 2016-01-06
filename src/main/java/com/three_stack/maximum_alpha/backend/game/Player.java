@@ -44,11 +44,6 @@ public class Player implements Damageable {
         hand = new CardList<>();
         field = new CardList<>();
 
-        //@Todo: REMOVE THIS
-        Creature pilot = new PilotRecruit();
-        pilot.setHasSummoningSickness(false);
-        field.add(pilot);
-
         grave = new CardList<>();
         workers = new CardList<>();
         structures = new CardList<>();
