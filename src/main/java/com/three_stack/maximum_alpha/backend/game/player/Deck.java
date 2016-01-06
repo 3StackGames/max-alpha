@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class Deck<T extends Card> extends Zone {
+public class Deck<T extends Card> extends Zone<T> {
     public Deck() {
         super();
     }
@@ -49,7 +49,7 @@ public class Deck<T extends Card> extends Zone {
         }
     }
 
-    public static Deck loadDeck(int deckId) {
+    public static Deck<Card> loadDeck(int deckId) {
         List<Card> cards = new ArrayList<>();
 
         for(int i = 0; i < 7; i++) {
@@ -62,6 +62,6 @@ public class Deck<T extends Card> extends Zone {
             cards.add(new MilitiaMinuteman());
         }
 
-        return new Deck(cards);
+        return new Deck<>(cards);
     }
 }

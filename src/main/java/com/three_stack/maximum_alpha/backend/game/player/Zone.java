@@ -1,16 +1,21 @@
 package com.three_stack.maximum_alpha.backend.game.player;
 
-import com.three_stack.maximum_alpha.backend.game.cards.Card;
+import io.gsonfire.annotations.ExposeMethodResult;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
+
+import com.three_stack.maximum_alpha.backend.game.cards.Card;
 
 /**
  * Be careful whenever modifying cards that you also modify cardIds. Ideally call methods rather than modifying it directly.
  */
 public class Zone<T extends Card> {
     protected transient List<T> cards;
-    private List<UUID> cardIds; // for gson use only
 
     public Zone() {
         cards = new ArrayList<>();
@@ -36,10 +41,7 @@ public class Zone<T extends Card> {
         cards.addAll(newCards);
     }
 
-    /**
-     *
-     * @return Unmodifiable List
-     */
+    @ExposeMethodResult("cardIds")
     public List<UUID> getCardIds() {
         return cards.stream().map(Card::getId).collect(Collectors.toList());
     }

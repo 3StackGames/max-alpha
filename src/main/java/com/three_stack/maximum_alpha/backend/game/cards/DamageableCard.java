@@ -1,5 +1,7 @@
 package com.three_stack.maximum_alpha.backend.game.cards;
 
+import io.gsonfire.annotations.ExposeMethodResult;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,13 +34,21 @@ public abstract class DamageableCard extends Card {
         damageTaken += damage;
         return new Event(this.getName() + " took " + damage + " damage from " + source.getName());
     }
+    
+    public Event heal(int heal, Card source) {
+    	heal = Math.min(heal, getMaxHealth() - getCurrentHealth());
+    	damageTaken -= heal;
+    	return new Event(this.getName() + " healed " + heal + " damage from " + source.getName());
+    }
 
+    @ExposeMethodResult("currentHealth")
     public int getCurrentHealth() {
         return health - damageTaken; //@Todo: account for buffs later
     }
 
+    @ExposeMethodResult("maxHealth")
     public int getMaxHealth() {
-        return health;
+        return health; //@Todo: account for buffs
     }
 
     public boolean isAlive() {

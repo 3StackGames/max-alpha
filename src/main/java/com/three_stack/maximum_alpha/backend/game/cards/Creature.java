@@ -1,8 +1,9 @@
 package com.three_stack.maximum_alpha.backend.game.cards;
 
-import com.three_stack.maximum_alpha.backend.game.player.Player;
-import com.three_stack.maximum_alpha.backend.game.State;
+import io.gsonfire.annotations.ExposeMethodResult;
+
 import com.three_stack.maximum_alpha.backend.game.ResourceList;
+import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
 
 public class Creature extends DamageableCard implements Worker {
@@ -10,9 +11,9 @@ public class Creature extends DamageableCard implements Worker {
     //@Todo: Add Tags
     protected final int attack;
     protected Structure attackTarget;
-    protected boolean canAttack;
+    protected transient boolean canAttack;
     protected Creature blockTarget;
-    protected boolean canBlock;
+    protected transient boolean canBlock;
     protected boolean hasSummoningSickness;
 
     protected Creature(String name, ResourceList cost, String text, String flavorText, int attack, int health) {
@@ -73,6 +74,7 @@ public class Creature extends DamageableCard implements Worker {
         attackTarget = c;
     }
 
+    @ExposeMethodResult("canAttack")
     public boolean canAttack() {
         return canAttack && !(exhausted || hasSummoningSickness);
     }
@@ -93,6 +95,7 @@ public class Creature extends DamageableCard implements Worker {
         blockTarget = c;
     }
 
+    @ExposeMethodResult("canBlock")
     public boolean canBlock() {
         return canBlock && !exhausted;
     }

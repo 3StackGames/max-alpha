@@ -22,7 +22,7 @@ public class Player {
     private final UUID playerId;
 
     private Zone<Card> hand;
-    private Deck deck;
+    private Deck<Card> deck;
     private Zone<Creature> field;
     private Zone<Card> grave;
     private Zone<Creature> town;
@@ -38,12 +38,12 @@ public class Player {
         this.connection = connection;
         playerId = UUID.randomUUID();
 
-        hand = new Zone();
-        deck = new Deck();
-        field = new Zone();
-        grave = new Zone();
-        town = new Zone();
-        courtyard = new Zone();
+        hand = new Zone<>();
+        deck = new Deck<>();
+        field = new Zone<>();
+        grave = new Zone<>();
+        town = new Zone<>();
+        courtyard = new Zone<>();
 
         resources = new ResourceList(Parameters.INITIAL_COLORLESS_MANA);
         castle = new Castle(baseMaxLife);
@@ -122,19 +122,19 @@ public class Player {
         return playerId;
     }
 
-    public Zone getHand() {
+    public Zone<Card> getHand() {
         return hand;
     }
 
-    public void setHand(Zone hand) {
+    public void setHand(Zone<Card> hand) {
         this.hand = hand;
     }
 
-    public Deck getDeck() {
+    public Deck<Card> getDeck() {
         return deck;
     }
 
-    public void setDeck(Deck deck) {
+    public void setDeck(Deck<Card> deck) {
         this.deck = deck;
     }
 
@@ -142,7 +142,7 @@ public class Player {
         return field;
     }
 
-    public void setField(Zone field) {
+    public void setField(Zone<Creature> field) {
         this.field = field;
     }
 
@@ -150,7 +150,7 @@ public class Player {
         return grave;
     }
 
-    public void setGrave(Zone grave) {
+    public void setGrave(Zone<Card> grave) {
         this.grave = grave;
     }
 
@@ -158,7 +158,7 @@ public class Player {
         return town;
     }
 
-    public void setTown(Zone town) {
+    public void setTown(Zone<Creature> town) {
         this.town = town;
     }
 
@@ -166,7 +166,7 @@ public class Player {
         return courtyard;
     }
 
-    public void setCourtyard(Zone courtyard) {
+    public void setCourtyard(Zone<Structure> courtyard) {
         this.courtyard = courtyard;
     }
 
