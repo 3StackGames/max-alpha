@@ -1,6 +1,6 @@
 package com.three_stack.maximum_alpha.backend.game.actions.abstracts;
 
-import com.three_stack.maximum_alpha.backend.game.Player;
+import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
 

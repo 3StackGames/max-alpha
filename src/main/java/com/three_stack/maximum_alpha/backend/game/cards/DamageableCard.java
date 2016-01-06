@@ -3,7 +3,6 @@ package com.three_stack.maximum_alpha.backend.game.cards;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.three_stack.maximum_alpha.backend.game.Buff;
 import com.three_stack.maximum_alpha.backend.game.ResourceList;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
 

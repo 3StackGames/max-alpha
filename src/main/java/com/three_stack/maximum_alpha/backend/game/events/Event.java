@@ -1,6 +1,6 @@
 package com.three_stack.maximum_alpha.backend.game.events;
 
-import com.three_stack.maximum_alpha.backend.game.Player;
+import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.utilities.Serializer;
 
 public class Event {

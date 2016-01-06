@@ -1,15 +1,15 @@
-package com.three_stack.maximum_alpha.backend.game;
+package com.three_stack.maximum_alpha.backend.game.player;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.UUID;
 
+import com.three_stack.maximum_alpha.backend.game.*;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
 import com.three_stack.maximum_alpha.backend.game.cards.Worker;
 import com.three_stack.maximum_alpha.backend.game.cards.instances.Base;
-import com.three_stack.maximum_alpha.backend.game.cards.instances.test.PilotRecruit;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
 import com.three_stack.maximum_alpha.backend.server.Connection;
 

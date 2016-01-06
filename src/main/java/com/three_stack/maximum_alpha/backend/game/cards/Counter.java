@@ -1,6 +1,4 @@
-package com.three_stack.maximum_alpha.backend.game;
-
-import com.three_stack.maximum_alpha.backend.game.cards.Card;
+package com.three_stack.maximum_alpha.backend.game.cards;
 
 public class Counter {
     private long id;
