@@ -21,6 +21,7 @@ public abstract class Card {
      * ONLY FOR GSON. DON'T TOUCH.
      */
     private boolean playable;
+    private ResourceList.Color dominantColor;
 
     protected Map<State.TriggerPoint, Trigger> triggers;
 
@@ -38,13 +39,14 @@ public abstract class Card {
         this.defaultCost = defaultCost;
         this.currentCost = defaultCost;
         this.flavorText = flavorText;
+        this.dominantColor = calculateDominantColor();
 	}
 
     public void addTrigger(State.TriggerPoint triggerPoint, Trigger trigger) {
         triggers.put(triggerPoint, trigger);
     }
 
-    public ResourceList.Color getDominantColor() {
+    public ResourceList.Color calculateDominantColor() {
         int max = 0;
         ResourceList.Color dominant = ResourceList.Color.COLORLESS;
         for(ResourceList.Color color : ResourceList.Color.values()) {
@@ -97,19 +99,7 @@ public abstract class Card {
         this.playable = playable;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Card card = (Card) o;
-
-        return id != null ? id.equals(card.id) : card.id == null;
-
-    }
-
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+    public ResourceList.Color getDominantColor() {
+        return dominantColor;
     }
 }

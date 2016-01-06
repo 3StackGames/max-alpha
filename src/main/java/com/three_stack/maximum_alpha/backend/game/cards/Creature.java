@@ -28,7 +28,7 @@ public class Creature extends DamageableCard implements Worker {
     @Override
     public ResourceList work(State state) {
         ResourceList resourceList = new ResourceList();
-        resourceList.addColor(getDominantColor(), 1);
+        resourceList.addColor(calculateDominantColor(), 1);
         return resourceList;
     }
 
