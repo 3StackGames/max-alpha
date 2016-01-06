@@ -31,7 +31,7 @@ public abstract class DamageableCard extends Card {
 
     public Event takeDamage(int damage, Card source) {
         damageTaken += damage;
-        return new Event(this.getName() + " took " + damage + " damage from" + source.getName());
+        return new Event(this.getName() + " took " + damage + " damage from " + source.getName());
     }
 
     public int getCurrentHealth() {

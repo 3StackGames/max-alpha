@@ -74,7 +74,7 @@ public class Creature extends DamageableCard implements Worker {
     }
 
     public boolean isAttacking() {
-        return attackTarget == null;
+        return attackTarget != null;
     }
 
     public void setAttackTarget(Structure c) {
@@ -94,7 +94,7 @@ public class Creature extends DamageableCard implements Worker {
     }
 
     public boolean isBlocking() {
-        return blockTarget == null;
+        return blockTarget != null;
     }
 
     public void setBlockTarget(Creature c) {
