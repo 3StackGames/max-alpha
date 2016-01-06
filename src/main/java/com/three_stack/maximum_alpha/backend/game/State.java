@@ -15,6 +15,7 @@ import com.three_stack.maximum_alpha.backend.game.phases.Phase;
 import com.three_stack.maximum_alpha.backend.game.phases.StartPhase;
 import com.three_stack.maximum_alpha.backend.game.utilities.Serializer;
 import com.three_stack.maximum_alpha.backend.server.Connection;
+import io.gsonfire.annotations.ExposeMethodResult;
 
 public class State {
     public enum TriggerPoint {
@@ -185,16 +186,27 @@ public class State {
     	return masterCardList;
     }
     
-    public Map<UUID, Card> generateVisibleCardList(Player player) {
-    	Map<UUID, Card> visibleCardList = getOtherPlayers(player).stream().
+    public Map<UUID, Optional<Card>> generateVisibleCardList(Player player) {
+    	List<Card> visibleCardList = getOtherPlayers(player).stream().
     										map(Player::getEnemyVisibleCards).
     											flatMap(p -> p.stream()).
-    												collect(Collectors.toMap(Card::getId, c->c));
+    												collect(Collectors.toList());
+    	visibleCardList.addAll(player.getSelfVisibleCards());
     	
-    	visibleCardList.putAll(player.getSelfVisibleCards().stream().collect(Collectors.toMap(Card::getId, c->c)));
-    	
-    	return visibleCardList;
+    	Map<UUID, Optional<Card>> visibleCardMap = new HashMap<>();
+        masterCardList.entrySet().forEach((keyValue) -> {
+            UUID key = keyValue.getKey();
+            Card value = keyValue.getValue();
+            if(visibleCardList.contains(value)) {
+                visibleCardMap.put(key, Optional.of(value));
+            } else {
+                visibleCardMap.put(key, Optional.empty());
+            }
+        });
+
+        return visibleCardMap;
     }
+
 
 	public String toString() {
     	generateCardList();
