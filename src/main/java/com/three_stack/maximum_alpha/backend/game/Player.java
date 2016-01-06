@@ -6,7 +6,6 @@ import java.util.UUID;
 
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
-import com.three_stack.maximum_alpha.backend.game.cards.Damageable;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
 import com.three_stack.maximum_alpha.backend.game.cards.Worker;
 import com.three_stack.maximum_alpha.backend.game.cards.instances.Base;
@@ -14,7 +13,7 @@ import com.three_stack.maximum_alpha.backend.game.cards.instances.test.PilotRecr
 import com.three_stack.maximum_alpha.backend.game.events.Event;
 import com.three_stack.maximum_alpha.backend.server.Connection;
 
-public class Player implements Damageable {
+public class Player {
     private String username;
 
     //@Todo: Actually retrieve their username
@@ -102,7 +101,6 @@ public class Player implements Damageable {
         hand.add(deck.draw());
     }
 
-    @Override
     public Event takeDamage(int damage, Card source) {
     	base.takeDamage(damage, source);
         return new Event(username + " took " + damage + " damage from " + source.getName() + ".");

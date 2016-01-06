@@ -10,7 +10,7 @@ import com.three_stack.maximum_alpha.backend.game.events.Event;
 /**
  * Damageable, Buffable, Refreshable / Exhaustable
  */
-public abstract class DamageableCard extends Card implements Damageable {
+public abstract class DamageableCard extends Card {
     protected final int health;
     protected int damageTaken;
 
