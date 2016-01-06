@@ -9,6 +9,7 @@ public class Serializer {
 
     static {
         GsonFireBuilder fireBuilder = new GsonFireBuilder();
+        fireBuilder.enableExposeMethodResult();
 
         GsonBuilder gsonBuilder = fireBuilder.createGsonBuilder();
         gsonBuilder.registerTypeAdapterFactory(new TitleCaseEnumTypeAdapterFactory());
