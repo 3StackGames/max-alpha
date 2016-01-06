@@ -53,14 +53,6 @@ public class Creature extends DamageableCard implements Worker {
         return getDefaultAttack();
     }
 
-    @Override
-    //@Todo: needs refactoring - player.assign(this)?
-    public Event assign(State state, Player player) {
-        player.getHand().remove(this);
-        player.getWorkers().add(this);
-        return new Event(name + " was assigned to player " + player.getUsername());
-    }
-
     public boolean hasSummoningSickness() {
         return hasSummoningSickness;
     }

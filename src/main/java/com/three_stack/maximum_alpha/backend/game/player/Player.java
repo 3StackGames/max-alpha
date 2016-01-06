@@ -21,12 +21,12 @@ public class Player {
 
 	private transient Connection connection;
     private final UUID playerId;
-    private CardList<Card> hand;
+    private Zone hand;
     private Deck deck;
-    private CardList<Creature> field;
-    private CardList<Card> grave;
-    private CardList<Card> workers;
-    private CardList<Structure> structures;
+    private CardListOld<Creature> field;
+    private CardListOld<Card> grave;
+    private CardListOld<Card> workers;
+    private CardListOld<Structure> structures;
     private ResourceList resources;
     private Base base;
     private int life;
@@ -40,12 +40,12 @@ public class Player {
         username = "Player " + usernameCounter++;
 
         resources = new ResourceList(Parameters.INITIAL_COLORLESS_MANA);
-        hand = new CardList<>();
-        field = new CardList<>();
+        hand = new Zone();
+        field = new CardListOld<>();
 
-        grave = new CardList<>();
-        workers = new CardList<>();
-        structures = new CardList<>();
+        grave = new CardListOld<>();
+        workers = new CardListOld<>();
+        structures = new CardListOld<>();
     }
 
     public String getUsername() {
@@ -63,7 +63,7 @@ public class Player {
     public Collection<Card> getAllCards() {
     	Collection<Card> cards = new HashSet<>();
     	cards.addAll(deck.getDeck());
-    	cards.addAll(hand);
+    	cards.addAll(hand.getCards());
     	cards.addAll(field);
     	cards.addAll(grave);
     	cards.addAll(structures);
@@ -116,16 +116,6 @@ public class Player {
     public boolean hasResources(ResourceList other) {
         return resources.hasResources(other);
     }
-    
-    public boolean playCreature(Creature c) {
-        if (hand.remove(c)) {
-            pay(c.getCurrentCost());
-            field.add(c);
-            return true;
-        }
-        
-        return false;
-    }
 
     public void setConnection(Connection connection) {
         this.connection = connection;
@@ -135,12 +125,8 @@ public class Player {
         return playerId;
     }
 
-    public CardList<Card> getHand() {
+    public Zone getHand() {
         return hand;
-    }
-
-    public void setHand(CardList<Card> hand) {
-        this.hand = hand;
     }
 
     public Deck getDeck() {
@@ -151,35 +137,35 @@ public class Player {
         this.deck = deck;
     }
 
-    public CardList<Creature> getField() {
+    public CardListOld<Creature> getField() {
         return field;
     }
 
-    public void setField(CardList<Creature> field) {
+    public void setField(CardListOld<Creature> field) {
         this.field = field;
     }
 
-    public CardList<Card> getGrave() {
+    public CardListOld<Card> getGrave() {
         return grave;
     }
 
-    public void setGrave(CardList<Card> grave) {
+    public void setGrave(CardListOld<Card> grave) {
         this.grave = grave;
     }
 
-    public CardList<Card> getWorkers() {
+    public CardListOld<Card> getWorkers() {
         return workers;
     }
 
-    public void setWorkers(CardList<Card> workers) {
+    public void setWorkers(CardListOld<Card> workers) {
         this.workers = workers;
     }
 
-    public CardList<Structure> getStructures() {
+    public CardListOld<Structure> getStructures() {
         return structures;
     }
 
-    public void setStructures(CardList<Structure> structures) {
+    public void setStructures(CardListOld<Structure> structures) {
         this.structures = structures;
     }
 

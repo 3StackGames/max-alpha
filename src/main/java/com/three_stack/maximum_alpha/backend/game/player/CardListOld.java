@@ -5,7 +5,7 @@ import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class CardList<T extends Card> extends ArrayList<T> {
+public class CardListOld<T extends Card> extends ArrayList<T> {
 
     /**
 	 * 
