@@ -26,7 +26,7 @@ public class DamagePhase extends Phase {
 
 
         List<Creature> blockers = state.getOtherPlayers(state.getTurnPlayer()).stream()
-                .map( player -> player.getField())
+                .map( player -> player.getField().getCards())
                 .flatMap( cards -> cards.stream())
                 .filter( Creature::isBlocking)
                 .collect(Collectors.toList());
@@ -48,7 +48,7 @@ public class DamagePhase extends Phase {
         }
 
         //handle attacks to structures
-        List<Creature> attackers = state.getTurnPlayer().getField().stream()
+        List<Creature> attackers = state.getTurnPlayer().getField().getCards().stream()
                 .filter( Creature::isAttacking)
                 .collect(Collectors.toList());
 

@@ -1,9 +1,7 @@
 package com.three_stack.maximum_alpha.backend.game.cards;
 
-import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.ResourceList;
 import com.three_stack.maximum_alpha.backend.game.State;
-import com.three_stack.maximum_alpha.backend.game.events.Event;
 
 public interface Worker {
 	/**
@@ -13,6 +11,4 @@ public interface Worker {
 	 * @return A resource list with resource values equal to the net change in resource quantities
 	 */
 	ResourceList work(State s);
-	
-	Event assign(State s, Player p);
 }

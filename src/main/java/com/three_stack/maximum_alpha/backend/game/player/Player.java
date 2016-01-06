@@ -9,81 +9,64 @@ import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
 import com.three_stack.maximum_alpha.backend.game.cards.Worker;
-import com.three_stack.maximum_alpha.backend.game.cards.instances.Base;
+import com.three_stack.maximum_alpha.backend.game.cards.instances.Castle;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
 import com.three_stack.maximum_alpha.backend.server.Connection;
 
 public class Player {
-    private String username;
-
     //@Todo: Actually retrieve their username
     private static int usernameCounter = 0;
+    private String username;
 
 	private transient Connection connection;
     private final UUID playerId;
-    private CardList<Card> hand;
+
+    private Zone<Card> hand;
     private Deck deck;
-    private CardList<Creature> field;
-    private CardList<Card> grave;
-    private CardList<Card> workers;
-    private CardList<Structure> structures;
+    private Zone<Creature> field;
+    private Zone<Card> grave;
+    private Zone<Creature> town;
+    private Zone<Structure> courtyard;
+
     private ResourceList resources;
-    private Base base;
+    private Castle castle;
     private boolean hasAssignedOrPulled;
 
-    public Player(Connection connection, int maxLife) {
-        this.connection = connection;
-        base = new Base(maxLife);
-        playerId = UUID.randomUUID();
+    public Player(Connection connection, int baseMaxLife) {
         username = "Player " + usernameCounter++;
 
+        this.connection = connection;
+        playerId = UUID.randomUUID();
+
+        hand = new Zone();
+        deck = new Deck();
+        field = new Zone();
+        grave = new Zone();
+        town = new Zone();
+        courtyard = new Zone();
+
         resources = new ResourceList(Parameters.INITIAL_COLORLESS_MANA);
-        hand = new CardList<>();
-        field = new CardList<>();
-
-        grave = new CardList<>();
-        workers = new CardList<>();
-        structures = new CardList<>();
+        castle = new Castle(baseMaxLife);
     }
-
-    public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public Base getBase() {
-		return base;
-	}
     
     public Collection<Card> getAllCards() {
     	Collection<Card> cards = new HashSet<>();
-    	cards.addAll(deck.getDeck());
-    	cards.addAll(hand);
-    	cards.addAll(field);
-    	cards.addAll(grave);
-    	cards.addAll(structures);
-    	workers.forEach((worker) -> {
-    		if (worker instanceof Card) {
-    			cards.add((Card)worker);
-    		}
-    	});
-    	cards.add(base);
+    	cards.addAll(deck.getCards());
+    	cards.addAll(hand.getCards());
+    	cards.addAll(field.getCards());
+    	cards.addAll(grave.getCards());
+        cards.addAll(town.getCards());
+        cards.addAll(courtyard.getCards());
+
+    	cards.add(castle);
     	return cards;
     }
     
     public Collection<Card> getTargets() {
     	Collection<Card> targets = new HashSet<>();
-    	targets.addAll(structures);
-    	targets.add(base);
-    	
+    	targets.addAll(courtyard.getCards());
+    	targets.add(castle);
     	return targets;
-    }
-
-    public Connection getConnection() {
-        return connection;
     }
 
     public void newTurn() {
@@ -95,12 +78,12 @@ public class Player {
     }
 
     public Event takeDamage(int damage, Card source) {
-    	base.takeDamage(damage, source);
+    	castle.takeDamage(damage, source);
         return new Event(username + " took " + damage + " damage from " + source.getName() + ".");
     }
 
     public void gatherResources(State state) {
-        for(Card workerCard : workers) {
+        for(Card workerCard : town.getCards()) {
             Worker worker = (Worker) workerCard;
             ResourceList resourceChange = worker.work(state);
             resources.add(resourceChange);
@@ -114,15 +97,21 @@ public class Player {
     public boolean hasResources(ResourceList other) {
         return resources.hasResources(other);
     }
-    
-    public boolean playCreature(Creature c) {
-        if (hand.remove(c)) {
-            pay(c.getCurrentCost());
-            field.add(c);
-            return true;
-        }
-        
-        return false;
+
+    /**
+     * Generic Getters and Setters Below Here
+     */
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public Connection getConnection() {
+        return connection;
     }
 
     public void setConnection(Connection connection) {
@@ -133,11 +122,11 @@ public class Player {
         return playerId;
     }
 
-    public CardList<Card> getHand() {
+    public Zone getHand() {
         return hand;
     }
 
-    public void setHand(CardList<Card> hand) {
+    public void setHand(Zone hand) {
         this.hand = hand;
     }
 
@@ -149,36 +138,36 @@ public class Player {
         this.deck = deck;
     }
 
-    public CardList<Creature> getField() {
+    public Zone<Creature> getField() {
         return field;
     }
 
-    public void setField(CardList<Creature> field) {
+    public void setField(Zone field) {
         this.field = field;
     }
 
-    public CardList<Card> getGrave() {
+    public Zone<Card> getGrave() {
         return grave;
     }
 
-    public void setGrave(CardList<Card> grave) {
+    public void setGrave(Zone grave) {
         this.grave = grave;
     }
 
-    public CardList<Card> getWorkers() {
-        return workers;
+    public Zone<Creature> getTown() {
+        return town;
     }
 
-    public void setWorkers(CardList<Card> workers) {
-        this.workers = workers;
+    public void setTown(Zone town) {
+        this.town = town;
     }
 
-    public CardList<Structure> getStructures() {
-        return structures;
+    public Zone<Structure> getCourtyard() {
+        return courtyard;
     }
 
-    public void setStructures(CardList<Structure> structures) {
-        this.structures = structures;
+    public void setCourtyard(Zone courtyard) {
+        this.courtyard = courtyard;
     }
 
     public ResourceList getResources() {
@@ -188,8 +177,16 @@ public class Player {
     public void setResources(ResourceList resources) {
         this.resources = resources;
     }
+    
+    public Castle getCastle() {
+        return castle;
+    }
 
-    public boolean isHasAssignedOrPulled() {
+    public void setCastle(Castle castle) {
+        this.castle = castle;
+    }
+
+    public boolean hasAssignedOrPulled() {
         return hasAssignedOrPulled;
     }
 

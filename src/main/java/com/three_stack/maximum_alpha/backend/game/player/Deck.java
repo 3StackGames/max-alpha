@@ -1,106 +1,68 @@
 package com.three_stack.maximum_alpha.backend.game.player;
 
+import com.three_stack.maximum_alpha.backend.game.cards.Card;
+import com.three_stack.maximum_alpha.backend.game.cards.instances.test.FieldCleric;
+import com.three_stack.maximum_alpha.backend.game.cards.instances.test.MilitiaMinuteman;
+import com.three_stack.maximum_alpha.backend.game.cards.instances.test.TravelingMerchant;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import com.three_stack.maximum_alpha.backend.game.cards.Card;
-import com.three_stack.maximum_alpha.backend.game.cards.instances.test.*;
+public class Deck<T extends Card> extends Zone {
+    public Deck() {
+        super();
+    }
 
-public class Deck {
-	CardList<Card> cards = new CardList<>();
+    public Deck(List<T> cards) {
+        super(cards);
+    }
 
-	public Deck(CardList<Card> cards) {
-		this.cards = cards;
-	}
-	
-	public List<Card> getDeck() {
-		return cards;
-	}
-	
-	public void shuffle() {
-		Collections.shuffle(cards);
-	}
-	
-	public Card draw() {
-		Card draw = cards.get(0);
-		cards.remove(0);
-		return draw;
-	}
-	
-	public List<Card> drawCards(int numCards) {
-		List<Card> subDeck = cards.subList(0, numCards);
-		cards.removeAll(subDeck);
-		return subDeck;
-	}
-	
-	public List<Card> topCards(int numCards) {
-		return cards.subList(0, numCards);
-	}
-	
-	public Card takeCard(Card c) {
-		if(contains(c)) {
-			cards.remove(c);
-			return c;
-		}
-		
-		return null;
-	}
-	
-	public Collection<Card> takeCards(Collection<Card> c) {
-		if(containsAll(c)) {
-			cards.removeAll(c);
-			return c;
-		}
-		
-		return null;
-	}
-	
-	public void placeAtBottom(Card c) {
-		if(contains(c)) {
-			cards.remove(c);
-			cards.add(c);
-		}
-		
-	}
-	
-	public void placeAtBottom(Collection<Card> c) {
-		if(containsAll(c)) {
-			cards.removeAll(c);
-			cards.addAll(c);
-		}
-	}
-	
-	public boolean contains(Card c) {
-		if(!cards.contains(c)) {
-			//ERROR report
-			return false;
-		}
-		
-		return true;
-	}
-	
-	public boolean containsAll(Collection<Card> c) {
-		if(!cards.contains(c)) {
-			//ERROR report
-			return false;
-		}
-		
-		return true;
-	}
+    public void shuffle() {
+        Collections.shuffle(cards);
+    }
 
-	public static Deck loadDeck(int deckId) {
-		CardList<Card> cards = new CardList<>();
-		for(int i = 0; i < 7; i++) {
-			cards.add(new WhiteCreature());
-            cards.add(new BlackCreature());
-            cards.add(new YellowCreature());
-            cards.add(new RedCreature());
-            cards.add(new BlueCreature());
-            cards.add(new GreenCreature());
+    public Card draw() {
+        return remove(0);
+    }
+
+    public List<T> drawCards(int numCards) {
+        List<T> subDeck = subList(0, numCards);
+        removeAll(subDeck);
+        return subDeck;
+    }
+
+    public List<T> topCards(int numCards) {
+        return subList(0, numCards);
+    }
+
+    public void placeAtBottom(T card) {
+        if (containsAll(card)) {
+            remove(card);
+            add(card);
+        }
+    }
+
+    public void placeAtBottom(Collection<T> bottomCards) {
+        if (containsAll(bottomCards)) {
+            removeAll(bottomCards);
+            addAll(bottomCards);
+        }
+    }
+
+    public static Deck loadDeck(int deckId) {
+        List<Card> cards = new ArrayList<>();
+        for (int i = 0; i < 15; i++) {
+            cards.add(new FieldCleric());
             cards.add(new MilitiaMinuteman());
-		}
+            cards.add(new TravelingMerchant());
+        }
 
-		return new Deck(cards);
-	}
+        for (int i = 0; i < 5; i++) {
+            cards.add(new MilitiaMinuteman());
+        }
+
+        return new Deck(cards);
+    }
 }

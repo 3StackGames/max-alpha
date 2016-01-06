@@ -11,7 +11,7 @@ public class PullCardAction extends ExistingCardAction {
     public void run(State state) {
         super.run(state);
         Player player = state.getTurnPlayer();
-        Card pullCard = player.getWorkers().takeCard(cardId);
+        Card pullCard = player.getTown().takeCard(cardId);
 
         player.getHand().add(pullCard);
         player.setHasAssignedOrPulled(true);

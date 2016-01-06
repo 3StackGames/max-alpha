@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.Action;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
+import com.three_stack.maximum_alpha.backend.game.cards.DamageableCard;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
 import com.three_stack.maximum_alpha.backend.game.player.Deck;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
@@ -171,9 +172,9 @@ public class State {
     public void refreshTurnPlayerCards() {
         Player player = getTurnPlayer();
         //look through field
-        player.getField().forEach(Creature::attemptRefresh);
+        player.getField().getCards().forEach(Creature::attemptRefresh);
         //look through structures
-        player.getStructures().forEach(Structure::attemptRefresh);
+        player.getCourtyard().getCards().forEach(Structure::attemptRefresh);
     }
     
     //For serialization
