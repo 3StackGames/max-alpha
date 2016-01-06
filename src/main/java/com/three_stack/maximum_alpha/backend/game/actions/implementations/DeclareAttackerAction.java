@@ -5,8 +5,8 @@ import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.ExistingCardAction;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
-import com.three_stack.maximum_alpha.backend.game.effects.AttackEffect;
-import com.three_stack.maximum_alpha.backend.game.effects.Effect;
+import com.three_stack.maximum_alpha.backend.game.prompts.AttackPrompt;
+import com.three_stack.maximum_alpha.backend.game.prompts.Prompt;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
 
 import java.util.List;
@@ -26,8 +26,8 @@ public class DeclareAttackerAction extends ExistingCardAction {
                 .flatMap(p -> p.stream())
                 .collect(Collectors.toList());
 
-        Effect attackEffect = new AttackEffect(attacker, "Select what you want attacked", attackableTargets);
-        state.addEffect(attackEffect);
+        Prompt attackPrompt = new AttackPrompt(attacker, "Select what you want attacked", attackableTargets);
+        state.addPrompt(attackPrompt);
 
         Event event = new Event(player, " declared " + attacker.getName() + " as attacking");
         state.addEvent(event);

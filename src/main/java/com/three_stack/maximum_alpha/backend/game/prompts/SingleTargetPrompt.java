@@ -1,14 +1,14 @@
-package com.three_stack.maximum_alpha.backend.game.effects;
+package com.three_stack.maximum_alpha.backend.game.prompts;
 
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 
 import java.util.List;
 
-public abstract class SingleTargetEffect extends Effect {
+public abstract class SingleTargetPrompt extends Prompt {
     protected List<Card> targetables;
 
-    public SingleTargetEffect(Card source, String prompt, List<Card> targetables) {
+    public SingleTargetPrompt(Card source, String prompt, List<Card> targetables) {
         super(source, prompt);
         this.targetables = targetables;
     }

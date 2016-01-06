@@ -1,4 +1,4 @@
-package com.three_stack.maximum_alpha.backend.game.effects;
+package com.three_stack.maximum_alpha.backend.game.prompts;
 
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
@@ -7,11 +7,10 @@ import com.three_stack.maximum_alpha.backend.game.cards.Structure;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
 
 import java.util.List;
-import java.util.UUID;
 
-public class AttackEffect extends SingleTargetEffect {
+public class AttackPrompt extends SingleTargetPrompt {
 
-    public AttackEffect(Card source, String prompt, List<Card> targetables) {
+    public AttackPrompt(Card source, String prompt, List<Card> targetables) {
         super(source, prompt, targetables);
     }
 

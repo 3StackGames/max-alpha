@@ -2,13 +2,13 @@ package com.three_stack.maximum_alpha.backend.game.actions.implementations;
 
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.ExistingCardAction;
-import com.three_stack.maximum_alpha.backend.game.effects.SingleTargetEffect;
+import com.three_stack.maximum_alpha.backend.game.prompts.SingleTargetPrompt;
 
-public class SingleTargetEffectAction extends ExistingCardAction {
+public class SingleTargetPromptAction extends ExistingCardAction {
     @Override
     public void run(State state) {
         super.run(state);
-        SingleTargetEffect effect = (SingleTargetEffect) state.takeEffect();
-        effect.resolve(state, card);
+        SingleTargetPrompt prompt = (SingleTargetPrompt) state.takePrompt();
+        prompt.resolve(state, card);
     }
 }

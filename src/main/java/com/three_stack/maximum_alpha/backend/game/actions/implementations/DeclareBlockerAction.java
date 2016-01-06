@@ -4,8 +4,8 @@ import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.ExistingCardAction;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
-import com.three_stack.maximum_alpha.backend.game.effects.BlockEffect;
-import com.three_stack.maximum_alpha.backend.game.effects.Effect;
+import com.three_stack.maximum_alpha.backend.game.prompts.BlockPrompt;
+import com.three_stack.maximum_alpha.backend.game.prompts.Prompt;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
 
 import java.util.List;
@@ -27,8 +27,8 @@ public class DeclareBlockerAction extends ExistingCardAction {
                 .filter(creature -> creature.isAttacking())
                 .collect(Collectors.toList());
 
-        Effect blockEffect = new BlockEffect(card, "Select attacker to block", blockableTargets);
-        state.addEffect(blockEffect);
+        Prompt blockPrompt = new BlockPrompt(card, "Select attacker to block", blockableTargets);
+        state.addPrompt(blockPrompt);
 
         Event event = new Event(player, " declared " + blocker.getName() + " as a blocker");
         state.addEvent(event);

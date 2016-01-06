@@ -1,12 +1,12 @@
-package com.three_stack.maximum_alpha.backend.game.effects;
+package com.three_stack.maximum_alpha.backend.game.prompts;
 
 import java.util.List;
 
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 
-public class ChooseEffect extends Effect {
+public class ChoosePrompt extends Prompt {
 
-    public ChooseEffect(Card source, String prompt, List<Card> options) {
+    public ChoosePrompt(Card source, String prompt, List<Card> options) {
         super(source, prompt);
         this.options = options;
     }

@@ -17,9 +17,9 @@ public class ActionService {
         actionMap.put("Play Card", PlayCardAction.class);//done
         actionMap.put("Assign Card", AssignCardAction.class);//done
         actionMap.put("Pull Card", PullCardAction.class);//implemented but not tested
-        actionMap.put("Activate Effect", ActivateEffectAction.class);//non-mvp
+        actionMap.put("Activate Prompt", ActivateEffectAction.class);//non-mvp
         actionMap.put("Choose", ChooseAction.class);//non-mvp
-        actionMap.put("Single Target Effect", SingleTargetEffectAction.class);//non-mvp
+        actionMap.put("Single Target Prompt", SingleTargetPromptAction.class);//non-mvp
         actionMap.put("Declare Attacker", DeclareAttackerAction.class);
         actionMap.put("Declare Blocker", DeclareBlockerAction.class);
         actionMap.put("Finish Phase", FinishPhaseAction.class);//implemented but not tested

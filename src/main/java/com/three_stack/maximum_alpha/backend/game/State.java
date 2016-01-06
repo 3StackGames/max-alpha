@@ -7,9 +7,8 @@ import com.three_stack.maximum_alpha.backend.game.actions.abstracts.Action;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
-import com.three_stack.maximum_alpha.backend.game.effects.Effect;
+import com.three_stack.maximum_alpha.backend.game.prompts.Prompt;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
-import com.three_stack.maximum_alpha.backend.game.phases.MainPhase;
 import com.three_stack.maximum_alpha.backend.game.phases.Phase;
 import com.three_stack.maximum_alpha.backend.game.phases.StartPhase;
 import com.three_stack.maximum_alpha.backend.game.utilities.Serializer;
@@ -66,7 +65,7 @@ public class State {
 	private int turn;
     //two players each taking 1 turn is turnCount + 2, starts at 0
 	private int turnCount;
-    private Queue<Effect> effectQueue;
+    private Queue<Prompt> promptQueue;
 	private List<Card> cardsPlayed;
 	private final transient Parameters parameters;
 	private Map<UUID, Card> cardList;
@@ -77,7 +76,7 @@ public class State {
 		this.parameters = parameters;
 		this.players = new ArrayList<>();
 		this.eventHistory = new ArrayList<>();
-        this.effectQueue = new ArrayDeque<>();
+        this.promptQueue = new ArrayDeque<>();
 		setupGame();
 	}
 	
@@ -244,20 +243,20 @@ public class State {
         this.turnCount = turnCount;
     }
     
-    public void addEffect(Effect effect) {
-    	effectQueue.add(effect);
+    public void addPrompt(Prompt prompt) {
+    	promptQueue.add(prompt);
     }
 
-    public Effect takeEffect() {
-        return effectQueue.remove();
+    public Prompt takePrompt() {
+        return promptQueue.remove();
     }
 
-    public Queue<Effect> getEffectQueue() {
-        return effectQueue;
+    public Queue<Prompt> getPromptQueue() {
+        return promptQueue;
     }
 
-    public void setEffectQueue(Queue<Effect> effectQueue) {
-        this.effectQueue = effectQueue;
+    public void setPromptQueue(Queue<Prompt> promptQueue) {
+        this.promptQueue = promptQueue;
     }
 
     public List<Card> getCardsPlayed() {

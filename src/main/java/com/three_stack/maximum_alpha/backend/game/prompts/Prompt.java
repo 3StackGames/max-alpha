@@ -1,13 +1,13 @@
-package com.three_stack.maximum_alpha.backend.game.effects;
+package com.three_stack.maximum_alpha.backend.game.prompts;
 
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 
-public abstract class Effect {
+public abstract class Prompt {
     protected Card source;
 
     protected String prompt;
 
-    public Effect(Card source, String prompt) {
+    public Prompt(Card source, String prompt) {
         this.source = source;
         this.prompt = prompt;
     }

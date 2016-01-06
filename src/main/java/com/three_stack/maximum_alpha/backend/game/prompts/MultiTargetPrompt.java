@@ -1,15 +1,14 @@
-package com.three_stack.maximum_alpha.backend.game.effects;
+package com.three_stack.maximum_alpha.backend.game.prompts;
 
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public abstract class MultiTargetEffect extends Effect {
+public abstract class MultiTargetPrompt extends Prompt {
 
-    public MultiTargetEffect(Card source, String prompt, List<UUID> targetables) {
+    public MultiTargetPrompt(Card source, String prompt, List<UUID> targetables) {
         super(source, prompt);
         this.targetables = targetables;
     }

@@ -1,4 +1,4 @@
-package com.three_stack.maximum_alpha.backend.game.effects;
+package com.three_stack.maximum_alpha.backend.game.prompts;
 
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
@@ -7,9 +7,9 @@ import com.three_stack.maximum_alpha.backend.game.events.Event;
 
 import java.util.List;
 
-public class BlockEffect extends SingleTargetEffect {
+public class BlockPrompt extends SingleTargetPrompt {
 
-    public BlockEffect(Card source, String prompt, List<Card> targetables) {
+    public BlockPrompt(Card source, String prompt, List<Card> targetables) {
         super(source, prompt, targetables);
     }
 
