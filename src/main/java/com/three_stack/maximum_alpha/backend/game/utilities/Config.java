@@ -1,4 +1,4 @@
-package com.three_stack.maximum_alpha.backend;
+package com.three_stack.maximum_alpha.backend.game.utilities;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

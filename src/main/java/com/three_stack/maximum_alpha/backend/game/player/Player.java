@@ -1,19 +1,16 @@
 package com.three_stack.maximum_alpha.backend.game.player;
 
+import com.three_stack.maximum_alpha.backend.game.Parameters;
+import com.three_stack.maximum_alpha.backend.game.ResourceList;
+import com.three_stack.maximum_alpha.backend.game.State;
+import com.three_stack.maximum_alpha.backend.game.cards.*;
+import com.three_stack.maximum_alpha.backend.game.events.Event;
+import com.three_stack.maximum_alpha.backend.server.Connection;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import com.three_stack.maximum_alpha.backend.game.*;
-import com.three_stack.maximum_alpha.backend.game.cards.Card;
-import com.three_stack.maximum_alpha.backend.game.cards.Creature;
-import com.three_stack.maximum_alpha.backend.game.cards.Structure;
-import com.three_stack.maximum_alpha.backend.game.cards.Worker;
-import com.three_stack.maximum_alpha.backend.game.cards.instances.Castle;
-import com.three_stack.maximum_alpha.backend.game.cards.instances.test.PilotRecruit;
-import com.three_stack.maximum_alpha.backend.game.events.Event;
-import com.three_stack.maximum_alpha.backend.server.Connection;
 
 public class Player {
     //@Todo: Actually retrieve their username
@@ -43,7 +40,7 @@ public class Player {
         hand = new Zone<>();
         deck = new Deck<>();
         field = new Zone<>();
-        field.add(new PilotRecruit());
+
         grave = new Zone<>();
         town = new Zone<>();
         courtyard = new Zone<>();

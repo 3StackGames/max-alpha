@@ -5,24 +5,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
-import com.mongodb.client.MongoDatabase;
-import com.three_stack.maximum_alpha.backend.Config;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
-import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
 import com.three_stack.maximum_alpha.backend.game.cards.CardFactory;
-import com.three_stack.maximum_alpha.backend.game.cards.instances.test.BasicStructure;
-import com.three_stack.maximum_alpha.backend.game.cards.instances.test.BlackCreature;
-import com.three_stack.maximum_alpha.backend.game.cards.instances.test.BlueCreature;
-import com.three_stack.maximum_alpha.backend.game.cards.instances.test.GreenCreature;
-import com.three_stack.maximum_alpha.backend.game.cards.instances.test.MediumStructure;
-import com.three_stack.maximum_alpha.backend.game.cards.instances.test.MilitiaMinuteman;
-import com.three_stack.maximum_alpha.backend.game.cards.instances.test.RedCreature;
-import com.three_stack.maximum_alpha.backend.game.cards.instances.test.WhiteCreature;
-import com.three_stack.maximum_alpha.backend.game.cards.instances.test.YellowCreature;
 import com.three_stack.maximum_alpha.backend.game.utilities.MongoService;
 import org.bson.Document;
 
@@ -84,26 +71,37 @@ public class Deck<T extends Card> extends Zone<T> {
 
     public static Deck<Card> loadDeck(int deckId) {
         MongoService mongoService = new MongoService();
-        MongoCollection<Document> cardCollection = mongoService.getCardsCollection();
 
-        MongoCursor<Document> cursor = cardCollection.find().iterator();
+        MongoCollection<Document> deckCollection = mongoService.getDeckCollection();
+        MongoCollection<Document> cardCollection = mongoService.getCardCollection();
 
-        if(!cursor.hasNext()) {
-            throw new IllegalStateException("Unable to retrieve cards from database");
+        MongoCursor<Document> deckCursor = deckCollection.find(new Document("id", deckId)).iterator();
+
+        if(!deckCursor.hasNext()) {
+            throw new IllegalArgumentException("Deck Not found");
         }
 
-        Document cardDocument = cursor.next();
+        Document deck = deckCursor.next();
+
+        List<Integer> mainDeckIds = (List<Integer>) deck.get("mainDeckIds");
+        List<Integer> structureIds = (List<Integer>) deck.get("buildableIds");
 
         List<Card> cards = new ArrayList<>();
 
-        for(int i = 0; i < 50; i++) {
+        for(Integer mainDeckId : mainDeckIds) {
+            Document cardDocument = cardCollection.find(new Document("id", mainDeckId)).first();
+
             Card card = CardFactory.create(cardDocument);
             cards.add(card);
         }
         
-        List<Structure> buildables = new ArrayList<>();     
-        buildables.add(new BasicStructure());
-        buildables.add(new MediumStructure());
+        List<Structure> buildables = new ArrayList<>();
+        for(Integer structureId : structureIds) {
+            Document cardDocument = cardCollection.find(new Document("id", structureId)).first();
+
+            Structure structure = (Structure) CardFactory.create(cardDocument);
+            buildables.add(structure);
+        }
 
         return new Deck<>(cards, buildables);
     }

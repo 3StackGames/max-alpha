@@ -10,7 +10,7 @@ public class Structure extends DamageableCard {
         underConstruction = true;
     }
 
-    protected Structure(Structure other) {
+    public Structure(Structure other) {
         super(other);
         this.underConstruction = other.underConstruction;
     }

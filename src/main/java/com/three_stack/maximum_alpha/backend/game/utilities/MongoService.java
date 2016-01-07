@@ -1,12 +1,10 @@
 package com.three_stack.maximum_alpha.backend.game.utilities;
 
-import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.three_stack.maximum_alpha.backend.Config;
 import org.bson.Document;
 
 import java.util.ArrayList;
@@ -19,10 +17,6 @@ public class MongoService {
     public MongoService() {
         client = getClient();
         database = client.getDatabase("max-alpha");
-    }
-
-    public MongoCollection<Document> getCardsCollection() {
-        return database.getCollection("cards");
     }
 
     private MongoClient getClient() {
@@ -38,5 +32,13 @@ public class MongoService {
 
         ServerAddress address = new ServerAddress(Config.getProperty("mongo.address"), port);
         return new MongoClient(address, credentials);
+    }
+
+    public MongoCollection<Document> getCardCollection() {
+        return database.getCollection("cards");
+    }
+
+    public MongoCollection<Document> getDeckCollection() {
+        return database.getCollection("decks");
     }
 }
