@@ -85,7 +85,7 @@ public class Creature extends DamageableCard implements Worker {
 
     @ExposeMethodResult("canAttack")
     public boolean canAttack() {
-        return canAttack && !(exhausted || hasSummoningSickness);
+        return canAttack && !(exhausted || hasSummoningSickness) && !isAttacking();
     }
 
     public void setCanAttack(boolean canAttack) {
@@ -106,7 +106,7 @@ public class Creature extends DamageableCard implements Worker {
 
     @ExposeMethodResult("canBlock")
     public boolean canBlock() {
-        return canBlock && !exhausted;
+        return canBlock && !exhausted && !isBlocking();
     }
 
     public void setCanBlock(boolean canBlock) {

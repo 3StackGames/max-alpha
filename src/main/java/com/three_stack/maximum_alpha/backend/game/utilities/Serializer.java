@@ -36,6 +36,7 @@ public class Serializer {
     	return gsonCard.toJson(object);
     }
     
+    //TODO: fix
     public static class CardExclStrat implements ExclusionStrategy {
 
         public boolean shouldSkipClass(Class<?> arg0) {
@@ -44,7 +45,7 @@ public class Serializer {
 
         public boolean shouldSkipField(FieldAttributes f) {
 
-            return (f.getDeclaringClass() == Card.class && !f.getName().equals("id"));
+            return (Card.class.isAssignableFrom(f.getDeclaringClass()) && !f.getName().equals("id"));
         }
 
     }
