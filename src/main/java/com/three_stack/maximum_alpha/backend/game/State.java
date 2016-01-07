@@ -67,7 +67,7 @@ public class State {
 	private int turn;
     //two players each taking 1 turn is turnCount + 2, starts at 0
 	private int turnCount;
-    private List<Prompt> promptList;
+    private Queue<Prompt> promptQueue;
 	private List<Card> cardsPlayed;
 	private final transient Parameters parameters;
 	private transient Map<UUID, Card> masterCardList;
@@ -79,7 +79,7 @@ public class State {
 		this.parameters = parameters;
 		this.players = new ArrayList<>();
 		this.eventHistory = new ArrayList<>();
-        this.promptList = new ArrayList<>();
+        this.promptQueue = new ArrayDeque<>();
 		setupGame();
 	}
 	
@@ -275,15 +275,15 @@ public class State {
     }
     
     public void addPrompt(Prompt prompt) {
-    	promptList.add(prompt);
+    	promptQueue.add(prompt);
     }
 
     public Prompt getCurrentPrompt() {
-        return promptList.get(0);
+        return promptQueue.peek();
     }
     
     public void removePrompt() {
-    	promptList.remove(0);
+    	promptQueue.remove(0);
     }
 
     public List<Card> getCardsPlayed() {

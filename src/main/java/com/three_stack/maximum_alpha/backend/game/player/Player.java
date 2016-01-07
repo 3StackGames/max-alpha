@@ -3,6 +3,7 @@ package com.three_stack.maximum_alpha.backend.game.player;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.three_stack.maximum_alpha.backend.game.*;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
@@ -88,8 +89,7 @@ public class Player {
     }
     
     public Collection<Card> getTargets() {
-    	Collection<Card> targets = new HashSet<>();
-    	targets.addAll(courtyard.getCards());
+    	Collection<Card> targets = courtyard.getCards().stream().filter(structure -> !structure.isUnderConstruction()).collect(Collectors.toSet());
     	targets.add(castle);
     	return targets;
     }

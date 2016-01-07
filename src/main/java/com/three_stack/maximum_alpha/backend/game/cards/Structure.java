@@ -10,7 +10,10 @@ public abstract class Structure extends DamageableCard {
         underConstruction = true;
     }
 
-    //TODO: copy method to "construct" a copy of this
+    protected Structure(Structure other) {
+        super(other);
+        this.underConstruction = other.underConstruction;
+    }
 
     public boolean isUnderConstruction() {
         return underConstruction;
@@ -19,10 +22,4 @@ public abstract class Structure extends DamageableCard {
     public void setUnderConstruction(boolean underConstruction) {
         this.underConstruction = underConstruction;
     }
-
-    public Structure copy() {
-
-        return null;
-    }
-
 }

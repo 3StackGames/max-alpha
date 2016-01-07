@@ -42,6 +42,16 @@ public abstract class Card {
         this.dominantColor = calculateDominantColor();
 	}
 
+    protected Card(Card other) {
+        this.id = UUID.randomUUID();
+        this.name = other.name;
+        this.defaultCost = other.defaultCost;
+        this.currentCost = other.currentCost;
+        this.text = other.text;
+        this.flavorText = other.flavorText;
+        this.counters = other.counters;
+    }
+
     public void addTrigger(State.TriggerPoint triggerPoint, Trigger trigger) {
         triggers.put(triggerPoint, trigger);
     }

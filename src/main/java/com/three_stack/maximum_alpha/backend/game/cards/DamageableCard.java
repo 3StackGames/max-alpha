@@ -30,6 +30,15 @@ public abstract class DamageableCard extends Card {
         buffs = new ArrayList<Buff>();
     }
 
+    public DamageableCard(DamageableCard other) {
+        super(other);
+        this.health = other.health;
+        this.damageTaken = other.damageTaken;
+        this.exhausted = other.exhausted;
+        this.refreshable = other.refreshable;
+        this.buffs = other.buffs;
+    }
+
     public Event takeDamage(int damage, Card source) {
         damageTaken += damage;
         return new Event(this.getName() + " took " + damage + " damage from " + source.getName());
