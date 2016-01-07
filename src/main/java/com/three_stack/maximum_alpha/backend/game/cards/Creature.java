@@ -6,6 +6,9 @@ import com.three_stack.maximum_alpha.backend.game.ResourceList;
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Creature extends DamageableCard implements Worker {
     //@Todo: Add Classes / Roles
     //@Todo: Add Tags
@@ -15,8 +18,9 @@ public class Creature extends DamageableCard implements Worker {
     protected Creature blockTarget;
     protected transient boolean canBlock;
     protected boolean hasSummoningSickness;
+    protected List<Creature> blockers;
 
-    protected Creature(String name, ResourceList cost, String text, String flavorText, int attack, int health) {
+    public Creature(String name, ResourceList cost, String text, String flavorText, int attack, int health) {
         super(name, cost, text, flavorText, health);
         this.attack = attack;
         attackTarget = null;
@@ -24,6 +28,7 @@ public class Creature extends DamageableCard implements Worker {
         blockTarget = null;
         canBlock = true;
         hasSummoningSickness = true;
+        resetBlockers();
     }
 
     @Override
@@ -74,6 +79,10 @@ public class Creature extends DamageableCard implements Worker {
         attackTarget = c;
     }
 
+    public boolean isBlocked() {
+        return !blockers.isEmpty();
+    }
+
     @ExposeMethodResult("canAttack")
     public boolean canAttack() {
         return canAttack && !(exhausted || hasSummoningSickness);
@@ -102,5 +111,17 @@ public class Creature extends DamageableCard implements Worker {
 
     public void setCanBlock(boolean canBlock) {
         this.canBlock = canBlock;
+    }
+
+    public List<Creature> getBlockers() {
+        return blockers;
+    }
+
+    public void resetBlockers() {
+        blockers = new ArrayList<>();
+    }
+
+    public void addBlocker(Creature blocker) {
+        blockers.add(blocker);
     }
 }

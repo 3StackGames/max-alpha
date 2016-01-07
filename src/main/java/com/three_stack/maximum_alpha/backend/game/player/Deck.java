@@ -23,6 +23,7 @@ import com.three_stack.maximum_alpha.backend.game.cards.instances.test.MilitiaMi
 import com.three_stack.maximum_alpha.backend.game.cards.instances.test.RedCreature;
 import com.three_stack.maximum_alpha.backend.game.cards.instances.test.WhiteCreature;
 import com.three_stack.maximum_alpha.backend.game.cards.instances.test.YellowCreature;
+import com.three_stack.maximum_alpha.backend.game.utilities.MongoService;
 import org.bson.Document;
 
 public class Deck<T extends Card> extends Zone<T> {
@@ -82,10 +83,8 @@ public class Deck<T extends Card> extends Zone<T> {
 	}
 
     public static Deck<Card> loadDeck(int deckId) {
-        MongoClient client = new MongoClient((String) Config.getProperty("mongo.address"), Integer.parseInt(Config.getProperty("mongo.port")));
-        MongoDatabase database = client.getDatabase("MaxAlpha");
-
-        MongoCollection<Document> cardCollection = database.getCollection("cards");
+        MongoService mongoService = new MongoService();
+        MongoCollection<Document> cardCollection = mongoService.getCardsCollection();
 
         MongoCursor<Document> cursor = cardCollection.find().iterator();
 

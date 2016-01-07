@@ -24,41 +24,25 @@ public class DamagePhase extends Phase {
     public void start(State state) {
         state.setCurrentPhase(instance);
 
-
-        List<Creature> blockers = state.getOtherPlayers(state.getTurnPlayer()).stream()
-                .map( player -> player.getField().getCards())
-                .flatMap( cards -> cards.stream())
-                .filter( Creature::isBlocking)
-                .collect(Collectors.toList());
-
-        Set<Creature> blockedAttackers = blockers.stream()
-                .map( blocker -> blocker.getBlockTarget())
-                .collect(Collectors.toSet());
-
-        //handle blocks
-        //@Todo: handle blocking order
-        for(Creature blocker : blockers) {
-            Creature attacker = blocker.getBlockTarget();
-            if(attacker.isAlive()) {
-                state.addEvent(attacker.takeDamage(blocker.getCurrentAttack(), blocker));
-                state.addEvent(blocker.takeDamage(attacker.getCurrentAttack(), attacker));
-
-                blocker.setBlockTarget(null);
-            }
-        }
-
-        //handle attacks to structures
         List<Creature> attackers = state.getTurnPlayer().getField().getCards().stream()
-                .filter( Creature::isAttacking)
+                .filter(Creature::isAttacking)
                 .collect(Collectors.toList());
 
-        attackers.forEach((attacker) -> {
-            if(!blockedAttackers.contains(attacker)) {
+        for(Creature attacker : attackers) {
+            if(!attacker.isBlocked()) {
                 state.addEvent(attacker.getAttackTarget().takeDamage(attacker.getCurrentAttack(), attacker));
+            } else {
+                attacker.getBlockers().stream().filter(blocker -> attacker.isAlive()).forEach(blocker -> {
+                    state.addEvent(attacker.takeDamage(blocker.getCurrentAttack(), blocker));
+                    state.addEvent(blocker.takeDamage(attacker.getCurrentAttack(), attacker));
+
+                    blocker.setBlockTarget(null);
+                });
+                attacker.resetBlockers();
             }
             attacker.setAttackTarget(null);
             attacker.setExhausted(true);
-        });
+        }
 
         end(state);
     }

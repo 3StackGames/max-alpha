@@ -26,8 +26,10 @@ public class BlockPrompt extends Prompt {
     public void resolve(State state) {
         Creature blocker = (Creature) getSource();
         TargetStep targetStep = (TargetStep) steps.get(0);
-        Card target = targetStep.getTarget();
-        blocker.setBlockTarget((Creature) target);
+        Creature target = (Creature) targetStep.getTarget();
+
+        blocker.setBlockTarget(target);
+        target.addBlocker(blocker);
 
         Event event = new Event(blocker.getName() + " is now blocking " + target.getName());
         state.addEvent(event);
