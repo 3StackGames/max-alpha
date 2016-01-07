@@ -6,7 +6,7 @@ import com.three_stack.maximum_alpha.backend.game.ResourceList;
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
 
-public class Creature extends DamageableCard implements Worker {
+public abstract class Creature extends DamageableCard implements Worker {
     //@Todo: Add Classes / Roles
     //@Todo: Add Tags
     protected final int attack;
