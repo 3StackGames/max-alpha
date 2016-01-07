@@ -29,9 +29,9 @@ public class Player {
     private Zone<Card> grave;
     private Zone<Creature> town;
     private Zone<Structure> courtyard;
+    private Castle castle;
 
     private ResourceList resources;
-    private Castle castle;
     private boolean hasAssignedOrPulled;
 
     public Player(Connection connection, int baseMaxLife) {

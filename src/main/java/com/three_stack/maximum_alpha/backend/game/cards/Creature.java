@@ -16,7 +16,7 @@ public class Creature extends DamageableCard implements Worker {
     protected transient boolean canBlock;
     protected boolean hasSummoningSickness;
 
-    protected Creature(String name, ResourceList cost, String text, String flavorText, int attack, int health) {
+    public Creature(String name, ResourceList cost, String text, String flavorText, int attack, int health) {
         super(name, cost, text, flavorText, health);
         this.attack = attack;
         attackTarget = null;
