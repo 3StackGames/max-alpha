@@ -4,7 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ResourceList {
-	public enum Color {
+
+    public enum Color {
 		RED, BLACK, GREEN, WHITE, YELLOW, BLUE, COLORLESS
 	}
 
@@ -31,6 +32,17 @@ public class ResourceList {
         setup();
         setColor(color, colorAmount);
         setColor(Color.COLORLESS, colorAmount);
+    }
+
+    public ResourceList(Map<String, Integer> costMap) {
+        setup();
+        for(Map.Entry<String, Integer> keyValue : costMap.entrySet()) {
+            String key = keyValue.getKey();
+            int value = keyValue.getValue();
+
+            Color color = Color.valueOf(key.toUpperCase());
+            setColor(color, value);
+        }
     }
 
     public ResourceList(int colorlessAmount) {

@@ -5,8 +5,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import com.mongodb.MongoClient;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.MongoDatabase;
+import com.three_stack.maximum_alpha.backend.Config;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
+import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
+import com.three_stack.maximum_alpha.backend.game.cards.CardFactory;
 import com.three_stack.maximum_alpha.backend.game.cards.instances.test.BasicStructure;
 import com.three_stack.maximum_alpha.backend.game.cards.instances.test.BlackCreature;
 import com.three_stack.maximum_alpha.backend.game.cards.instances.test.BlueCreature;
@@ -16,6 +23,7 @@ import com.three_stack.maximum_alpha.backend.game.cards.instances.test.MilitiaMi
 import com.three_stack.maximum_alpha.backend.game.cards.instances.test.RedCreature;
 import com.three_stack.maximum_alpha.backend.game.cards.instances.test.WhiteCreature;
 import com.three_stack.maximum_alpha.backend.game.cards.instances.test.YellowCreature;
+import org.bson.Document;
 
 public class Deck<T extends Card> extends Zone<T> {
 	private Zone<Structure> buildables;
@@ -74,15 +82,24 @@ public class Deck<T extends Card> extends Zone<T> {
 	}
 
     public static Deck<Card> loadDeck(int deckId) {
+        MongoClient client = new MongoClient((String) Config.getProperty("mongo.address"), Integer.parseInt(Config.getProperty("mongo.port")));
+        MongoDatabase database = client.getDatabase("MaxAlpha");
+
+        MongoCollection<Document> cardCollection = database.getCollection("cards");
+
+        MongoCursor<Document> cursor = cardCollection.find().iterator();
+
+        if(!cursor.hasNext()) {
+            throw new IllegalStateException("Unable to retrieve cards from database");
+        }
+
+        Document cardDocument = cursor.next();
+
         List<Card> cards = new ArrayList<>();
-        for(int i = 0; i < 7; i++) {
-            cards.add(new WhiteCreature());
-            cards.add(new BlackCreature());
-            cards.add(new YellowCreature());
-            cards.add(new RedCreature());
-            cards.add(new BlueCreature());
-            cards.add(new GreenCreature());
-            cards.add(new MilitiaMinuteman());
+
+        for(int i = 0; i < 50; i++) {
+            Card card = CardFactory.create(cardDocument);
+            cards.add(card);
         }
         
         List<Structure> buildables = new ArrayList<>();     

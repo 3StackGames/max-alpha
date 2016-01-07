@@ -2,7 +2,7 @@ package com.three_stack.maximum_alpha.backend.game.cards;
 
 import com.three_stack.maximum_alpha.backend.game.ResourceList;
 
-public abstract class Structure extends DamageableCard {
+public class Structure extends DamageableCard {
     protected boolean underConstruction;
 
     protected Structure(String name, ResourceList cost, String text, String flavorText, int health) {

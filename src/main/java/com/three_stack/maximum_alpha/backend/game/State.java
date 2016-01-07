@@ -283,7 +283,7 @@ public class State {
     }
     
     public void removePrompt() {
-    	promptQueue.remove(0);
+    	promptQueue.remove();
     }
 
     public List<Card> getCardsPlayed() {
