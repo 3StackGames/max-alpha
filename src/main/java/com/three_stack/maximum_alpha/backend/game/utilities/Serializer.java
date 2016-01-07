@@ -36,6 +36,7 @@ public class Serializer {
     	return gsonCard.toJson(object);
     }
     
+    //TODO: fix
     public static class CardExclStrat implements ExclusionStrategy {
 
         public boolean shouldSkipClass(Class<?> arg0) {
