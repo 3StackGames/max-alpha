@@ -57,7 +57,7 @@ public class State {
     }
 
 	private List<Player> players;
-	private List<Event> eventHistory;
+	private List<List<Event>> eventHistory;
 	private Phase currentPhase;
 	/**
 	 * Marks when combat has happened in Main Phase
@@ -224,14 +224,16 @@ public class State {
     }
 
 	public void addEvent(Event event) {
-		eventHistory.add(event);
+        List<Event> newEvents = new ArrayList<>();
+        newEvents.add(event);
+		eventHistory.add(newEvents);
 	}
 
-    public List<Event> getEventHistory() {
+    public List<List<Event>> getEventHistory() {
         return eventHistory;
     }
 
-    public void setEventHistory(List<Event> eventHistory) {
+    public void setEventHistory(List<List<Event>> eventHistory) {
         this.eventHistory = eventHistory;
     }
 

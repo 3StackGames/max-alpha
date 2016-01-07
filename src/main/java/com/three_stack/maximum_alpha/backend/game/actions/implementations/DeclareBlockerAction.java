@@ -27,7 +27,7 @@ public class DeclareBlockerAction extends ExistingCardAction {
                 .filter(creature -> creature.isAttacking())
                 .collect(Collectors.toList());
 
-        Prompt blockPrompt = new BlockPrompt(card, "Select attacker to block", blockableTargets);
+        Prompt blockPrompt = new BlockPrompt(card, blockableTargets);
         state.addPrompt(blockPrompt);
 
         Event event = new Event(player, " declared " + blocker.getName() + " as a blocker");

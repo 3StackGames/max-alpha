@@ -1,16 +1,30 @@
 package com.three_stack.maximum_alpha.backend.game.prompts;
 
+import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
+import com.three_stack.maximum_alpha.backend.game.prompts.steps.Step;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Prompt {
     protected Card source;
+    protected List<Step> steps;
+    protected int currentStep;
 
-    protected String prompt;
-
-    public Prompt(Card source, String prompt) {
+    public Prompt(Card source) {
         this.source = source;
-        this.prompt = prompt;
+        this.steps = new ArrayList<>();
+        currentStep = 0;
     }
+
+    public void processStep(Card input) {
+        currentStep++;
+    }
+
+    public abstract void resolve(State state);
+
+    public abstract boolean hasNext();
 
     public Card getSource() {
         return source;
@@ -18,13 +32,5 @@ public abstract class Prompt {
 
     public void setSource(Card source) {
         this.source = source;
-    }
-
-    public String getPrompt() {
-        return prompt;
-    }
-
-    public void setPrompt(String prompt) {
-        this.prompt = prompt;
     }
 }

@@ -5,10 +5,11 @@ import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
+import com.three_stack.maximum_alpha.backend.game.prompts.steps.TargetStep;
 
 import java.util.List;
 
-public class AttackPrompt extends SingleTargetPrompt {
+public class AttackPrompt extends TargetStep {
 
     public AttackPrompt(Card source, String prompt, List<Card> targetables) {
         super(source, prompt, targetables);
