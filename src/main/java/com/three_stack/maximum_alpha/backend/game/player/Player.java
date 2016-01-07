@@ -91,9 +91,14 @@ public class Player {
     	targets.add(castle);
     	return targets;
     }
+    
+    public void completeStructures() {
+    	courtyard.getCards().stream().filter(Structure::isUnderConstruction).forEach((structure) -> {
+    		structure.setUnderConstruction(false);
+    	});
+    }
 
     public void newTurn() {
-        setHasAssignedOrPulled(false);
     }
 
     public void draw() {
