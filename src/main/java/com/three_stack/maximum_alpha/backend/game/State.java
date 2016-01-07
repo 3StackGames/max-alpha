@@ -217,7 +217,7 @@ public class State {
 
 	public String toString() {
     	generateCardList();
-		return Serializer.toJson(this);
+		return Serializer.toJsonCard(this);
 	}
 
 	//Getters and setters
