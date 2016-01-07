@@ -18,13 +18,15 @@ public abstract class Prompt {
         currentStep = 0;
     }
 
-    public void processStep(Card input) {
+    public void processCurrentStep(Card input) {
         currentStep++;
     }
 
     public abstract void resolve(State state);
 
-    public abstract boolean hasNext();
+    public boolean isDone() {
+        return currentStep >= steps.size();
+    }
 
     public Card getSource() {
         return source;

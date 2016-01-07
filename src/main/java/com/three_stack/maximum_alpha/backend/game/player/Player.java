@@ -10,6 +10,7 @@ import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
 import com.three_stack.maximum_alpha.backend.game.cards.Worker;
 import com.three_stack.maximum_alpha.backend.game.cards.instances.Castle;
+import com.three_stack.maximum_alpha.backend.game.cards.instances.test.PilotRecruit;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
 import com.three_stack.maximum_alpha.backend.server.Connection;
 
@@ -41,6 +42,7 @@ public class Player {
         hand = new Zone<>();
         deck = new Deck<>();
         field = new Zone<>();
+        field.add(new PilotRecruit());
         grave = new Zone<>();
         town = new Zone<>();
         courtyard = new Zone<>();

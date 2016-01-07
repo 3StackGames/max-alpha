@@ -56,7 +56,7 @@ public class State {
     }
 
 	private List<Player> players;
-	private List<List<Event>> eventHistory;
+	private List<Event> eventHistory;
 	private Phase currentPhase;
 	/**
 	 * Marks when combat has happened in Main Phase
@@ -231,16 +231,14 @@ public class State {
     }
 
 	public void addEvent(Event event) {
-        List<Event> newEvents = new ArrayList<>();
-        newEvents.add(event);
-		eventHistory.add(newEvents);
+        eventHistory.add(event);
 	}
 
-    public List<List<Event>> getEventHistory() {
+    public List<Event> getEventHistory() {
         return eventHistory;
     }
 
-    public void setEventHistory(List<List<Event>> eventHistory) {
+    public void setEventHistory(List<Event> eventHistory) {
         this.eventHistory = eventHistory;
     }
 
@@ -280,16 +278,12 @@ public class State {
     	promptList.add(prompt);
     }
 
-    public Prompt checkPrompt() {
+    public Prompt getCurrentPrompt() {
         return promptList.get(0);
     }
     
     public void removePrompt() {
     	promptList.remove(0);
-    }
-    
-    public void updatePrompt(Prompt newPrompt) {
-    	promptList.set(0, newPrompt);
     }
 
     public List<Card> getCardsPlayed() {

@@ -4,10 +4,8 @@ import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
-import com.three_stack.maximum_alpha.backend.game.prompts.steps.Step;
 import com.three_stack.maximum_alpha.backend.game.prompts.steps.TargetStep;
 
-import java.lang.annotation.Target;
 import java.util.List;
 
 public class BlockPrompt extends Prompt {
@@ -18,10 +16,10 @@ public class BlockPrompt extends Prompt {
     }
 
     @Override
-    public void processStep(Card input) {
-        super.processStep(input);
+    public void processCurrentStep(Card input) {
+        super.processCurrentStep(input);
         TargetStep step = (TargetStep) steps.get(0);
-        step.setTarget(input);
+        step.complete(input);
     }
 
     @Override
@@ -33,10 +31,5 @@ public class BlockPrompt extends Prompt {
 
         Event event = new Event(blocker.getName() + " is now blocking " + target.getName());
         state.addEvent(event);
-    }
-
-    @Override
-    public boolean hasNext() {
-        return false;
     }
 }
