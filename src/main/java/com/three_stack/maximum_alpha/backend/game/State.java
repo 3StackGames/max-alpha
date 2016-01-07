@@ -15,7 +15,6 @@ import com.three_stack.maximum_alpha.backend.game.phases.Phase;
 import com.three_stack.maximum_alpha.backend.game.phases.StartPhase;
 import com.three_stack.maximum_alpha.backend.game.utilities.Serializer;
 import com.three_stack.maximum_alpha.backend.server.Connection;
-import io.gsonfire.annotations.ExposeMethodResult;
 
 public class State {
     public enum TriggerPoint {
@@ -68,10 +67,11 @@ public class State {
 	private int turn;
     //two players each taking 1 turn is turnCount + 2, starts at 0
 	private int turnCount;
-    private Queue<Prompt> promptQueue;
+    private List<Prompt> promptList;
 	private List<Card> cardsPlayed;
 	private final transient Parameters parameters;
 	private transient Map<UUID, Card> masterCardList;
+	private boolean gameOver;
 	
 	//game over: winningPlayers, losingPlayers, tiedPlayers
 	
@@ -79,11 +79,13 @@ public class State {
 		this.parameters = parameters;
 		this.players = new ArrayList<>();
 		this.eventHistory = new ArrayList<>();
-        this.promptQueue = new ArrayDeque<>();
+        this.promptList = new ArrayList<>();
 		setupGame();
 	}
 	
 	public void setupGame() {
+        gameOver = false;
+        
         for(Connection connection : parameters.players) {
             Player player = new Player(connection, parameters.TOTAL_HEALTH);
             players.add(player);
@@ -107,8 +109,13 @@ public class State {
 	
 	//Phase utilities
 
+	public void completeStructures() {
+		getTurnPlayer().completeStructures();
+	}
+	
 	public void turnPlayerDraw() {
-		getTurnPlayer().draw();
+		if(turnCount > 0)
+			getTurnPlayer().draw();
 	}
 	
 	public void gatherResources() {
@@ -270,19 +277,19 @@ public class State {
     }
     
     public void addPrompt(Prompt prompt) {
-    	promptQueue.add(prompt);
+    	promptList.add(prompt);
     }
 
-    public Prompt takePrompt() {
-        return promptQueue.remove();
+    public Prompt checkPrompt() {
+        return promptList.get(0);
     }
-
-    public Queue<Prompt> getPromptQueue() {
-        return promptQueue;
+    
+    public void removePrompt() {
+    	promptList.remove(0);
     }
-
-    public void setPromptQueue(Queue<Prompt> promptQueue) {
-        this.promptQueue = promptQueue;
+    
+    public void updatePrompt(Prompt newPrompt) {
+    	promptList.set(0, newPrompt);
     }
 
     public List<Card> getCardsPlayed() {

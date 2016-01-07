@@ -29,6 +29,7 @@ public class StartPhase extends Phase {
     public void start(State state) {
         state.setCurrentPhase(instance);
         //@Todo: structure complete
+        state.completeStructures();
         //resources generated
         state.gatherResources();
         //@Todo: triggers
