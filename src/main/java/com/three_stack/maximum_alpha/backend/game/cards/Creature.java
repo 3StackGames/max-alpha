@@ -127,4 +127,14 @@ public class Creature extends DamageableCard implements Worker {
     public void addBlocker(Creature blocker) {
         blockers.add(blocker);
     }
+
+	@Override
+	public boolean isAssignable() {
+		return true;
+	}
+
+	@Override
+	public boolean isPullable() {
+		return true;
+	}
 }

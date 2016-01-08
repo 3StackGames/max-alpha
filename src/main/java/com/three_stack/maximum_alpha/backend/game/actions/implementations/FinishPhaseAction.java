@@ -12,4 +12,12 @@ public class FinishPhaseAction extends Action {
         state.addEvent(event);
         state.getCurrentPhase().end(state);
     }
+    
+    @Override
+    public boolean isValid(State state) {
+		boolean notInPrompt = notInPrompt(state);
+		boolean playerTurn = isPhase(state, "Block Phase") ? !isPlayerTurn(state) : isPlayerTurn(state);
+		
+    	return notInPrompt && playerTurn;
+    }
 }

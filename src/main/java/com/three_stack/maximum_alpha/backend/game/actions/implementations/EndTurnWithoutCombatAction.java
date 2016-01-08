@@ -15,4 +15,14 @@ public class EndTurnWithoutCombatAction extends Action {
         Event event = new Event(getPlayer(state).getUsername() + " has ended " + state.getCurrentPhase().getName());
         state.getEventHistory().add(event);
     }
+
+	@Override
+	public boolean isValid(State state) {
+		boolean notInPrompt = notInPrompt(state);
+		boolean correctPhase = isPhase(state, "Main Phase");
+		boolean playerTurn = isPlayerTurn(state);
+		boolean combatNotStarted = !state.isCombatEnded();
+		
+		return notInPrompt && correctPhase && playerTurn && combatNotStarted;
+	}
 }

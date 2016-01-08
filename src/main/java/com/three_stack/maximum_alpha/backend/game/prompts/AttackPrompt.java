@@ -1,18 +1,19 @@
 package com.three_stack.maximum_alpha.backend.game.prompts;
 
+import java.util.List;
+
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
+import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.prompts.steps.TargetStep;
-
-import java.util.List;
 
 public class AttackPrompt extends Prompt {
 
-    public AttackPrompt(Card source, List<Card> targetables) {
-        super(source);
+    public AttackPrompt(Card source, Player player, List<Card> targetables) {
+        super(source, player);
         steps.add(new TargetStep("Select what you want attacked", targetables));
     }
 
@@ -33,4 +34,10 @@ public class AttackPrompt extends Prompt {
         Event event = new Event(attacker.getName() + " is now attacking " + target.getName());
         state.addEvent(event);
     }
+
+	@Override
+	public boolean isValidInput(Card input) {
+		TargetStep step = (TargetStep) getCurrentStep();
+		return step.getTargetables().contains(input);	
+	}
 }

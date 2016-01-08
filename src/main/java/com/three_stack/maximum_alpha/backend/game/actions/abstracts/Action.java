@@ -17,6 +17,8 @@ public abstract class Action extends Event {
     public void run(State state) {
         player = state.findPlayer(playerId);
     }
+    
+    public abstract boolean isValid(State state);
 
     public UUID getPlayerId() {
         return playerId;
@@ -33,5 +35,17 @@ public abstract class Action extends Event {
             }
         }
         throw new IllegalArgumentException("Player Not Found");
+    }
+    
+    public boolean isPlayerTurn(State state) {
+		return (player == state.getTurnPlayer()); 	
+    }
+    
+    public boolean isPhase(State state, String phaseName) {
+    	return state.getCurrentPhase().getName().equals(phaseName);
+    }
+    
+    public boolean notInPrompt(State state) {
+    	return state.getCurrentPrompt() == null;
     }
 }

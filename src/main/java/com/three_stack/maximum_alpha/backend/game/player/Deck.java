@@ -48,7 +48,7 @@ public class Deck extends Zone<Card> {
     }
 
     public void placeAtBottom(Card card) {
-        if (containsAll(card)) {
+        if (contains(card)) {
             remove(card);
             add(card);
         }

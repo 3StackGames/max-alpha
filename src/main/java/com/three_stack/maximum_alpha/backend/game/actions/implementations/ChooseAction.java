@@ -13,4 +13,10 @@ public class ChooseAction extends Action {
     public void run(State state) {
         super.run(state);
     }
+
+	@Override
+	public boolean isValid(State state) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

@@ -17,19 +17,29 @@ public class DeclareAttackerAction extends ExistingCardAction {
     @Override
     public void run(State state) {
         super.run(state);
-        if (!(card instanceof Creature)) {
-            throw new IllegalArgumentException("Attacking card isn't a creature");
-        }
         Creature attacker = (Creature) card;
         List<Card> attackableTargets = state.getOtherPlayers(player).stream()
                 .map(Player::getTargets)
                 .flatMap(p -> p.stream())
                 .collect(Collectors.toList());
 
-        Prompt attackPrompt = new AttackPrompt(attacker,  attackableTargets);
+        Prompt attackPrompt = new AttackPrompt(attacker, state.getTurnPlayer(), attackableTargets);
         state.addPrompt(attackPrompt);
 
         Event event = new Event(player, " declared " + attacker.getName() + " as attacking");
         state.addEvent(event);
     }
+
+	@Override
+	public boolean isValid(State state) {
+		boolean notInPrompt = notInPrompt(state);
+		boolean correctPhase = isPhase(state, "Attack Phase");
+		boolean playerTurn = isPlayerTurn(state);
+		boolean isCreature = card instanceof Creature;
+		Creature attacker = (Creature) card;
+		boolean isOnPlayerField = player.getField().getCreatures().contains(attacker);
+		boolean canAttack = attacker.canAttack();
+		
+		return notInPrompt && correctPhase && playerTurn && isCreature && isOnPlayerField && canAttack;
+	}
 }
