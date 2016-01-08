@@ -23,11 +23,11 @@ public class DeclareBlockerAction extends ExistingCardAction {
 
         Creature blocker = (Creature) card;
 
-        List<Card> blockableTargets = state.getTurnPlayer().getField().getCards().stream()
+        List<Card> blockableTargets = state.getTurnPlayer().getField().getCreatures().stream()
                 .filter(creature -> creature.isAttacking())
                 .collect(Collectors.toList());
 
-        Prompt blockPrompt = new BlockPrompt(card, blockableTargets);
+        Prompt blockPrompt = new BlockPrompt(card, player, blockableTargets);
         state.addPrompt(blockPrompt);
 
         Event event = new Event(player, " declared " + blocker.getName() + " as a blocker");

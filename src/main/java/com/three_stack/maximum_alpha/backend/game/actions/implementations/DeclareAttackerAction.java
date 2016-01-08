@@ -26,7 +26,7 @@ public class DeclareAttackerAction extends ExistingCardAction {
                 .flatMap(p -> p.stream())
                 .collect(Collectors.toList());
 
-        Prompt attackPrompt = new AttackPrompt(attacker,  attackableTargets);
+        Prompt attackPrompt = new AttackPrompt(attacker, player, attackableTargets);
         state.addPrompt(attackPrompt);
 
         Event event = new Event(player, " declared " + attacker.getName() + " as attacking");
