@@ -159,6 +159,7 @@ public class Server extends WebSocketServer {
 
     public void updateGame(String gameCode, Action action, WebSocket socket) {
     	State state = startedGames.get(gameCode);
+        action.setup(state);
         if (state.isLegalAction(action)) {
             state.processAction(action);
             sendStateUpdate(gameCode);

@@ -14,10 +14,13 @@ public abstract class Action extends Event {
 
     protected Player player;
 
-    public void run(State state) {
+    public abstract void run(State state);
+
+    //@Todo: instead create a custom serializer that converts ids to player
+    public void setup(State state) {
         player = state.findPlayer(playerId);
     }
-    
+
     public abstract boolean isValid(State state);
 
     public UUID getPlayerId() {

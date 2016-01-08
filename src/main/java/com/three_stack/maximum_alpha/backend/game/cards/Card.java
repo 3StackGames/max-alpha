@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-//@Todo: Implement initializing controller
 public abstract class Card {
 	protected final UUID id;
     protected Player controller;
@@ -27,7 +26,7 @@ public abstract class Card {
     private boolean playable;
     private ResourceList.Color dominantColor;
 
-    protected Map<Trigger, List<Effect>> effects;
+    protected transient Map<Trigger, List<Effect>> effects;
 
     protected Card() {
         this.id = UUID.randomUUID();

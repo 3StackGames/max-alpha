@@ -16,7 +16,6 @@ public class DeclareAttackerAction extends ExistingCardAction {
 
     @Override
     public void run(State state) {
-        super.run(state);
         if (!(card instanceof Creature)) {
             throw new IllegalArgumentException("Attacking card isn't a creature");
         }

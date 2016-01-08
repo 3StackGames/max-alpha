@@ -11,7 +11,6 @@ public abstract class ExistingPairAction extends ExistingCardAction {
     protected Card targetCard;
     @Override
     public void run(State state) {
-        super.run(state);
         targetCard = state.findCard(targetId);
     }
 }

@@ -10,10 +10,9 @@ import com.three_stack.maximum_alpha.backend.game.cards.Structure;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
 
 public class PlayCardAction extends ExistingCardWithCostAction {
-
+    
     @Override
     public void run(State state) {
-        super.run(state);
         Player player = getPlayer(state);
         //find card in player's hand
         Card card = player.getHand().takeCard(cardId);

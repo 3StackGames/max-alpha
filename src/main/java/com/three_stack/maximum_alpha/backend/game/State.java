@@ -92,8 +92,11 @@ public class State {
             Player player = new Player(connection, parameters.TOTAL_HEALTH);
             players.add(player);
             Deck deck = Deck.loadDeck(player.getConnection().deckId);
-            //add effects
+            //add effects and mark controller
             for(Card card : deck.getCards()) {
+
+                card.setController(player);
+
                 Map<Trigger, List<Effect>> effectsMap = card.getEffects();
                 if(card.hasEffects() && !card.getEffects().isEmpty()) {
                     Iterator iterator = effectsMap.entrySet().iterator();
@@ -166,16 +169,6 @@ public class State {
         List<Player> otherPlayers = players.stream()
                 .filter(player -> !player.equals(undesiredPlayer))
                 .collect(Collectors.toList());
-
-        /*
-        English version of above
-
-        for(Player player : players) {
-            if(!player.equals(undesiredPlayer)) {
-                otherPlayers.add(player);
-            }
-        }
-        */
 
         return otherPlayers;
     }

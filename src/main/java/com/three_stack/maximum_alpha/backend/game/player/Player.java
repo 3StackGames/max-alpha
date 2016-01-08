@@ -221,4 +221,20 @@ public class Player {
     public void setHasAssignedOrPulled(boolean hasAssignedOrPulled) {
         this.hasAssignedOrPulled = hasAssignedOrPulled;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Player player = (Player) o;
+
+        return playerId != null ? playerId.equals(player.playerId) : player.playerId == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return playerId != null ? playerId.hashCode() : 0;
+    }
 }

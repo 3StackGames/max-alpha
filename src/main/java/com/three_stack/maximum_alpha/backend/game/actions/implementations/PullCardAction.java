@@ -10,7 +10,6 @@ import com.three_stack.maximum_alpha.backend.game.events.Event;
 public class PullCardAction extends ExistingCardAction {
     @Override
     public void run(State state) {
-        super.run(state);
         Player player = state.getTurnPlayer();
         Card pullCard = player.getTown().takeCard(cardId);
 

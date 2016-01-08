@@ -10,6 +10,8 @@ public class Results {
         int damage = (Integer) value;
         state.getPlayers().stream()
                 .filter( player -> !player.equals(controller))
-                .forEach( player -> player.takeDamage(damage, source));
+                .forEach( player -> {
+                    state.addEvent(player.takeDamage(damage, source));
+                });
     };
 }

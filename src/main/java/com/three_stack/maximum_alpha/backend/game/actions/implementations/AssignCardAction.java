@@ -10,7 +10,6 @@ public class AssignCardAction extends ExistingCardAction {
 
     @Override
     public void run(State state) {
-        super.run(state);
 
         Creature assignCard = (Creature) player.getHand().takeCard(cardId);
 

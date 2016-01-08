@@ -10,7 +10,6 @@ import com.three_stack.maximum_alpha.backend.game.player.Player;
 public class BuildStructureAction extends ExistingCardAction {
     @Override
     public void run(State state) {
-        super.run(state);
         Player player = getPlayer(state);
         //find card in player's hand
         Card card = player.getDeck().getBuildables().takeCard(cardId);

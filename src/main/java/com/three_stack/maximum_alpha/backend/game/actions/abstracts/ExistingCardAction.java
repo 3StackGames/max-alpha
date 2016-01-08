@@ -19,8 +19,8 @@ public abstract class ExistingCardAction extends Action {
     }
 
     @Override
-    public void run(State state) {
-        super.run(state);
+    public void setup(State state) {
+        super.setup(state);
         card = state.findCard(cardId);
     }
 }

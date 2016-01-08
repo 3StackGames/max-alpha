@@ -15,8 +15,6 @@ public class DeclareBlockerAction extends ExistingCardAction {
 
     @Override
     public void run(State state) {
-        super.run(state);
-
         if(!(card instanceof Creature)) {
             throw new IllegalArgumentException("Blocking card isn't a creature");
         }
