@@ -77,12 +77,12 @@ public class Zone<T extends Card> {
     }
 
     //@Todo: Error Handling
-    public boolean containsAll(T needle) {
-        return cards.contains(needle);
+    public boolean contains(T card) {
+        return cards.contains(card);
     }
 
     //@Todo: Error Handling
-    public boolean containsAll(Collection<T> needles) {
-        return cards.containsAll(needles);
+    public boolean containsAll(Collection<T> cards) {
+        return cards.containsAll(cards);
     }
 }

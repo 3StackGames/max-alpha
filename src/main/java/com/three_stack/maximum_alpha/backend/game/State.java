@@ -169,7 +169,7 @@ public class State {
 	}
 	
 	public boolean isLegalAction(Action action) {
-		return true;
+		return action.isValid(this);
 	}
 
     public Player getTurnPlayer() {

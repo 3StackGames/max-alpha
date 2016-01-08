@@ -11,4 +11,8 @@ public interface Worker {
 	 * @return A resource list with resource values equal to the net change in resource quantities
 	 */
 	ResourceList work(State s);
+	
+	public boolean isAssignable();
+	
+	public boolean isPullable();
 }

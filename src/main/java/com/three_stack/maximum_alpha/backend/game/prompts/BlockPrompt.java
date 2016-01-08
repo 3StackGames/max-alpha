@@ -1,17 +1,18 @@
 package com.three_stack.maximum_alpha.backend.game.prompts;
 
+import java.util.List;
+
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
+import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.prompts.steps.TargetStep;
-
-import java.util.List;
 
 public class BlockPrompt extends Prompt {
 
-    public BlockPrompt(Card source, List<Card> targetables) {
-        super(source);
+    public BlockPrompt(Card source, Player player, List<Card> targetables) {
+        super(source, player);
         steps.add(new TargetStep("Select attacker to block", targetables));
     }
 
@@ -34,4 +35,10 @@ public class BlockPrompt extends Prompt {
         Event event = new Event(blocker.getName() + " is now blocking " + target.getName());
         state.addEvent(event);
     }
+
+	@Override
+	public boolean isValidInput(Card input) {
+		TargetStep step = (TargetStep) getCurrentStep();
+		return step.getTargetables().contains(input);
+	}
 }

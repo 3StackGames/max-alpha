@@ -213,8 +213,9 @@ public class Player {
         this.castle = castle;
     }
 
-    public boolean hasAssignedOrPulled() {
-        return hasAssignedOrPulled;
+    //TODO: add support for effects which give extra assigns/pulls? or should those be separate effects
+    public boolean canAssignOrPull() {
+        return !hasAssignedOrPulled;
     }
 
     public void setHasAssignedOrPulled(boolean hasAssignedOrPulled) {
