@@ -32,7 +32,7 @@ public class StartPhase extends Phase {
         state.completeStructures();
         //resources generated
         state.gatherResources();
-        //@Todo: triggers
+        //@Todo: effects
         //turnPlayerDraw card
         state.turnPlayerDraw();
         //refresh

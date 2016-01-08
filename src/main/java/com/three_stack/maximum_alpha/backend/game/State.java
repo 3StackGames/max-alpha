@@ -7,6 +7,8 @@ import com.three_stack.maximum_alpha.backend.game.actions.abstracts.Action;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
+import com.three_stack.maximum_alpha.backend.game.events.Effect;
+import com.three_stack.maximum_alpha.backend.game.events.Trigger;
 import com.three_stack.maximum_alpha.backend.game.player.Deck;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.prompts.Prompt;
@@ -72,7 +74,7 @@ public class State {
 	private final transient Parameters parameters;
 	private transient Map<UUID, Card> masterCardList;
 	private boolean gameOver;
-	
+    private transient Map<Trigger, List<Effect>> effects = new HashMap<>();
 	//game over: winningPlayers, losingPlayers, tiedPlayers
 	
 	public State(Parameters parameters) {
@@ -89,7 +91,22 @@ public class State {
         for(Connection connection : parameters.players) {
             Player player = new Player(connection, parameters.TOTAL_HEALTH);
             players.add(player);
-            Deck<Card> deck = Deck.loadDeck(player.getConnection().deckId);
+            Deck deck = Deck.loadDeck(player.getConnection().deckId);
+            //add effects
+            for(Card card : deck.getCards()) {
+                Map<Trigger, List<Effect>> effectsMap = card.getEffects();
+                if(card.hasEffects() && !card.getEffects().isEmpty()) {
+                    Iterator iterator = effectsMap.entrySet().iterator();
+                    while(iterator.hasNext()) {
+                        Map.Entry<Trigger, List<Effect>> entry = (Map.Entry<Trigger, List<Effect>>) iterator.next();
+
+                        for(Effect effect : entry.getValue()) {
+                            effect.setSource(card);
+                            addEffect(entry.getKey(), effect);
+                        }
+                    }
+                }
+            }
             deck.shuffle();
             player.setDeck(deck);
         }
@@ -179,7 +196,7 @@ public class State {
     public void refreshTurnPlayerCards() {
         Player player = getTurnPlayer();
         //look through field
-        player.getField().getCards().forEach(Creature::attemptRefresh);
+        player.getField().getCreatures().forEach(Creature::attemptRefresh);
         //look through structures
         player.getCourtyard().getCards().forEach(Structure::attemptRefresh);
     }
@@ -294,4 +311,21 @@ public class State {
         this.cardsPlayed = cardsPlayed;
     }
 
+    public List<Effect> getEffects(Trigger trigger) {
+        return effects.get(trigger);
+    }
+
+    public void addEffect(Trigger trigger, Effect effect) {
+        if(effects.containsKey(trigger)) {
+            effects.get(trigger).add(effect);
+        } else {
+            List<Effect> newEffects = new ArrayList<>();
+            newEffects.add(effect);
+            effects.put(trigger, newEffects);
+        }
+    }
+
+    public boolean hasEffects(Trigger trigger) {
+        return effects.containsKey(trigger);
+    }
 }

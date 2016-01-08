@@ -1,5 +1,7 @@
 package com.three_stack.maximum_alpha.backend.game.cards;
 
+import com.three_stack.maximum_alpha.backend.game.events.Effect;
+import com.three_stack.maximum_alpha.backend.game.events.Trigger;
 import io.gsonfire.annotations.ExposeMethodResult;
 
 import com.three_stack.maximum_alpha.backend.game.ResourceList;
@@ -8,6 +10,7 @@ import com.three_stack.maximum_alpha.backend.game.events.Event;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Creature extends DamageableCard implements Worker {
     //@Todo: Add Classes / Roles
@@ -20,8 +23,8 @@ public class Creature extends DamageableCard implements Worker {
     protected boolean hasSummoningSickness;
     protected List<Creature> blockers;
 
-    public Creature(String name, ResourceList cost, String text, String flavorText, int attack, int health) {
-        super(name, cost, text, flavorText, health);
+    public Creature(String name, ResourceList cost, String text, String flavorText, int attack, int health, Map<Trigger, List<Effect>> effects) {
+        super(name, cost, text, flavorText, health, effects);
         this.attack = attack;
         attackTarget = null;
         canAttack = true;

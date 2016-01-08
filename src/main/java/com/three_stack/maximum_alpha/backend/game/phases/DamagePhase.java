@@ -24,7 +24,7 @@ public class DamagePhase extends Phase {
     public void start(State state) {
         state.setCurrentPhase(instance);
 
-        List<Creature> attackers = state.getTurnPlayer().getField().getCards().stream()
+        List<Creature> attackers = state.getTurnPlayer().getField().getCreatures().stream()
                 .filter(Creature::isAttacking)
                 .collect(Collectors.toList());
 

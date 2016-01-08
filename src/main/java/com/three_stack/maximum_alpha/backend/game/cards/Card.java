@@ -1,15 +1,19 @@
 package com.three_stack.maximum_alpha.backend.game.cards;
 
 import com.three_stack.maximum_alpha.backend.game.*;
-import com.three_stack.maximum_alpha.backend.game.Trigger;
+import com.three_stack.maximum_alpha.backend.game.events.Effect;
+import com.three_stack.maximum_alpha.backend.game.events.Trigger;
+import com.three_stack.maximum_alpha.backend.game.player.Player;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+//@Todo: Implement initializing controller
 public abstract class Card {
 	protected final UUID id;
+    protected Player controller;
     protected final String name;
     protected final ResourceList defaultCost;
     protected ResourceList currentCost;
@@ -23,7 +27,7 @@ public abstract class Card {
     private boolean playable;
     private ResourceList.Color dominantColor;
 
-    protected Map<State.TriggerPoint, Trigger> triggers;
+    protected Map<Trigger, List<Effect>> effects;
 
     protected Card() {
         this.id = UUID.randomUUID();
@@ -32,9 +36,9 @@ public abstract class Card {
         flavorText = null;
     }
 
-    protected Card(String name, ResourceList defaultCost, String text, String flavorText) {
+    protected Card(String name, ResourceList defaultCost, String text, String flavorText, Map<Trigger, List<Effect>> effects) {
         this.id = UUID.randomUUID();
-        triggers = new HashMap<>();
+        this.effects = effects;
         this.name = name;
         this.defaultCost = defaultCost;
         this.currentCost = defaultCost;
@@ -50,10 +54,6 @@ public abstract class Card {
         this.text = other.text;
         this.flavorText = other.flavorText;
         this.counters = other.counters;
-    }
-
-    public void addTrigger(State.TriggerPoint triggerPoint, Trigger trigger) {
-        triggers.put(triggerPoint, trigger);
     }
 
     public ResourceList.Color calculateDominantColor() {
@@ -111,5 +111,25 @@ public abstract class Card {
 
     public ResourceList.Color getDominantColor() {
         return dominantColor;
+    }
+
+    public Player getController() {
+        return controller;
+    }
+
+    public void setController(Player controller) {
+        this.controller = controller;
+    }
+
+    public Map<Trigger, List<Effect>> getEffects() {
+        return effects;
+    }
+
+    public void setEffects(Map<Trigger, List<Effect>> effects) {
+        this.effects = effects;
+    }
+
+    public boolean hasEffects() {
+        return this.effects != null;
     }
 }

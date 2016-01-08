@@ -23,7 +23,7 @@ public class DeclareBlockerAction extends ExistingCardAction {
 
         Creature blocker = (Creature) card;
 
-        List<Card> blockableTargets = state.getTurnPlayer().getField().getCards().stream()
+        List<Card> blockableTargets = state.getTurnPlayer().getField().getCreatures().stream()
                 .filter(creature -> creature.isAttacking())
                 .collect(Collectors.toList());
 

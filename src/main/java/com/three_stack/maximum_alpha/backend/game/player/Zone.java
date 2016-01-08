@@ -2,11 +2,7 @@ package com.three_stack.maximum_alpha.backend.game.player;
 
 import io.gsonfire.annotations.ExposeMethodResult;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
@@ -30,7 +26,7 @@ public class Zone<T extends Card> {
      * @return Unmodifiable List
      */
     public List<T> getCards() {
-        return cards;
+        return Collections.unmodifiableList(cards);
     }
 
     public void add(T newCard) {

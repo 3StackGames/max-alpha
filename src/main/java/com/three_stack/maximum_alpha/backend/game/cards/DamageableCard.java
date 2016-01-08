@@ -1,9 +1,12 @@
 package com.three_stack.maximum_alpha.backend.game.cards;
 
+import com.three_stack.maximum_alpha.backend.game.events.Effect;
+import com.three_stack.maximum_alpha.backend.game.events.Trigger;
 import io.gsonfire.annotations.ExposeMethodResult;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.three_stack.maximum_alpha.backend.game.ResourceList;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
@@ -20,8 +23,8 @@ public abstract class DamageableCard extends Card {
 
     protected List<Buff> buffs;
 
-    protected DamageableCard(String name, ResourceList cost, String text, String flavorText, int health) {
-        super(name, cost, text, flavorText);
+    protected DamageableCard(String name, ResourceList cost, String text, String flavorText, int health, Map<Trigger, List<Effect>> effects) {
+        super(name, cost, text, flavorText, effects);
         this.health = health;
         this.refreshable = true;
         this.damageTaken = 0;

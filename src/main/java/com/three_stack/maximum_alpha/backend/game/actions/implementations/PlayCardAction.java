@@ -1,5 +1,6 @@
 package com.three_stack.maximum_alpha.backend.game.actions.implementations;
 
+import com.three_stack.maximum_alpha.backend.game.events.SingleCardEvent;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.ExistingCardWithCostAction;
@@ -17,10 +18,15 @@ public class PlayCardAction extends ExistingCardWithCostAction {
         Card card = player.getHand().takeCard(cardId);
         if(card instanceof Creature) {
             player.pay(card.getCurrentCost());
-            player.getField().add((Creature) card);
-            
-            Event event = new Event(player.getUsername() + " has played " + card.getName());
-            state.addEvent(event);
+
+            Event playEvent = new SingleCardEvent(card, player.getUsername() + " has played " + card.getName());
+            state.addEvent(playEvent);
+
+
+            Event enterFieldEvent = new SingleCardEvent(card, card.getName() + " entered the field");
+            state.addEvent(enterFieldEvent);
+            player.getField().add((Creature) card, state, enterFieldEvent);
+
         } else {
             //@Todo: Handle non-creature cards
         }

@@ -21,8 +21,8 @@ public class Player {
     private final UUID playerId;
 
     private Zone<Card> hand;
-    private Deck<Card> deck;
-    private Zone<Creature> field;
+    private Deck deck;
+    private Field field;
     private Zone<Card> grave;
     private Zone<Creature> town;
     private Zone<Structure> courtyard;
@@ -38,8 +38,8 @@ public class Player {
         playerId = UUID.randomUUID();
 
         hand = new Zone<>();
-        deck = new Deck<>();
-        field = new Zone<>();
+        deck = new Deck();
+        field = new Field();
 
         grave = new Zone<>();
         town = new Zone<>();
@@ -53,7 +53,7 @@ public class Player {
     	Collection<Card> cards = new HashSet<>();
     	cards.addAll(deck.getCards());
     	cards.addAll(hand.getCards());
-    	cards.addAll(field.getCards());
+    	cards.addAll(field.getCreatures());
     	cards.addAll(grave.getCards());
         cards.addAll(town.getCards());
         cards.addAll(courtyard.getCards());
@@ -65,7 +65,7 @@ public class Player {
     public Collection<Card> getSelfVisibleCards() {
     	Collection<Card> cards = new HashSet<>();
     	cards.addAll(hand.getCards());
-    	cards.addAll(field.getCards());
+    	cards.addAll(field.getCreatures());
     	cards.addAll(grave.getCards());
         cards.addAll(town.getCards());
         cards.addAll(courtyard.getCards());
@@ -76,7 +76,7 @@ public class Player {
     
     public Collection<Card> getEnemyVisibleCards() {
     	Collection<Card> cards = new HashSet<>();
-    	cards.addAll(field.getCards());
+    	cards.addAll(field.getCreatures());
     	cards.addAll(grave.getCards());
         cards.addAll(town.getCards());
         cards.addAll(courtyard.getCards());
@@ -157,19 +157,19 @@ public class Player {
         this.hand = hand;
     }
 
-    public Deck<Card> getDeck() {
+    public Deck getDeck() {
         return deck;
     }
 
-    public void setDeck(Deck<Card> deck) {
+    public void setDeck(Deck deck) {
         this.deck = deck;
     }
 
-    public Zone<Creature> getField() {
+    public Field getField() {
         return field;
     }
 
-    public void setField(Zone<Creature> field) {
+    public void setField(Field field) {
         this.field = field;
     }
 

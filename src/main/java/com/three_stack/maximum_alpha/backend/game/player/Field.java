@@ -1,12 +1,31 @@
 package com.three_stack.maximum_alpha.backend.game.player;
 
 import com.three_stack.maximum_alpha.backend.game.State;
-import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
+import com.three_stack.maximum_alpha.backend.game.events.Event;
+import com.three_stack.maximum_alpha.backend.game.events.EventManager;
+import com.three_stack.maximum_alpha.backend.game.events.Trigger;
 
-public class Field<T extends Card> extends Zone {
+import java.util.Collections;
+import java.util.List;
 
-    public void add(Creature creature, State state) {
+public class Field {
+    Zone<Creature> creatures;
 
+    public Field() {
+        creatures = new Zone<>();
+    }
+
+    public void add(Creature creature, State state, Event event) {
+        creatures.add(creature);
+        EventManager.notify(Trigger.ON_ENTER_FIELD, state, event);
+    }
+
+    /**
+     *
+     * @return unmodifiable list of creatures
+     */
+    public List<Creature> getCreatures() {
+        return Collections.unmodifiableList(creatures.getCards());
     }
 }

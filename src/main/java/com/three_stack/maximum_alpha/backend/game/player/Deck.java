@@ -13,18 +13,18 @@ import com.three_stack.maximum_alpha.backend.game.cards.CardFactory;
 import com.three_stack.maximum_alpha.backend.game.utilities.MongoService;
 import org.bson.Document;
 
-public class Deck<T extends Card> extends Zone<T> {
+public class Deck extends Zone<Card> {
 	private Zone<Structure> buildables;
 
 	public Deck() {
         super();
     }
 
-    public Deck(List<T> cards) {
+    public Deck(List<Card> cards) {
         super(cards);
     }
     
-    public Deck(List<T> cards, List<Structure> buildables) {
+    public Deck(List<Card> cards, List<Structure> buildables) {
     	super(cards);
     	this.buildables = new Zone<Structure>(buildables);
     }
@@ -37,24 +37,24 @@ public class Deck<T extends Card> extends Zone<T> {
         return remove(0);
     }
 
-    public List<T> drawCards(int numCards) {
-        List<T> subDeck = subList(0, numCards);
+    public List<Card> drawCards(int numCards) {
+        List<Card> subDeck = subList(0, numCards);
         removeAll(subDeck);
         return subDeck;
     }
 
-    public List<T> topCards(int numCards) {
+    public List<Card> topCards(int numCards) {
         return subList(0, numCards);
     }
 
-    public void placeAtBottom(T card) {
+    public void placeAtBottom(Card card) {
         if (containsAll(card)) {
             remove(card);
             add(card);
         }
     }
 
-    public void placeAtBottom(Collection<T> bottomCards) {
+    public void placeAtBottom(Collection<Card> bottomCards) {
         if (containsAll(bottomCards)) {
             removeAll(bottomCards);
             addAll(bottomCards);
@@ -69,7 +69,7 @@ public class Deck<T extends Card> extends Zone<T> {
 		this.buildables = buildables;
 	}
 
-    public static Deck<Card> loadDeck(int deckId) {
+    public static Deck loadDeck(int deckId) {
         MongoService mongoService = new MongoService();
 
         MongoCollection<Document> deckCollection = mongoService.getDeckCollection();
@@ -103,6 +103,6 @@ public class Deck<T extends Card> extends Zone<T> {
             buildables.add(structure);
         }
 
-        return new Deck<>(cards, buildables);
+        return new Deck(cards, buildables);
     }
 }
