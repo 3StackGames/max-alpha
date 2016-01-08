@@ -16,13 +16,18 @@ public class DeclareBlockerAction extends ExistingCardAction {
     @Override
     public void run(State state) {
         super.run(state);
+
+        if(!(card instanceof Creature)) {
+            throw new IllegalArgumentException("Blocking card isn't a creature");
+        }
+
         Creature blocker = (Creature) card;
 
-        List<Card> blockableTargets = state.getTurnPlayer().getField().getCreatures().stream()
+        List<Card> blockableTargets = state.getTurnPlayer().getField().getCards().stream()
                 .filter(creature -> creature.isAttacking())
                 .collect(Collectors.toList());
 
-        Prompt blockPrompt = new BlockPrompt(card, player, blockableTargets);
+        Prompt blockPrompt = new BlockPrompt(card, blockableTargets);
         state.addPrompt(blockPrompt);
 
         Event event = new Event(player, " declared " + blocker.getName() + " as a blocker");
@@ -38,7 +43,7 @@ public class DeclareBlockerAction extends ExistingCardAction {
 		Creature blocker = (Creature) card;
 		boolean isOnPlayerField = player.getField().getCreatures().contains(blocker);
 		boolean canBlock = blocker.canBlock();
-		
+
 		return notInPrompt && correctPhase && playerTurn && isCreature && isOnPlayerField && canBlock;
 	}
 }
