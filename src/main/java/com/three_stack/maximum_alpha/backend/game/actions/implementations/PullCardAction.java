@@ -26,7 +26,7 @@ public class PullCardAction extends ExistingCardAction {
 		boolean correctPhase = isPhase(state, "Main Phase"); //TODO: FubarPhase (instant phase)
 		boolean playerTurn = isPlayerTurn(state);
 		boolean playerCanPull = player.canAssignOrPull();
-		Creature creature = (Creature) player.getHand().takeCard(cardId);
+		Creature creature = (Creature) player.getHand().findCard(cardId);
 		boolean isPullable = creature.isPullable();
 		
 		return notInPrompt && correctPhase && playerTurn && playerCanPull && isPullable;

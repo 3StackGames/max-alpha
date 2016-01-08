@@ -5,6 +5,9 @@ import com.three_stack.maximum_alpha.backend.game.actions.abstracts.ExistingCard
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.cards.Worker;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
+import com.three_stack.maximum_alpha.backend.game.events.EventManager;
+import com.three_stack.maximum_alpha.backend.game.events.SingleCardEvent;
+import com.three_stack.maximum_alpha.backend.game.events.Trigger;
 
 public class AssignCardAction extends ExistingCardAction {
 
@@ -15,20 +18,21 @@ public class AssignCardAction extends ExistingCardAction {
 
         player.getTown().add(assignCard);
         player.setHasAssignedOrPulled(true);
-        
-        Event event = new Event(player.getUsername() + " has assigned " + assignCard.getName() + " as a worker.");
+
+        Event event = new SingleCardEvent(player, " assigned " + assignCard.getName() + " as a worker.", assignCard);
         state.addEvent(event);
+        EventManager.notify(Trigger.ON_ASSIGN, state, event);
     }
 
-	@Override
-	public boolean isValid(State state) {
-		boolean notInPrompt = notInPrompt(state);
-		boolean correctPhase = isPhase(state, "Main Phase");
-		boolean playerTurn = isPlayerTurn(state);
-		boolean playerCanAssign = player.canAssignOrPull();
-		Creature creature = (Creature) player.getHand().takeCard(cardId);
-		boolean isAssignable = creature.isAssignable();
-		
-		return notInPrompt && correctPhase && playerTurn && playerCanAssign && isAssignable;
-	}
+    @Override
+    public boolean isValid(State state) {
+        boolean notInPrompt = notInPrompt(state);
+        boolean correctPhase = isPhase(state, "Main Phase");
+        boolean playerTurn = isPlayerTurn(state);
+        boolean playerCanAssign = player.canAssignOrPull();
+        Creature creature = (Creature) player.getHand().findCard(cardId);
+        boolean isAssignable = creature.isAssignable();
+
+        return notInPrompt && correctPhase && playerTurn && playerCanAssign && isAssignable;
+    }
 }

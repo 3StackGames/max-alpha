@@ -5,6 +5,7 @@ import com.three_stack.maximum_alpha.backend.game.utilities.Serializer;
 
 public class Event {
 	protected final String description;
+    protected Player player;
 	
 	public Event() {
 		description = "";
@@ -16,6 +17,7 @@ public class Event {
 
     public Event(Player player, String action) {
         this.description = player.getUsername() + " has " + action;
+        this.player = player;
     }
 
     public String getDescription() {

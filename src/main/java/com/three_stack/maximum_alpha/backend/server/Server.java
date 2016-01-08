@@ -81,7 +81,7 @@ public class Server extends WebSocketServer {
                     String gameCode = json.getString("gameCode");
                 	readyGame(gameCode, json.getInt("playerId"), json.getBoolean("ready"));
                 }
-            } catch (JSONException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 sendError(socket, "Invalid JSON", message);
             }

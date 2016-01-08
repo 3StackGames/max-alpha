@@ -55,6 +55,13 @@ public class Zone<T extends Card> {
         throw new IllegalArgumentException("Card Not Found");
     }
 
+    public T findCard(UUID cardId) {
+        return cards.stream()
+                .filter( card -> card.getId().equals(cardId))
+                .collect(Collectors.toList())
+                .get(0);
+    }
+
     public void remove(T card) {
         cards.remove(card);
     }

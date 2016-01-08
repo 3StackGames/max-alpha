@@ -27,7 +27,7 @@ public class BuildStructureAction extends ExistingCardAction {
 	@Override
 	public boolean isValid(State state) {
 		boolean notInPrompt = notInPrompt(state);
-		Structure structure = player.getDeck().getBuildables().takeCard(cardId);
+		Structure structure = player.getDeck().getBuildables().findCard(cardId);
 		boolean correctPhase = isPhase(state, "Main Phase");
 		boolean playerTurn = isPlayerTurn(state);
 		boolean isBuildable = (structure != null);

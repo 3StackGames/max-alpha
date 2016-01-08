@@ -12,7 +12,7 @@ import java.util.UUID;
 public abstract class Action extends Event {
     protected UUID playerId;
 
-    protected Player player;
+    protected transient Player player;
 
     public abstract void run(State state);
 
