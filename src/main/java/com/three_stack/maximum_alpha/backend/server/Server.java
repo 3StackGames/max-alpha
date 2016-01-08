@@ -34,7 +34,7 @@ public class Server extends WebSocketServer {
     static char code = 'a';
     ExecutorService executor = newBoundedFixedThreadPool(8);
 
-    Map<String, State> unstartedGames = new HashMap<>();
+    Map<String, List<Connection>> unstartedGames = new HashMap<>();
     Map<String, State> startedGames = new HashMap<>();
     Runnable matchmaking = new Matchmaking(ROOM_SIZE);
     LinkedBlockingQueue<Connection> pool = new LinkedBlockingQueue<>();
@@ -76,10 +76,10 @@ public class Server extends WebSocketServer {
                     String gameCode = json.getString("gameCode");
                     String actionName = json.getJSONObject("action").getString("type");
                     Action action = (Action) Serializer.fromJson(json.getJSONObject("action").toString(), ActionService.getAction(actionName));
-                    updateGame(gameCode, action);
+                    updateGame(gameCode, action, socket);
                 } else if (eventType.equals("Player Ready")) {
                     String gameCode = json.getString("gameCode");
-                	readyGame(gameCode, json.getInt("playerId"));
+                	readyGame(gameCode, json.getInt("playerId"), json.getBoolean("ready"));
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -105,7 +105,7 @@ public class Server extends WebSocketServer {
                             for (int i = 0; i < size; i++) {
                                 match.add(pool.take());
                             }
-                            createGame(match);
+                            matchGame(match);
                         }
                         pool.wait();
                     }
@@ -115,44 +115,55 @@ public class Server extends WebSocketServer {
             }
         }
     }
-
-    public void createGame(List<Connection> players) {
-        Parameters parameters = new Parameters(players);
-        State newGame = new State(parameters);
-        String gameCode = nextCode();
-        unstartedGames.put(gameCode, newGame);
-
+    
+    public void matchGame(List<Connection> players) {
+    	String gameCode = nextCode();
+    	unstartedGames.put(gameCode, players);
         sendGameFound(gameCode);
     }
-    
-    public void readyGame(String gameCode, int playerId) {
-    	State game = unstartedGames.get(gameCode);
-    	boolean ready = true;
-    	for(Player player : game.getPlayers()) {
-    		Connection connection = player.getConnection();
-    		if (connection.playerId == playerId) {
-    			connection.ready();
-    			
-    		}
-    		ready &= connection.isReady();
-    	}
-    	
-    	if(ready) {
-    		startGame(gameCode);
-    	}
-    }
-    
+
     public void startGame(String gameCode) {
-    	startedGames.put(gameCode, unstartedGames.remove(gameCode));
+    	List<Connection> players = unstartedGames.remove(gameCode);
+        Parameters parameters = new Parameters(players);
+        State newGame = new State(parameters);
+        startedGames.put(gameCode, newGame);
+
         sendStateUpdate(gameCode);
     }
+    
+    public void readyGame(String gameCode, int playerId, boolean ready) {
+    	List<Connection> players = unstartedGames.get(gameCode);
+    	if(!ready) {
+    		for(Connection player : players) {
+	    		if (player.playerId != playerId) {
+	    			pool.add(player);
+	    		}
+	    	}
+    		sendGameDeclined(gameCode);
+    		unstartedGames.remove(players);
+    	}
+    	else {
+	    	boolean allReady = true;
+	    	for(Connection player : players) {
+	    		if (player.playerId == playerId) {
+	    			player.ready();    			
+	    		}
+	    		allReady &= player.isReady();
+	    	}
+	    	
+	    	if(allReady) {
+	    		startGame(gameCode);
+	    	}
+    	}
+    }
 
-    public void updateGame(String gameCode, Action action) {
+    public void updateGame(String gameCode, Action action, WebSocket socket) {
     	State state = startedGames.get(gameCode);
         if (state.isLegalAction(action)) {
             state.processAction(action);
-
             sendStateUpdate(gameCode);
+        } else {
+        	sendError(socket, "Invalid Action", "");
         }
     }
 
@@ -259,6 +270,7 @@ public class Server extends WebSocketServer {
             stateUpdate.add("gameCode", gameCode);
             //@Todo: Find a better way to do this.
             stateUpdate.add("cardList", new JSONObject(Serializer.toJson(game.generateVisibleCardList(player))));
+            stateUpdate.add("playerId", player.getPlayerId());
             
             player.getConnection().socket.send(stateUpdate.toString());
         }
@@ -271,12 +283,17 @@ public class Server extends WebSocketServer {
     }
     
     public void sendGameFound(String gameCode) {
-    	State state = unstartedGames.get(gameCode);
-        for (Player player : state.getPlayers()) {
+        for (Connection player : unstartedGames.get(gameCode)) {
         	Message gameFound = new Message("Game Found");
         	gameFound.add("gameCode", gameCode);
-        	gameFound.add("playerId", player.getPlayerId());
-            player.getConnection().socket.send(gameFound.toString());
+            player.socket.send(gameFound.toString());
+        }
+    }
+    
+    public void sendGameDeclined(String gameCode) {
+        for (Connection player : unstartedGames.get(gameCode)) {
+        	Message gameFound = new Message("Game Declined");
+            player.socket.send(gameFound.toString());
         }
     }
 }
