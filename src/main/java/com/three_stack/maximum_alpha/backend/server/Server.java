@@ -18,7 +18,6 @@ import org.java_websocket.WebSocket;
 import org.java_websocket.framing.Framedata;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.three_stack.maximum_alpha.backend.game.Parameters;
@@ -271,7 +270,7 @@ public class Server extends WebSocketServer {
             stateUpdate.add("gameCode", gameCode);
             //@Todo: Find a better way to do this.
             stateUpdate.add("cardList", new JSONObject(Serializer.toJson(game.generateVisibleCardList(player))));
-            stateUpdate.add("playerId", player.getPlayerId());
+            stateUpdate.add("currentPlayer", player.getPlayerId());
             
             player.getConnection().socket.send(stateUpdate.toString());
         }
