@@ -25,5 +25,6 @@ public class ActionService {
         actionMap.put("Finish Phase", FinishPhaseAction.class);//implemented but not tested
         actionMap.put("End Turn Without Combat", EndTurnWithoutCombatAction.class);//implemented but not tested
         actionMap.put("Build Structure", BuildStructureAction.class);//non-mvp
+        actionMap.put("Undo Action", UndoAction.class);
     }
 }

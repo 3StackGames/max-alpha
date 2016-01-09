@@ -10,4 +10,6 @@ public abstract class Step {
     }
 
     public abstract void complete(Card input);
+    
+    public abstract void reset();
 }

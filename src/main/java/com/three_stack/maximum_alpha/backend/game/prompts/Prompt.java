@@ -13,15 +13,25 @@ public abstract class Prompt {
     protected List<Step> steps;
     protected int currentStep;
 	protected final Player player;
+	protected boolean isMandatory;
 
-    public Prompt(Card source, Player player) {
+    protected Prompt(Card source, Player player) {
         this.source = source;
         this.steps = new ArrayList<>();
         this.player = player;
+        isMandatory = false;
+        currentStep = 0;
+    }
+    
+    protected Prompt(Card source, Player player, boolean isMandatory) {
+        this.source = source;
+        this.steps = new ArrayList<>();
+        this.player = player;
+        this.isMandatory = isMandatory;
         currentStep = 0;
     }
 
-    public void processCurrentStep(Card input) {
+	public void processCurrentStep(Card input) {
         currentStep++;
     }
     
@@ -43,5 +53,33 @@ public abstract class Prompt {
     
     public Player getPlayer() {
 		return player;
+	}
+
+    public boolean isMandatory() {
+		return isMandatory;
+	}
+
+	public void setMandatory(boolean isMandatory) {
+		this.isMandatory = isMandatory;
+	}
+	
+	public boolean canUndo() {
+		if(isMandatory() && currentStep == 0)
+			return false;
+		return true;
+	}
+	
+	/**
+	 * Undoes the current step.
+	 * @return True if the prompt should be removed from the queue, false otherwise.
+	 */
+	public boolean undo() {
+		if (currentStep > 0) {
+			currentStep--;
+			getCurrentStep().reset();
+			return false;
+		} else {
+			return true;
+		}
 	}
 }

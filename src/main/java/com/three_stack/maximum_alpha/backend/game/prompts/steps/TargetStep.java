@@ -35,4 +35,8 @@ public class TargetStep extends Step {
     public void setTarget(Card target) {
         this.target = target;
     }
+    
+    public void reset() {
+    	target = null;
+    }
 }

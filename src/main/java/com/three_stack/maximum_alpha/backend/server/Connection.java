@@ -14,8 +14,8 @@ public class Connection {
 		this.deckId = deckId;
 	}
 	
-	public void ready() {
-		ready = true;
+	public void setReady(boolean ready) {
+		this.ready = ready;
 	}
 	
 	public boolean isReady() {
