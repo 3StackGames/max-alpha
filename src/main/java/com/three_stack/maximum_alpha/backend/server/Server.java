@@ -68,6 +68,7 @@ public class Server extends WebSocketServer {
                         pool.notify();
                     }
                 } else if (eventType.equals("Stop Find Game")) {
+                	//Should make less jank in the future?
                     synchronized (pool) {
                         pool.remove(new Connection(socket, json.getInt("playerId"), json.getInt("deckId")));
                     }
@@ -135,6 +136,7 @@ public class Server extends WebSocketServer {
     	if(!ready) {
     		for(Connection player : players) {
 	    		if (player.playerId != playerId) {
+	    			player.setReady(false);
 	    			pool.add(player);
 	    		}
 	    	}
@@ -145,7 +147,7 @@ public class Server extends WebSocketServer {
 	    	boolean allReady = true;
 	    	for(Connection player : players) {
 	    		if (player.playerId == playerId) {
-	    			player.ready();    			
+	    			player.setReady(true);    			
 	    		}
 	    		allReady &= player.isReady();
 	    	}
