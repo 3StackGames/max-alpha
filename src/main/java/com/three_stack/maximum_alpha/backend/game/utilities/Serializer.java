@@ -17,7 +17,6 @@ public class Serializer {
         fireBuilder.enableExposeMethodResult();
 
         GsonBuilder gsonBuilder = fireBuilder.createGsonBuilder();
-        gsonBuilder.registerTypeAdapterFactory(new TitleCaseEnumTypeAdapterFactory());
         gson = gsonBuilder.create();
         
         gsonBuilder.setExclusionStrategies(new CardExclStrat());
