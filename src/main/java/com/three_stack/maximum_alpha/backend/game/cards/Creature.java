@@ -137,4 +137,6 @@ public class Creature extends DamageableCard implements Worker {
 	public boolean isPullable() {
 		return true;
 	}
+
+
 }
