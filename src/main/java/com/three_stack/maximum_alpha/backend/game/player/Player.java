@@ -18,7 +18,7 @@ public class Player {
     private String username;
 
 	private transient Connection connection;
-    private transient final UUID playerId;
+    private final UUID playerId;
 
     private Zone<Card> hand;
     private Deck deck;
