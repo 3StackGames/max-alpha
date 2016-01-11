@@ -12,7 +12,7 @@ public class BuildStructureAction extends ExistingCardAction {
     public void run(State state) {
         Player player = getPlayer(state);
         //find card in player's hand
-        Card card = player.getDeck().getBuildables().takeCard(cardId);
+        Card card = state.findCard(cardId);
         if(card instanceof Structure) {
             player.pay(card.getCurrentCost());
             player.getCourtyard().add(new Structure((Structure)card));
@@ -27,10 +27,10 @@ public class BuildStructureAction extends ExistingCardAction {
 	@Override
 	public boolean isValid(State state) {
 		boolean notInPrompt = notInPrompt(state);
-		Structure structure = player.getDeck().getBuildables().findCard(cardId);
+		Card structure = (Card) state.findCard(cardId);
 		boolean correctPhase = isPhase(state, "Main Phase");
 		boolean playerTurn = isPlayerTurn(state);
-		boolean isBuildable = (structure != null);
+		boolean isBuildable = (structure != null && player.getDeck().getBuildables().contains(structure));
 		boolean hasResources = player.hasResources(structure.getCurrentCost());
 		
 		return notInPrompt && correctPhase && playerTurn && isBuildable && hasResources;

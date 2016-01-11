@@ -57,6 +57,7 @@ public class Player {
     	cards.addAll(grave.getCards());
         cards.addAll(town.getCards());
         cards.addAll(courtyard.getCards());
+        cards.addAll(deck.getBuildables());
     	cards.add(castle);
     	
     	return cards;
