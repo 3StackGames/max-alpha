@@ -11,17 +11,12 @@ public class BuildStructureAction extends ExistingCardAction {
     @Override
     public void run(State state) {
         Player player = getPlayer(state);
-        //find card in player's hand
         Card card = state.findCard(cardId);
-        if(card instanceof Structure) {
-            player.pay(card.getCurrentCost());
-            player.getCourtyard().add(new Structure((Structure)card));
-            
-            Event event = new Event(player.getUsername() + " is constructing " + card.getName());
-            state.addEvent(event);
-        } else {
-            //ERROR
-        }
+        player.pay(card.getCurrentCost());
+        player.getCourtyard().add(new Structure((Structure)card));
+        
+        Event event = new Event(player.getUsername() + " is constructing " + card.getName());
+        state.addEvent(event);
     }
 
 	@Override
