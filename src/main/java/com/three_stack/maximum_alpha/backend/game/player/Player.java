@@ -62,27 +62,23 @@ public class Player {
     	return cards;
     }
     
-    public Collection<Card> getSelfVisibleCards() {
+    public Collection<Card> getVisibleCards() {
     	Collection<Card> cards = new HashSet<>();
-    	cards.addAll(hand.getCards());
     	cards.addAll(field.getCreatures());
     	cards.addAll(grave.getCards());
         cards.addAll(town.getCards());
         cards.addAll(courtyard.getCards());
+        cards.addAll(deck.getBuildables());
     	cards.add(castle);
-    	
-    	return cards;
+        
+        return cards;	
     }
     
-    public Collection<Card> getEnemyVisibleCards() {
-    	Collection<Card> cards = new HashSet<>();
-    	cards.addAll(field.getCreatures());
-    	cards.addAll(grave.getCards());
-        cards.addAll(town.getCards());
-        cards.addAll(courtyard.getCards());
-    	cards.add(castle);
+    public Collection<Card> getSelfVisibleCards() {
+    	Collection<Card> cards = getVisibleCards();
+    	cards.addAll(hand.getCards());
     	
-    	return cards;    	
+    	return cards;
     }
     
     public Collection<Card> getTargets() {

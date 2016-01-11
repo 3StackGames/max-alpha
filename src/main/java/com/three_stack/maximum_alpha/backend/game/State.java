@@ -205,7 +205,7 @@ public class State {
     
     public Map<UUID, Optional<Card>> generateVisibleCardList(Player player) {
     	List<Card> visibleCardList = getOtherPlayers(player).stream().
-    										map(Player::getEnemyVisibleCards).
+    										map(Player::getVisibleCards).
     											flatMap(p -> p.stream()).
     												collect(Collectors.toList());
     	visibleCardList.addAll(player.getSelfVisibleCards());

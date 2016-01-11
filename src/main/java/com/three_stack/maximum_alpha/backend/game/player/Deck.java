@@ -14,7 +14,7 @@ import com.three_stack.maximum_alpha.backend.game.utilities.MongoService;
 import org.bson.Document;
 
 public class Deck extends Zone<Card> {
-	private Zone<Structure> buildables;
+	private List<Structure> buildables;
 
 	public Deck() {
         super();
@@ -26,7 +26,7 @@ public class Deck extends Zone<Card> {
     
     public Deck(List<Card> cards, List<Structure> buildables) {
     	super(cards);
-    	this.buildables = new Zone<Structure>(buildables);
+    	this.buildables = new ArrayList<Structure>(buildables);
     }
 
     public void shuffle() {
@@ -61,11 +61,11 @@ public class Deck extends Zone<Card> {
         }
     }
 	
-    public Zone<Structure> getBuildables() {
+    public List<Structure> getBuildables() {
 		return buildables;
 	}
 
-	public void setBuildables(Zone<Structure> buildables) {
+	public void setBuildables(List<Structure> buildables) {
 		this.buildables = buildables;
 	}
 
