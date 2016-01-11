@@ -266,13 +266,17 @@ public class Server extends WebSocketServer {
     	State game = startedGames.get(gameCode); 	
     	String state = game.toString();
         
-        for (Player player : game.getPlayers()) {     	
+    	List<Player> players = game.getPlayers();
+        for (Player player : players) {     	
             Message stateUpdate = new Message("State Update");
             stateUpdate.add("state", new JSONObject(state));
             stateUpdate.add("gameCode", gameCode);
             //@Todo: Find a better way to do this.
             stateUpdate.add("cardList", new JSONObject(Serializer.toJson(game.generateVisibleCardList(player))));
-            stateUpdate.add("currentPlayer", player.getPlayerId());
+            JSONObject currentPlayer = new JSONObject();
+            currentPlayer.put("playerId", player.getPlayerId());
+            currentPlayer.put("playerIndex", players.indexOf(player));
+            stateUpdate.add("currentPlayer", currentPlayer);
             
             player.getConnection().socket.send(stateUpdate.toString());
         }

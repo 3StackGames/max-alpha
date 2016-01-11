@@ -99,7 +99,7 @@ public class State {
 
                 Map<Trigger, List<Effect>> effectsMap = card.getEffects();
                 if(card.hasEffects() && !card.getEffects().isEmpty()) {
-                    Iterator iterator = effectsMap.entrySet().iterator();
+                    Iterator<Map.Entry<Trigger, List<Effect>>> iterator = effectsMap.entrySet().iterator();
                     while(iterator.hasNext()) {
                         Map.Entry<Trigger, List<Effect>> entry = (Map.Entry<Trigger, List<Effect>>) iterator.next();
 
