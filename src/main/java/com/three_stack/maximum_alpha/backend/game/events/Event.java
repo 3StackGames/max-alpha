@@ -3,34 +3,57 @@ package com.three_stack.maximum_alpha.backend.game.events;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.utilities.Serializer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Event {
 
     /**
      * time occurred is essentially an id since no two events can occur at the same time.
      */
     protected int timeOccurred;
-	protected final String description;
+	protected List<String> descriptions;
     protected Player player;
 	
 	public Event() {
-		description = "";
+		setup();
 	}
 
     public Event(String description) {
-        this.description = description;
+        setup();
+        this.descriptions.add(description);
     }
 
     public Event(Player player, String action) {
-        this.description = player.getUsername() + " has " + action;
+        setup();
+        this.descriptions.add(player.getUsername() + " has " + action);
         this.player = player;
     }
 
-    public String getDescription() {
-        return description;
+    protected void setup() {
+        this.descriptions = new ArrayList<>();
+    }
+
+    public List<String> getDescriptions() {
+        return descriptions;
+    }
+
+    public void addDescription(String description) {
+        this.getDescriptions().add(description);
+    }
+
+    public void mergeEvent(Event other) {
+        getDescriptions().addAll(other.getDescriptions());
+        this.timeOccurred = Math.min(timeOccurred, other.getTimeOccurred());
     }
 
     public static Event joinEvents (Event a, Event b) {
-        return new Event(a.getDescription() + " and " + b.getDescription());
+        Event event = new Event();
+        event.getDescriptions().addAll(a.getDescriptions());
+        event.getDescriptions().addAll(b.getDescriptions());
+        int timeOccurred = Math.min(a.getTimeOccurred(), b.getTimeOccurred());
+        event.setTimeOccurred(timeOccurred);
+        return event;
     }
 
     public int getTimeOccurred() {

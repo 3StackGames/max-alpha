@@ -9,6 +9,10 @@ public enum Trigger {
     ON_PULL,
     ON_CARD_LEAVE_HAND,
     ON_PLAY_CARD,
+    /**
+     * Spells occur ON_CAST
+     */
+    ON_CAST,
     ON_DISCARD_CARD,
     ON_ASSIGN,
     ON_COMBAT,
