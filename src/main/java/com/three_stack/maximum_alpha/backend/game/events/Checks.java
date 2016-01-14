@@ -1,19 +1,20 @@
 package com.three_stack.maximum_alpha.backend.game.events;
 
+import org.apache.log4j.Logger;
+
 public class Checks {
+    static Logger log = Logger.getLogger(Checks.class.getName());
+
     public static Check getCheck(String checkName) {
         try {
             return (Check) Checks.class.getField(checkName).get(Checks.class.newInstance());
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            log.warn("Tried getting check called " + checkName + " but failed. Falling back to FALSE");
+            return FALSE;
         }
-        //@Todo: handle case where it's not found.
-        return null;
     }
+
+    public static Check FALSE = (state, effect, event) -> false;
 
     public static Check IS_SELF = (state, effect, event) -> {
         SingleCardEvent singleCardEvent = (SingleCardEvent) event;

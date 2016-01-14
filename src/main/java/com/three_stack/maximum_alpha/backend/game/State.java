@@ -22,44 +22,6 @@ import com.three_stack.maximum_alpha.database_client.DatabaseClient;
 import org.bson.types.ObjectId;
 
 public class State {
-    public enum TriggerPoint {
-        ON_EVENT,
-        ON_RESOURCE_GENERATE,
-        ON_RESOURCE_SPEND,
-        ON_CARD_ENTER_HAND,
-            ON_DRAW,
-            ON_PULL,
-        ON_CARD_LEAVE_HAND,
-            ON_PLAY_CARD,
-            ON_DISCARD_CARD,
-            ON_ASSIGN,
-        ON_COMBAT,
-            ON_ATTACK,
-            ON_BLOCK,
-        ON_DAMAGE,
-        ON_TARGET,
-        ON_BUILD_STRUCTURE,
-        ON_STRUCTURE_COMPLETE,
-        ON_CARD_ENTER_FIELD,
-        ON_CARD_LEAVE_FIELD,
-            ON_DEATH,
-        ON_ENTER_GRAVEYARD,
-        ON_LEAVE_GRAVEYARD,
-        ON_REFRESH,
-        ON_EXHAUST,
-
-        ON_BEGIN_PHASE_START,
-        ON_BEGIN_PHASE_END,
-        ON_MAIN_PHASE_START,
-        ON_MAIN_PHASE_END,
-        ON_ATTACK_PHASE_START,
-        ON_ATTACK_PHASE_END,
-        ON_BLOCK_PHASE_START,
-        ON_BLOCK_PHASE_END,
-        ON_END_PHASE_START,
-        ON_END_PHASE_END
-    }
-
 	private List<Player> players;
 	private List<Event> eventHistory;
 	private Phase currentPhase;
@@ -77,7 +39,8 @@ public class State {
 	private final transient Parameters parameters;
 	private transient Map<UUID, Card> masterCardList;
 	private boolean gameOver;
-    private transient Map<Trigger, List<Effect>> effects = new HashMap<>();
+    private transient Map<Trigger, List<Effect>> effects;
+    private transient Queue<Effect> triggeredEffects;
 	//game over: winningPlayers, losingPlayers, tiedPlayers
 	
 	public State(Parameters parameters) {
@@ -85,10 +48,13 @@ public class State {
 		this.players = new ArrayList<>();
 		this.eventHistory = new ArrayList<>();
         this.promptQueue = new ArrayDeque<>();
+        this.effects = new HashMap<>();
+        this.triggeredEffects = new ArrayDeque<>();
 		setupGame();
 	}
 	
 	public void setupGame() {
+
         gameOver = false;
         
         for(Connection connection : parameters.players) {
@@ -174,7 +140,7 @@ public class State {
         throw new IllegalArgumentException("Player Not Found");
     }
 
-    public List<Player> getOtherPlayers(Player undesiredPlayer) {
+    public List<Player> getPlayersExcept(Player undesiredPlayer) {
         List<Player> otherPlayers = players.stream()
                 .filter(player -> !player.equals(undesiredPlayer))
                 .collect(Collectors.toList());
@@ -213,7 +179,7 @@ public class State {
     }
     
     public Map<UUID, Optional<Card>> generateVisibleCardList(Player player) {
-    	List<Card> visibleCardList = getOtherPlayers(player).stream().
+    	List<Card> visibleCardList = getPlayersExcept(player).stream().
     										map(Player::getVisibleCards).
     											flatMap(p -> p.stream()).
     												collect(Collectors.toList());
@@ -329,5 +295,17 @@ public class State {
 
     public boolean hasEffects(Trigger trigger) {
         return effects.containsKey(trigger);
+    }
+
+    public void addTriggeredEffect(Effect triggeredEffect) {
+        triggeredEffects.add(triggeredEffect);
+    }
+
+    public Effect getTriggeredEffect() {
+        return triggeredEffects.remove();
+    }
+
+    public boolean hasTriggeredEffect() {
+        return !triggeredEffects.isEmpty();
     }
 }

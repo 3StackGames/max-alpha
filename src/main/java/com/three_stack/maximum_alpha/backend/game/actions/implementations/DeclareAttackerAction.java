@@ -20,7 +20,7 @@ public class DeclareAttackerAction extends ExistingCardAction {
             throw new IllegalArgumentException("Attacking card isn't a creature");
         }
         Creature attacker = (Creature) card;
-        List<Card> attackableTargets = state.getOtherPlayers(player).stream()
+        List<Card> attackableTargets = state.getPlayersExcept(player).stream()
                 .map(Player::getTargets)
                 .flatMap(p -> p.stream())
                 .collect(Collectors.toList());
