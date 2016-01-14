@@ -13,14 +13,18 @@ public class EventManager {
         //add triggered effects to the queue of triggered effects
         effects.stream()
                 .filter(effect -> effect.checks.parallelStream().allMatch(check -> check.run(state, effect, event)))
+                .map(effect -> new TriggeredEffect(effect, event))
                 .forEach(state::addTriggeredEffect);
 
         //process all triggered effects
         while(state.hasTriggeredEffect()) {
-            Effect effect = state.getTriggeredEffect();
+            TriggeredEffect triggeredEffect = state.getTriggeredEffect();
+            Effect currentEffect = triggeredEffect.getEffect();
+            Event effectEvent = triggeredEffect.getEvent();
             //index tracks which result / value pair we're on so we can pass the proper value to the run() method
             int[] index = {0};
-            effect.results.stream().forEachOrdered(result -> result.run(state, effect.getSource(), event, effect.getValues().get(index[0]++)));
+            currentEffect.results.stream()
+                    .forEachOrdered(result -> result.run(state, currentEffect.getSource(), effectEvent, currentEffect.getValues().get(index[0]++)));
         }
     }
 

@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
+import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
 import com.three_stack.maximum_alpha.backend.game.cards.CardFactory;
@@ -60,17 +61,10 @@ public class Deck extends Zone<Card> {
         return subList(0, numCards);
     }
 
-    public void placeAtBottom(Card card) {
+    public void placeAtBottom(Card card, State state) {
         if (contains(card)) {
             remove(card);
-            add(card);
-        }
-    }
-
-    public void placeAtBottom(Collection<Card> bottomCards) {
-        if (containsAll(bottomCards)) {
-            removeAll(bottomCards);
-            addAll(bottomCards);
+            add(card, state);
         }
     }
 	

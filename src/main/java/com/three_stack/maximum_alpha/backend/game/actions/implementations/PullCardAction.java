@@ -13,7 +13,7 @@ public class PullCardAction extends ExistingCardAction {
         Player player = state.getTurnPlayer();
         Card pullCard = player.getTown().takeCard(cardId);
 
-        player.getHand().add(pullCard);
+        player.getHand().add(pullCard, state);
         player.setHasAssignedOrPulled(true);
         
         Event event = new Event(player.getUsername() + " has pulled " + pullCard.getName() + " from work");

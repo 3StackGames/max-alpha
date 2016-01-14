@@ -13,7 +13,7 @@ public class BuildStructureAction extends ExistingCardAction {
         Player player = getPlayer(state);
         Card card = state.findCard(cardId);
         player.pay(card.getCurrentCost());
-        player.getCourtyard().add(new Structure((Structure) card));
+        player.getCourtyard().add(new Structure((Structure) card), state);
         
         Event event = new Event(player.getUsername() + " is constructing " + card.getName());
         state.addEvent(event);

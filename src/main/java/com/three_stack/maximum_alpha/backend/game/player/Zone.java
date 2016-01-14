@@ -1,5 +1,6 @@
 package com.three_stack.maximum_alpha.backend.game.player;
 
+import com.three_stack.maximum_alpha.backend.game.State;
 import io.gsonfire.annotations.ExposeMethodResult;
 
 import java.util.*;
@@ -29,12 +30,9 @@ public class Zone<T extends Card> {
         return Collections.unmodifiableList(cards);
     }
 
-    public void add(T newCard) {
+    public void add(T newCard, State state) {
+        newCard.setTimeEnteredZone(state.getTime());
         cards.add(newCard);
-    }
-
-    public void addAll(Collection<T> newCards) {
-        cards.addAll(newCards);
     }
 
     @ExposeMethodResult("cardIds")

@@ -99,8 +99,8 @@ public class Player {
     public void newTurn() {
     }
 
-    public void draw() {
-        hand.add(deck.draw());
+    public void draw(State state) {
+        hand.add(deck.draw(), state);
     }
 
     public Event takeDamage(int damage, Card source) {

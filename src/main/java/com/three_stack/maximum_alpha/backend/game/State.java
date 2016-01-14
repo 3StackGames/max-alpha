@@ -9,6 +9,7 @@ import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
 import com.three_stack.maximum_alpha.backend.game.events.Effect;
 import com.three_stack.maximum_alpha.backend.game.events.Trigger;
+import com.three_stack.maximum_alpha.backend.game.events.TriggeredEffect;
 import com.three_stack.maximum_alpha.backend.game.player.Deck;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.prompts.Prompt;
@@ -40,7 +41,13 @@ public class State {
 	private transient Map<UUID, Card> masterCardList;
 	private boolean gameOver;
     private transient Map<Trigger, List<Effect>> effects;
-    private transient Queue<Effect> triggeredEffects;
+
+    /**
+     * begins at 1, because initialization happens "at time 0"
+     */
+    private int timer = 1;
+    //@Todo: make this a priority queue with 2-factors: low effectCount (main priority) and low ageInZone (secondary priority)
+    private transient PriorityQueue<TriggeredEffect> triggeredEffects;
 	//game over: winningPlayers, losingPlayers, tiedPlayers
 	
 	public State(Parameters parameters) {
@@ -49,7 +56,13 @@ public class State {
 		this.eventHistory = new ArrayList<>();
         this.promptQueue = new ArrayDeque<>();
         this.effects = new HashMap<>();
-        this.triggeredEffects = new ArrayDeque<>();
+        this.triggeredEffects = new PriorityQueue<>((Comparator<TriggeredEffect>) (a, b) -> {
+            if(!a.getEvent().equals(b.getEvent())) {
+                return a.getEvent().getTimeOccurred() - b.getEvent().getTimeOccurred();
+            } else {
+                return a.getEffect().getSource().getTimeEnteredZone() - b.getEffect().getSource().getTimeEnteredZone();
+            }
+        });
 		setupGame();
 	}
 	
@@ -97,7 +110,7 @@ public class State {
 	public void initialDraw() {
 		for (Player player : players) {
 			for(int i = 0; i < parameters.INITIAL_DRAW_SIZE; i++) {
-				player.draw();
+				player.draw(this);
 			}
 		}
 	}
@@ -110,7 +123,7 @@ public class State {
 	
 	public void turnPlayerDraw() {
 		if(turnCount > 0)
-			getTurnPlayer().draw();
+			getTurnPlayer().draw(this);
 	}
 	
 	public void gatherResources() {
@@ -216,6 +229,7 @@ public class State {
     }
 
 	public void addEvent(Event event) {
+        event.setTimeOccurred(timer++);
         eventHistory.add(event);
 	}
 
@@ -297,15 +311,19 @@ public class State {
         return effects.containsKey(trigger);
     }
 
-    public void addTriggeredEffect(Effect triggeredEffect) {
+    public void addTriggeredEffect(TriggeredEffect triggeredEffect) {
         triggeredEffects.add(triggeredEffect);
     }
 
-    public Effect getTriggeredEffect() {
+    public TriggeredEffect getTriggeredEffect() {
         return triggeredEffects.remove();
     }
 
     public boolean hasTriggeredEffect() {
         return !triggeredEffects.isEmpty();
+    }
+
+    public int getTime() {
+        return timer++;
     }
 }

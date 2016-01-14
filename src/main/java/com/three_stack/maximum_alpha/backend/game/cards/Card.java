@@ -19,6 +19,10 @@ public abstract class Card {
     protected String text;
     protected final String flavorText;
     protected List<Counter> counters;
+    /**
+     * timeEnteredZone is used only when determining effect order. lower values indicate earlier times.
+     */
+    protected transient int timeEnteredZone;
 
     /**
      * ONLY FOR GSON. DON'T TOUCH.
@@ -29,6 +33,7 @@ public abstract class Card {
     protected transient Map<Trigger, List<Effect>> effects;
 
     protected Card() {
+        setup();
         this.id = UUID.randomUUID();
         name = null;
         defaultCost = null;
@@ -36,6 +41,7 @@ public abstract class Card {
     }
 
     protected Card(String name, ResourceList defaultCost, String text, String flavorText, Map<Trigger, List<Effect>> effects) {
+        setup();
         this.id = UUID.randomUUID();
         this.effects = effects;
         this.name = name;
@@ -46,6 +52,7 @@ public abstract class Card {
 	}
 
     protected Card(Card other) {
+        setup();
         this.id = UUID.randomUUID();
         this.name = other.name;
         this.defaultCost = other.defaultCost;
@@ -53,6 +60,10 @@ public abstract class Card {
         this.text = other.text;
         this.flavorText = other.flavorText;
         this.counters = other.counters;
+    }
+
+    protected void setup() {
+        this.timeEnteredZone = 0;
     }
 
     public ResourceList.Color calculateDominantColor() {
@@ -130,6 +141,14 @@ public abstract class Card {
 
     public boolean hasEffects() {
         return this.effects != null;
+    }
+
+    public int getTimeEnteredZone() {
+        return timeEnteredZone;
+    }
+
+    public void setTimeEnteredZone(int timeEnteredZone) {
+        this.timeEnteredZone = timeEnteredZone;
     }
 
     @Override

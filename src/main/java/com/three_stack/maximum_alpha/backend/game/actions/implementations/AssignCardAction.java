@@ -16,7 +16,7 @@ public class AssignCardAction extends ExistingCardAction {
 
         Creature assignCard = (Creature) player.getHand().takeCard(cardId);
 
-        player.getTown().add(assignCard);
+        player.getTown().add(assignCard, state);
         player.setHasAssignedOrPulled(true);
 
         Event event = new SingleCardEvent(player, " assigned " + assignCard.getName() + " as a worker.", assignCard);

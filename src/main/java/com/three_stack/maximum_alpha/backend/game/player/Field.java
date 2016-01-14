@@ -17,7 +17,7 @@ public class Field {
     }
 
     public void add(Creature creature, State state, Event event) {
-        creatures.add(creature);
+        creatures.add(creature, state);
         EventManager.notify(Trigger.ON_ENTER_FIELD, state, event);
     }
 
