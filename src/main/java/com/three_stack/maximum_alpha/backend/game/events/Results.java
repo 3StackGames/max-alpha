@@ -31,7 +31,10 @@ public class Results {
         Player controller = source.getController();
         int damage = (int) value;
 
-        state.getPlayersExcept(controller).forEach(player -> player.takeDamage(damage, source));
+        state.getPlayersExcept(controller).forEach(player -> {
+            Event damageEvent = player.takeDamage(damage, source);
+            state.addEvent(damageEvent);
+        });
     };
 
     public static Result DEAL_DAMAGE_ALL_CREATURES = (state, source, event, value) -> {
@@ -39,7 +42,10 @@ public class Results {
         state.getPlayers().stream()
                 .map(player -> player.getField().getCreatures())
                 .flatMap(creatures -> creatures.stream())
-                .forEach( creature -> creature.takeDamage(damage, source));
+                .forEach( creature -> {
+                    Event damageEvent = creature.takeDamage(damage, source);
+                    state.addEvent(damageEvent);
+                });
     };
 
     public static Result DEAL_DAMAGE_RANDOM_ENEMY_CREATURE = (state, source, event, value) -> {
@@ -57,6 +63,7 @@ public class Results {
         }
 
         Creature victim = enemyCreatures.get(random.nextInt(enemyCreatures.size()));
-        victim.takeDamage(damage, source);
+        Event damageEvent = victim.takeDamage(damage, source);
+        state.addEvent(damageEvent);
     };
 }

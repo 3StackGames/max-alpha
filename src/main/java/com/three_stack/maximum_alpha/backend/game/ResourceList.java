@@ -6,7 +6,11 @@ import java.util.Map;
 public class ResourceList {
 
     public enum Color {
-		RED, BLACK, GREEN, WHITE, YELLOW, BLUE, COLORLESS
+		RED, BLACK, GREEN, WHITE, YELLOW, BLUE,
+        /**
+         * Note: COLORLESS must be last for calculation purposes.
+         */
+        COLORLESS
 	}
 
 	Map<Color, Integer> colors;
@@ -132,13 +136,12 @@ public class ResourceList {
 	
 	public boolean hasResources(ResourceList other) {	
 		int totalManaReserve = 0;
-	    for (Map.Entry<Color, Integer> color : other.colors.entrySet()) {
-            Color key = color.getKey();
-            int value = color.getValue();
+	    for (Color color : Color.values()) {
+            int value = colors.get(color);
 
-            totalManaReserve += getColor(key);
-            if (key != Color.COLORLESS) {
-                if (value > getColor(key))
+            totalManaReserve += getColor(color);
+            if (color != Color.COLORLESS) {
+                if (value > getColor(color))
                     return false;
                 
                 totalManaReserve -= value;
