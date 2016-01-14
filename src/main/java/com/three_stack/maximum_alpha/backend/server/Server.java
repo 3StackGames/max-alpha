@@ -72,18 +72,20 @@ public class Server extends WebSocketServer {
             try {
                 JSONObject json = new JSONObject(message);
                 String eventType = json.getString(Message.EVENT_TYPE);
-                ObjectId playerId = new ObjectId(json.getString("playerId"));
-                ObjectId deckId = new ObjectId(json.getString("deckId"));
                 //todo: add more events
                 if (eventType.equals("Find Game")) {
                     synchronized (pool) {
                         System.out.println("adding to matchmaking pool....");
+                        ObjectId deckId = new ObjectId(json.getString("deckId"));
+                        ObjectId playerId = new ObjectId(json.getString("playerId"));
                         pool.add(new Connection(socket, playerId, deckId));
                         pool.notify();
                     }
                 } else if (eventType.equals("Stop Find Game")) {
                 	//Should make less jank in the future?
                     synchronized (pool) {
+                        ObjectId deckId = new ObjectId(json.getString("deckId"));
+                        ObjectId playerId = new ObjectId(json.getString("playerId"));
                         pool.remove(new Connection(socket, playerId, deckId));
                     }
                 } else if (eventType.equals("Game Action")) {
@@ -93,6 +95,7 @@ public class Server extends WebSocketServer {
                     updateGame(gameCode, action, socket);
                 } else if (eventType.equals("Player Ready")) {
                     String gameCode = json.getString("gameCode");
+                    ObjectId playerId = new ObjectId(json.getString("playerId"));
                 	readyGame(gameCode, playerId, json.getBoolean("ready"));
                 }
             } catch (Exception e) {

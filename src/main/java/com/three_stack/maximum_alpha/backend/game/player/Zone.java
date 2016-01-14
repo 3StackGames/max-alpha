@@ -67,7 +67,7 @@ public class Zone<T extends Card> {
     }
 
     public T remove(int index) {
-        T card = cards.remove(0);
+        T card = cards.remove(index);
         return card;
     }
 

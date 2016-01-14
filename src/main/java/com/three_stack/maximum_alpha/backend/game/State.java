@@ -97,7 +97,7 @@ public class State {
             //load deck
             DatabaseClient client = DatabaseClientFactory.create();
             ObjectId deckId = player.getConnection().deckId;
-            Deck deck = new Deck(client.getDeck(deckId));
+            Deck deck = new Deck(client.getDeckWithCards(deckId));
 
             //add effects and mark controller
             for(Card card : deck.getCards()) {

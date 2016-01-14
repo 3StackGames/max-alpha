@@ -38,6 +38,7 @@ public class Deck extends Zone<Card> {
 
     public Deck(DBDeck deck) {
         cards = deck.getMainCards().stream().map(CardFactory::create).collect(Collectors.toList());
+        buildables = new Zone<>();
         buildables.cards = deck.getStructureCards().stream().map(CardFactory::create).map(card -> (Structure) card).collect(Collectors.toList());
     }
 
