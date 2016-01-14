@@ -164,9 +164,10 @@ public class State {
 	public void processAction(Action action) {
 		eventHistory.clear();
 		action.run(this);
+        resolveTriggeredEffects();
 	}
-	
-	public boolean isLegalAction(Action action) {
+
+    public boolean isLegalAction(Action action) {
 		return action.isValid(this);
 	}
 
@@ -325,5 +326,20 @@ public class State {
 
     public int getTime() {
         return timer++;
+    }
+
+    /**
+     * Traverses the "Effect Tree" and resolves them in BFS / Level-Order manner.
+     */
+    private void resolveTriggeredEffects() {
+        while(hasTriggeredEffect()) {
+            TriggeredEffect triggeredEffect = getTriggeredEffect();
+            Effect currentEffect = triggeredEffect.getEffect();
+            Event effectEvent = triggeredEffect.getEvent();
+            //index tracks which result / value pair we're on so we can pass the proper value to the run() method
+            int[] index = {0};
+            currentEffect.getResults().stream()
+                    .forEachOrdered(result -> result.run(this, currentEffect.getSource(), effectEvent, currentEffect.getValues().get(index[0]++)));
+        }
     }
 }
