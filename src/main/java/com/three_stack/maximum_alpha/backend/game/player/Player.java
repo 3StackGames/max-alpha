@@ -6,6 +6,7 @@ import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.*;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
 import com.three_stack.maximum_alpha.backend.server.Connection;
+import org.bson.types.ObjectId;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 public class Player {
     //@Todo: Actually retrieve their username
     private static int usernameCounter = 0;
+
     private String username;
 
 	private transient Connection connection;

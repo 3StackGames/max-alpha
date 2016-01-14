@@ -51,7 +51,7 @@ public class ResourceList {
     }
 
     private void setup() {
-        //all colors default to value 0
+        //all colors default to values 0
         colors = new HashMap<>();
         for (Color c : Color.values()) {
         	colors.put(c, 0);

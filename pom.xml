@@ -5,6 +5,15 @@
     <groupId>com.three-stack.digital-compass</groupId>
     <artifactId>backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+
+    <repositories>
+        <repository>
+            <id>max-alpha-database-client</id>
+            <name>Max Alpha Database Client</name>
+            <url>http://bamboozle.io:8081/nexus/content/repositories/max-alpha-database-client</url>
+        </repository>
+    </repositories>
+
     <build>
         <plugins>
             <plugin>
@@ -54,9 +63,9 @@
             <version>3.4</version>
         </dependency>
         <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongo-java-driver</artifactId>
-            <version>3.2.0</version>
+            <groupId>com.three-stack</groupId>
+            <artifactId>max-alpha-database-client</artifactId>
+            <version>0.0.2-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

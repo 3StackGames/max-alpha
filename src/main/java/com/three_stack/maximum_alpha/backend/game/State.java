@@ -15,8 +15,11 @@ import com.three_stack.maximum_alpha.backend.game.prompts.Prompt;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
 import com.three_stack.maximum_alpha.backend.game.phases.Phase;
 import com.three_stack.maximum_alpha.backend.game.phases.StartPhase;
+import com.three_stack.maximum_alpha.backend.game.utilities.DatabaseClientFactory;
 import com.three_stack.maximum_alpha.backend.game.utilities.Serializer;
 import com.three_stack.maximum_alpha.backend.server.Connection;
+import com.three_stack.maximum_alpha.database_client.DatabaseClient;
+import org.bson.types.ObjectId;
 
 public class State {
     public enum TriggerPoint {
@@ -91,7 +94,11 @@ public class State {
         for(Connection connection : parameters.players) {
             Player player = new Player(connection, parameters.TOTAL_HEALTH);
             players.add(player);
-            Deck deck = Deck.loadDeck(player.getConnection().deckId);
+            //load deck
+            DatabaseClient client = DatabaseClientFactory.create();
+            ObjectId deckId = player.getConnection().deckId;
+            Deck deck = new Deck(client.getDeck(deckId));
+
             //add effects and mark controller
             for(Card card : deck.getCards()) {
 
@@ -118,7 +125,9 @@ public class State {
         StartPhase.getInstance().start(this);
 		//do other things here
 	}
-	
+
+
+
 	public void initialDraw() {
 		for (Player player : players) {
 			for(int i = 0; i < parameters.INITIAL_DRAW_SIZE; i++) {

@@ -1,22 +1,27 @@
 package com.three_stack.maximum_alpha.backend.game.events;
 
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
+import com.three_stack.maximum_alpha.database_client.pojos.DBEffect;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class Effect {
     protected UUID id;
     protected Card source;
-    protected Check check;
-    protected Result result;
-    protected Object value;
+    protected List<Check> checks;
+    protected List<Result> results;
+    protected List<Object> values;
 
-    public Effect(Card source, Check check, Result result, Object value) {
-        id = UUID.randomUUID();
-        this.source = source;
-        this.check = check;
-        this.result = result;
-        this.value = value;
+    public Effect(DBEffect dbEffect) {
+        this.checks = dbEffect.getChecks().stream()
+                .map(Checks::getCheck)
+                .collect(Collectors.toList());
+        this.results = dbEffect.getResults().stream()
+                .map(Results::getResult)
+                .collect(Collectors.toList());
+        this.values = dbEffect.getValues();
     }
 
     public UUID getId() {
@@ -35,27 +40,27 @@ public class Effect {
         this.source = source;
     }
 
-    public Check getCheck() {
-        return check;
+    public List<Check> getChecks() {
+        return checks;
     }
 
-    public void setCheck(Check check) {
-        this.check = check;
+    public void setChecks(List<Check> checks) {
+        this.checks = checks;
     }
 
-    public Result getResult() {
-        return result;
+    public List<Result> getResults() {
+        return results;
     }
 
-    public void setResult(Result result) {
-        this.result = result;
+    public void setResults(List<Result> results) {
+        this.results = results;
     }
 
-    public Object getValue() {
-        return value;
+    public List<Object> getValues() {
+        return values;
     }
 
-    public void setValue(Object value) {
-        this.value = value;
+    public void setValues(List<Object> values) {
+        this.values = values;
     }
 }

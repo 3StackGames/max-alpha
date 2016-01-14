@@ -14,6 +14,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.bson.types.ObjectId;
 import org.java_websocket.WebSocket;
 import org.java_websocket.framing.Framedata;
 import org.java_websocket.handshake.ClientHandshake;
@@ -39,6 +40,17 @@ public class Server extends WebSocketServer {
     LinkedBlockingQueue<Connection> pool = new LinkedBlockingQueue<>();
     Collection<Connection> playersInGame = new HashSet<>();
 
+    public static void main(String[] args) throws InterruptedException, IOException {
+        int port = 8080;
+        try {
+            port = Integer.parseInt(args[0]);
+        } catch (Exception e) {
+        }
+        Server server = new Server(port);
+        server.start();
+        System.out.println("Server started on port: " + server.getPort());
+    }
+
     public static ExecutorService newBoundedFixedThreadPool(int nThreads) {
         return new ThreadPoolExecutor(nThreads, nThreads,
                 0L, TimeUnit.MILLISECONDS,
@@ -60,17 +72,19 @@ public class Server extends WebSocketServer {
             try {
                 JSONObject json = new JSONObject(message);
                 String eventType = json.getString(Message.EVENT_TYPE);
+                ObjectId playerId = new ObjectId(json.getString("playerId"));
+                ObjectId deckId = new ObjectId(json.getString("deckId"));
                 //todo: add more events
                 if (eventType.equals("Find Game")) {
                     synchronized (pool) {
                         System.out.println("adding to matchmaking pool....");
-                        pool.add(new Connection(socket, json.getInt("playerId"), json.getInt("deckId")));
+                        pool.add(new Connection(socket, playerId, deckId));
                         pool.notify();
                     }
                 } else if (eventType.equals("Stop Find Game")) {
                 	//Should make less jank in the future?
                     synchronized (pool) {
-                        pool.remove(new Connection(socket, json.getInt("playerId"), json.getInt("deckId")));
+                        pool.remove(new Connection(socket, playerId, deckId));
                     }
                 } else if (eventType.equals("Game Action")) {
                     String gameCode = json.getString("gameCode");
@@ -79,7 +93,7 @@ public class Server extends WebSocketServer {
                     updateGame(gameCode, action, socket);
                 } else if (eventType.equals("Player Ready")) {
                     String gameCode = json.getString("gameCode");
-                	readyGame(gameCode, json.getInt("playerId"), json.getBoolean("ready"));
+                	readyGame(gameCode, playerId, json.getBoolean("ready"));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -131,11 +145,11 @@ public class Server extends WebSocketServer {
         sendStateUpdate(gameCode);
     }
     
-    public void readyGame(String gameCode, int playerId, boolean ready) {
+    public void readyGame(String gameCode, ObjectId playerId, boolean ready) {
     	List<Connection> players = unstartedGames.get(gameCode);
     	if(!ready) {
     		for(Connection player : players) {
-	    		if (player.playerId != playerId) {
+	    		if (!player.playerId.equals(playerId)) {
 	    			player.setReady(false);
 	    			pool.add(player);
 	    		}
@@ -146,7 +160,7 @@ public class Server extends WebSocketServer {
     	else {
 	    	boolean allReady = true;
 	    	for(Connection player : players) {
-	    		if (player.playerId == playerId) {
+	    		if (player.playerId.equals(playerId)) {
 	    			player.setReady(true);    			
 	    		}
 	    		allReady &= player.isReady();
@@ -213,16 +227,7 @@ public class Server extends WebSocketServer {
         System.out.println("received fragment: " + fragment);
     }
 
-    public static void main(String[] args) throws InterruptedException, IOException {
-        int port = 8080;
-        try {
-            port = Integer.parseInt(args[0]);
-        } catch (Exception e) {
-        }
-        Server server = new Server(port);
-        server.start();
-        System.out.println("Server started on port: " + server.getPort());
-    }
+
 
     @Override
     public void onError(WebSocket socket, Exception e) {

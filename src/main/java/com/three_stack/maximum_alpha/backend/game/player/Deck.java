@@ -4,16 +4,23 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
 import com.three_stack.maximum_alpha.backend.game.cards.CardFactory;
-import com.three_stack.maximum_alpha.backend.game.utilities.MongoService;
+import com.three_stack.maximum_alpha.backend.game.utilities.DatabaseClientFactory;
+import com.three_stack.maximum_alpha.database_client.DatabaseClient;
+import com.three_stack.maximum_alpha.database_client.pojos.DBDeck;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 public class Deck extends Zone<Card> {
+    //@Todo: remove this for production
+    public static ObjectId DEFAULT_ID = new ObjectId("568ec4b9bbdcf16c2c000003");
+
 	private Zone<Structure> buildables;
 
 	public Deck() {
@@ -27,6 +34,11 @@ public class Deck extends Zone<Card> {
     public Deck(List<Card> cards, List<Structure> buildables) {
     	super(cards);
     	this.buildables = new Zone<Structure>(buildables);
+    }
+
+    public Deck(DBDeck deck) {
+        cards = deck.getMainCards().stream().map(CardFactory::create).collect(Collectors.toList());
+        buildables.cards = deck.getStructureCards().stream().map(CardFactory::create).map(card -> (Structure) card).collect(Collectors.toList());
     }
 
     public void shuffle() {
@@ -68,41 +80,4 @@ public class Deck extends Zone<Card> {
 	public void setBuildables(Zone<Structure> buildables) {
 		this.buildables = buildables;
 	}
-
-    public static Deck loadDeck(int deckId) {
-        MongoService mongoService = new MongoService();
-
-        MongoCollection<Document> deckCollection = mongoService.getDeckCollection();
-        MongoCollection<Document> cardCollection = mongoService.getCardCollection();
-
-        MongoCursor<Document> deckCursor = deckCollection.find(new Document("id", deckId)).iterator();
-
-        if(!deckCursor.hasNext()) {
-            throw new IllegalArgumentException("Deck Not found");
-        }
-
-        Document deck = deckCursor.next();
-
-        List<Integer> mainDeckIds = (List<Integer>) deck.get("mainDeckIds");
-        List<Integer> structureIds = (List<Integer>) deck.get("buildableIds");
-
-        List<Card> cards = new ArrayList<>();
-
-        for(Integer mainDeckId : mainDeckIds) {
-            Document cardDocument = cardCollection.find(new Document("id", mainDeckId)).first();
-
-            Card card = CardFactory.create(cardDocument);
-            cards.add(card);
-        }
-        
-        List<Structure> buildables = new ArrayList<>();
-        for(Integer structureId : structureIds) {
-            Document cardDocument = cardCollection.find(new Document("id", structureId)).first();
-
-            Structure structure = (Structure) CardFactory.create(cardDocument);
-            buildables.add(structure);
-        }
-
-        return new Deck(cards, buildables);
-    }
 }
