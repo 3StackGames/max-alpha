@@ -17,7 +17,6 @@ import org.bson.types.ObjectId;
 
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.Action;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
-import com.three_stack.maximum_alpha.backend.game.cards.Castle;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
 import com.three_stack.maximum_alpha.backend.game.events.Effect;
@@ -34,6 +33,7 @@ import com.three_stack.maximum_alpha.backend.game.player.Zone;
 import com.three_stack.maximum_alpha.backend.game.prompts.Prompt;
 import com.three_stack.maximum_alpha.backend.game.utilities.DatabaseClientFactory;
 import com.three_stack.maximum_alpha.backend.game.utilities.Serializer;
+import com.three_stack.maximum_alpha.backend.game.victories.VictoryHandler;
 import com.three_stack.maximum_alpha.backend.server.Connection;
 import com.three_stack.maximum_alpha.database_client.DatabaseClient;
 
@@ -68,6 +68,7 @@ public class State {
     private List<Player> losingPlayers;
     private List<Player> tiedPlayers;
 	private boolean gameOver;
+	private VictoryHandler victoryHandler;
 	
 	public State(Parameters parameters) {
 		this.parameters = parameters;
@@ -90,7 +91,7 @@ public class State {
 	}
 	
 	public void setupGame() {
-
+		victoryHandler = parameters.victoryHandler;
         gameOver = false;
         
         for(Connection connection : parameters.players) {
@@ -400,9 +401,9 @@ public class State {
     }
     
     public void resolveDeaths() {
-    	boolean tie = true;
     	for(Player player : playingPlayers) {
     		Field field = player.getField();
+    		Zone<Structure> court = player.getCourtyard();
     		Zone<Card> grave = player.getGrave();
     		for(Creature creature : field.getCreatures()) {
     			if(creature.isDead()) {
@@ -410,39 +411,16 @@ public class State {
     				grave.add(creature, this);
     			}
     		}
-    		
-    		Castle castle = player.getCastle();
-    		if(castle.isDead()) {
-    			setPlayerStatus(player, Status.LOSE);
-    		} else {
-    			tie = false;
+    		for(Structure structure : court.getCards()) {
+    			if(structure.isDead()) {
+    				court.remove(structure);
+    				grave.add(structure, this);
+    			}
     		}
     	}
     	
-    	if(tie) {
-    		playingPlayers.forEach((player) -> {
-    			if(player.getStatus() == Status.PLAYING) {
-        			setPlayerStatus(player, Status.TIE);
-    			}
-    		});
-			gameOver();
-    	}
-    	else {
-	    	for(Player player : playingPlayers) {
-	    		if(player.getStatus() == Status.PLAYING) {
-	    			boolean won = true;
-		    		for(Player otherPlayer : getPlayersExcept(player)) {
-		    			if(otherPlayer.getStatus() != Status.LOSE) {
-		    				won = false;
-		    				break;
-		    			}
-		    		}
-		    		if(won) {
-		    			setPlayerStatus(player, Status.WIN);
-		    			gameOver();
-		    		}
-	    		}
-	    	}
+    	if(victoryHandler.determineVictory(this)) {
+    		gameOver();
     	}
     }
     

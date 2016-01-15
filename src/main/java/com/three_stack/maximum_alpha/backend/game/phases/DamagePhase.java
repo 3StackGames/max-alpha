@@ -4,7 +4,6 @@ import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class DamagePhase extends Phase {
@@ -30,7 +29,10 @@ public class DamagePhase extends Phase {
 
         for(Creature attacker : attackers) {
             if(!attacker.isBlocked()) {
-                state.addEvent(attacker.getAttackTarget().takeDamage(attacker.getCurrentAttack(), attacker));
+            	if(!attacker.getAttackTarget().isDead()) {
+	                state.addEvent(attacker.getAttackTarget().takeDamage(attacker.getCurrentAttack(), attacker));
+	                state.resolveDeaths();
+            	}
             } else {
                 attacker.getBlockers().stream().forEach(blocker -> {
                 	if(!attacker.isDead() && !blocker.isDead()) {
