@@ -32,6 +32,11 @@ public class Player {
 
     private ResourceList resources;
     private boolean hasAssignedOrPulled;
+    private Status status;
+
+	public enum Status {
+    	WIN, LOSE, TIE, PLAYING
+    }
 
     public Player(Connection connection, int baseMaxLife) {
         username = "Player " + usernameCounter++;
@@ -49,6 +54,8 @@ public class Player {
 
         resources = new ResourceList(Parameters.INITIAL_COLORLESS_MANA);
         castle = new Castle(baseMaxLife);
+        
+        status = Status.PLAYING;
     }
     
     public Collection<Card> getAllCards() {
@@ -236,4 +243,12 @@ public class Player {
     public int hashCode() {
         return playerId != null ? playerId.hashCode() : 0;
     }
+   
+    public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
+	}
 }

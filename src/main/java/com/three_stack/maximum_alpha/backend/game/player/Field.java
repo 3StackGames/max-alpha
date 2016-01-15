@@ -28,4 +28,8 @@ public class Field {
     public List<Creature> getCreatures() {
         return Collections.unmodifiableList(creatures.getCards());
     }
+    
+    public Zone<Creature> getCreatureZone() {
+    	return creatures;
+    }
 }

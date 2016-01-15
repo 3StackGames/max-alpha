@@ -1,29 +1,45 @@
 package com.three_stack.maximum_alpha.backend.game;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.UUID;
 import java.util.stream.Collectors;
+
+import org.bson.types.ObjectId;
 
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.Action;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
+import com.three_stack.maximum_alpha.backend.game.cards.Castle;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
 import com.three_stack.maximum_alpha.backend.game.events.Effect;
+import com.three_stack.maximum_alpha.backend.game.events.Event;
 import com.three_stack.maximum_alpha.backend.game.events.Trigger;
 import com.three_stack.maximum_alpha.backend.game.events.TriggeredEffect;
-import com.three_stack.maximum_alpha.backend.game.player.Deck;
-import com.three_stack.maximum_alpha.backend.game.player.Player;
-import com.three_stack.maximum_alpha.backend.game.prompts.Prompt;
-import com.three_stack.maximum_alpha.backend.game.events.Event;
 import com.three_stack.maximum_alpha.backend.game.phases.Phase;
 import com.three_stack.maximum_alpha.backend.game.phases.StartPhase;
+import com.three_stack.maximum_alpha.backend.game.player.Deck;
+import com.three_stack.maximum_alpha.backend.game.player.Field;
+import com.three_stack.maximum_alpha.backend.game.player.Player;
+import com.three_stack.maximum_alpha.backend.game.player.Player.Status;
+import com.three_stack.maximum_alpha.backend.game.player.Zone;
+import com.three_stack.maximum_alpha.backend.game.prompts.Prompt;
 import com.three_stack.maximum_alpha.backend.game.utilities.DatabaseClientFactory;
 import com.three_stack.maximum_alpha.backend.game.utilities.Serializer;
 import com.three_stack.maximum_alpha.backend.server.Connection;
 import com.three_stack.maximum_alpha.database_client.DatabaseClient;
-import org.bson.types.ObjectId;
 
 public class State {
 	private List<Player> players;
+	private List<Player> playingPlayers;
 	private List<Event> eventHistory;
 	private Phase currentPhase;
 	/**
@@ -39,7 +55,6 @@ public class State {
 	private List<Card> cardsPlayed;
 	private final transient Parameters parameters;
 	private transient Map<UUID, Card> masterCardList;
-	private boolean gameOver;
     private transient Map<Trigger, List<Effect>> effects;
 
     /**
@@ -48,14 +63,22 @@ public class State {
     private int timer = 1;
     //@Todo: make this a priority queue with 2-factors: low effectCount (main priority) and low ageInZone (secondary priority)
     private transient PriorityQueue<TriggeredEffect> triggeredEffects;
-	//game over: winningPlayers, losingPlayers, tiedPlayers
+    
+    private List<Player> winningPlayers;
+    private List<Player> losingPlayers;
+    private List<Player> tiedPlayers;
+	private boolean gameOver;
 	
 	public State(Parameters parameters) {
 		this.parameters = parameters;
 		this.players = new ArrayList<>();
+		this.playingPlayers = new ArrayList<>();
 		this.eventHistory = new ArrayList<>();
         this.promptQueue = new ArrayDeque<>();
         this.effects = new HashMap<>();
+        this.winningPlayers = new ArrayList<>();
+        this.losingPlayers = new ArrayList<>();
+        this.tiedPlayers = new ArrayList<>();
         this.triggeredEffects = new PriorityQueue<>((Comparator<TriggeredEffect>) (a, b) -> {
             if(!a.getEvent().equals(b.getEvent())) {
                 return a.getEvent().getTimeOccurred() - b.getEvent().getTimeOccurred();
@@ -99,6 +122,7 @@ public class State {
             deck.shuffle();
             player.setDeck(deck);
         }
+        playingPlayers.addAll(players);
 
 		initialDraw();
         StartPhase.getInstance().start(this);
@@ -108,7 +132,7 @@ public class State {
 
 
 	public void initialDraw() {
-		for (Player player : players) {
+		for (Player player : playingPlayers) {
 			for(int i = 0; i < parameters.INITIAL_DRAW_SIZE; i++) {
 				player.draw(this);
 			}
@@ -134,10 +158,10 @@ public class State {
 		combatEnded = false;
 		turnCount++;
 		turn++;
-		if (turn >= players.size()) {
+		if (turn >= playingPlayers.size()) {
 			turn = 0;
 		}
-        players.forEach(Player::newTurn);
+        playingPlayers.forEach(Player::newTurn);
 	}
     
     public Card findCard(UUID id) {
@@ -145,7 +169,7 @@ public class State {
     }
     
     public Player findPlayer(UUID id) {
-        for(Player player : players) {
+        for(Player player : playingPlayers) {
             if(player.getPlayerId().equals(id)) {
                 return player;
             }
@@ -154,7 +178,7 @@ public class State {
     }
 
     public List<Player> getPlayersExcept(Player undesiredPlayer) {
-        List<Player> otherPlayers = players.stream()
+        List<Player> otherPlayers = playingPlayers.stream()
                 .filter(player -> !player.equals(undesiredPlayer))
                 .collect(Collectors.toList());
 
@@ -166,13 +190,17 @@ public class State {
 		action.run(this);
         resolveTriggeredEffects();
 	}
+	
+	public boolean isGameOver() {
+		return gameOver;
+	}
 
     public boolean isLegalAction(Action action) {
 		return action.isValid(this);
 	}
 
     public Player getTurnPlayer() {
-        return players.get(turn);
+        return playingPlayers.get(turn);
     }
 
     public void refreshTurnPlayerCards() {
@@ -187,7 +215,7 @@ public class State {
     
     public Map<UUID, Card> generateCardList() {
 		//Gets all cards from each player, then collects them into the map
-		masterCardList = players.stream().map(Player::getAllCards).flatMap(p -> p.stream()).collect(Collectors.toMap(Card::getId, c->c));
+		masterCardList = playingPlayers.stream().map(Player::getAllCards).flatMap(p -> p.stream()).collect(Collectors.toMap(Card::getId, c->c));
     	
     	return masterCardList;
     }
@@ -221,12 +249,12 @@ public class State {
 
 	//Getters and setters
 	
-    public List<Player> getPlayers() {
-        return players;
-    }
-
-    public void setPlayers(List<Player> players) {
-        this.players = players;
+	public List<Player> getAllPlayers() {
+		return players;
+	}
+	
+    public List<Player> getPlayingPlayers() {
+        return playingPlayers;
     }
 
 	public void addEvent(Event event) {
@@ -340,6 +368,80 @@ public class State {
             int[] index = {0};
             currentEffect.getResults().stream()
                     .forEachOrdered(result -> result.run(this, currentEffect.getSource(), effectEvent, currentEffect.getValues().get(index[0]++)));
+            resolveDeaths();
         }
+    }
+    
+    public void setPlayerStatus(Player player, Status status) {
+    	switch(status) {
+    		case LOSE:
+    			player.setStatus(Status.LOSE);
+				playingPlayers.remove(player);
+				losingPlayers.add(player);
+				break;
+    		case TIE:
+    			player.setStatus(Status.TIE);
+				playingPlayers.remove(player);
+				tiedPlayers.add(player);
+				break;
+    		case WIN:
+    			player.setStatus(Status.WIN);
+				playingPlayers.remove(player);
+				winningPlayers.add(player);
+				break;
+    		default:
+    			break;
+    	}
+    }
+    
+    public void resolveDeaths() {
+    	boolean tie = true;
+    	for(Player player : playingPlayers) {
+    		Field field = player.getField();
+    		Zone<Card> grave = player.getGrave();
+    		for(Creature creature : field.getCreatures()) {
+    			if(creature.isDead()) {
+    				field.getCreatureZone().remove(creature);
+    				grave.add(creature, this);
+    			}
+    		}
+    		
+    		Castle castle = player.getCastle();
+    		if(castle.isDead()) {
+    			setPlayerStatus(player, Status.LOSE);
+    		} else {
+    			tie = false;
+    		}
+    	}
+    	
+    	if(tie) {
+    		playingPlayers.forEach((player) -> {
+    			if(player.getStatus() == Status.PLAYING) {
+        			setPlayerStatus(player, Status.TIE);
+    			}
+    		});
+			gameOver();
+    	}
+    	else {
+	    	for(Player player : playingPlayers) {
+	    		if(player.getStatus() == Status.PLAYING) {
+	    			boolean won = true;
+		    		for(Player otherPlayer : getPlayersExcept(player)) {
+		    			if(otherPlayer.getStatus() != Status.LOSE) {
+		    				won = false;
+		    				break;
+		    			}
+		    		}
+		    		if(won) {
+		    			setPlayerStatus(player, Status.WIN);
+		    			gameOver();
+		    		}
+	    		}
+	    	}
+    	}
+    }
+    
+    public void gameOver() {
+    	gameOver = true;
     }
 }

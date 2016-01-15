@@ -181,6 +181,9 @@ public class Server extends WebSocketServer {
         if (state.isLegalAction(action)) {
             state.processAction(action);
             sendStateUpdate(gameCode);
+            if(state.isGameOver()) {
+            	startedGames.remove(gameCode);
+            }
         } else {
         	sendError(socket, "Invalid Action", "");
         }
@@ -274,7 +277,7 @@ public class Server extends WebSocketServer {
     	State game = startedGames.get(gameCode); 	
     	String state = game.toString();
         
-    	List<Player> players = game.getPlayers();
+    	List<Player> players = game.getAllPlayers();
         for (Player player : players) {     	
             Message stateUpdate = new Message("State Update");
             stateUpdate.add("state", new JSONObject(state));

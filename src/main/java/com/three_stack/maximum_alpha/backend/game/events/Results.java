@@ -33,10 +33,10 @@ public class Results {
     public static Result DEAL_DAMAGE_ALL_STRUCTURES_AND_CASTLES = (state, source, event, value) -> {
         int damage = (int) value;
 
-        Stream<DamageableCard> castleStream = state.getPlayers().stream()
+        Stream<DamageableCard> castleStream = state.getPlayingPlayers().stream()
                 .map(Player::getCastle);
 
-        Stream<DamageableCard> structureStream = state.getPlayers().stream()
+        Stream<DamageableCard> structureStream = state.getPlayingPlayers().stream()
                 .map(player -> player.getCourtyard().getCards())
                 .flatMap(Collection::stream);
 
@@ -53,7 +53,7 @@ public class Results {
     public static Result DEAL_DAMAGE_ALL_CREATURES = (state, source, event, value) -> {
         int damage = (int) value;
         Event damageEvent = new Event();
-        state.getPlayers().stream()
+        state.getPlayingPlayers().stream()
                 .map(player -> player.getField().getCreatures())
                 .flatMap(creatures -> creatures.stream())
                 .forEach(creature -> {

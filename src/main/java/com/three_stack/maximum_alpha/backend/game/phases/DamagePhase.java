@@ -32,11 +32,14 @@ public class DamagePhase extends Phase {
             if(!attacker.isBlocked()) {
                 state.addEvent(attacker.getAttackTarget().takeDamage(attacker.getCurrentAttack(), attacker));
             } else {
-                attacker.getBlockers().stream().filter(blocker -> attacker.isAlive()).forEach(blocker -> {
-                    state.addEvent(attacker.takeDamage(blocker.getCurrentAttack(), blocker));
-                    state.addEvent(blocker.takeDamage(attacker.getCurrentAttack(), attacker));
-
-                    blocker.setBlockTarget(null);
+                attacker.getBlockers().stream().forEach(blocker -> {
+                	if(!attacker.isDead() && !blocker.isDead()) {
+	                    state.addEvent(attacker.takeDamage(blocker.getCurrentAttack(), blocker));
+	                    state.addEvent(blocker.takeDamage(attacker.getCurrentAttack(), attacker));
+	                    state.resolveDeaths();
+                	}
+	
+	                blocker.setBlockTarget(null);
                 });
                 attacker.resetBlockers();
             }
