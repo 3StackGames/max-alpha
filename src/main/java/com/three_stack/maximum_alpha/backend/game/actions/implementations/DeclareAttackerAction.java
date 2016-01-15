@@ -39,7 +39,7 @@ public class DeclareAttackerAction extends ExistingCardAction {
 		boolean playerTurn = isPlayerTurn(state);
 		boolean isCreature = card instanceof Creature;
 		Creature attacker = (Creature) card;
-		boolean isOnPlayerField = player.getField().getCreatures().contains(attacker);
+		boolean isOnPlayerField = player.getField().getCards().contains(attacker);
 		boolean canAttack = attacker.canAttack();
 
 		return notInPrompt && correctPhase && playerTurn && isCreature && isOnPlayerField && canAttack;

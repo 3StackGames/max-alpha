@@ -54,7 +54,7 @@ public class Results {
         int damage = (int) value;
         Event damageEvent = new Event();
         state.getPlayers().stream()
-                .map(player -> player.getField().getCreatures())
+                .map(player -> player.getField().getCards())
                 .flatMap(creatures -> creatures.stream())
                 .forEach(creature -> {
                     damageEvent.mergeEvent(creature.takeDamage(damage, source));
@@ -78,7 +78,7 @@ public class Results {
         Random random = new Random();
 
         List<Creature> enemyCreatures = state.getPlayersExcept(controller).stream()
-                .map(player -> player.getField().getCreatures())
+                .map(player -> player.getField().getCards())
                 .flatMap(creatures -> creatures.stream())
                 .collect(Collectors.toList());
 

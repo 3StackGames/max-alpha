@@ -23,7 +23,8 @@ public class Player {
 
     //Zones
     private Hand hand;
-    private Deck deck;
+    private MainDeck mainDeck;
+    private StructureDeck structureDeck;
     private Field field;
     private Graveyard graveyard;
     private Town town;
@@ -41,12 +42,11 @@ public class Player {
         playerId = UUID.randomUUID();
 
         hand = new Hand(this);
-        deck = new Deck();
-        field = new Field();
+        field = new Field(this);
 
-        graveyard = new Graveyard();
-        town = new Town();
-        courtyard = new Courtyard();
+        graveyard = new Graveyard(this);
+        town = new Town(this);
+        courtyard = new Courtyard(this);
 
         resources = new ResourceList(Parameters.INITIAL_COLORLESS_MANA);
         castle = new Castle(baseMaxLife);
@@ -54,13 +54,13 @@ public class Player {
     
     public Collection<Card> getAllCards() {
     	Collection<Card> cards = new HashSet<>();
-    	cards.addAll(deck.getCards());
+    	cards.addAll(mainDeck.getCards());
     	cards.addAll(hand.getCards());
-    	cards.addAll(field.getCreatures());
+    	cards.addAll(field.getCards());
     	cards.addAll(graveyard.getCards());
         cards.addAll(town.getCards());
         cards.addAll(courtyard.getCards());
-        cards.addAll(deck.getBuildables().getCards());
+        cards.addAll(structureDeck.getCards());
     	cards.add(castle);
     	
     	return cards;
@@ -68,11 +68,11 @@ public class Player {
     
     public Collection<Card> getVisibleCards() {
     	Collection<Card> cards = new HashSet<>();
-    	cards.addAll(field.getCreatures());
+    	cards.addAll(field.getCards());
     	cards.addAll(graveyard.getCards());
         cards.addAll(town.getCards());
         cards.addAll(courtyard.getCards());
-        cards.addAll(deck.getBuildables().getCards());
+        cards.addAll(structureDeck.getCards());
     	cards.add(castle);
         
         return cards;	
@@ -101,7 +101,7 @@ public class Player {
     }
 
     public void draw(State state) {
-        hand.add(deck.draw(), state);
+        hand.add(mainDeck.draw(), state);
     }
 
     public Event takeDamage(int damage, Card source) {
@@ -153,44 +153,28 @@ public class Player {
         return hand;
     }
 
-    public Deck getDeck() {
-        return deck;
+    public MainDeck getMainDeck() {
+        return mainDeck;
     }
 
-    public void setDeck(Deck deck) {
-        this.deck = deck;
+    public void setMainDeck(MainDeck mainDeck) {
+        this.mainDeck = mainDeck;
     }
 
     public Field getField() {
         return field;
     }
 
-    public void setField(Field field) {
-        this.field = field;
-    }
-
-    public Zone<Card> getGraveyard() {
+    public Graveyard getGraveyard() {
         return graveyard;
     }
 
-    public void setGraveyard(Zone<Card> graveyard) {
-        this.graveyard = graveyard;
-    }
-
-    public Zone<Creature> getTown() {
+    public Town getTown() {
         return town;
     }
 
-    public void setTown(Zone<Creature> town) {
-        this.town = town;
-    }
-
-    public Zone<Structure> getCourtyard() {
+    public Courtyard getCourtyard() {
         return courtyard;
-    }
-
-    public void setCourtyard(Zone<Structure> courtyard) {
-        this.courtyard = courtyard;
     }
 
     public ResourceList getResources() {
@@ -207,6 +191,14 @@ public class Player {
 
     public void setCastle(Castle castle) {
         this.castle = castle;
+    }
+
+    public StructureDeck getStructureDeck() {
+        return structureDeck;
+    }
+
+    public void setStructureDeck(StructureDeck structureDeck) {
+        this.structureDeck = structureDeck;
     }
 
     //TODO: add support for effects which give extra assigns/pulls? or should those be separate effects

@@ -59,6 +59,6 @@ public class Checks {
      */
     public static Check S_ON_FIELD = (state, effect, event) -> {
         Card source = effect.getSource();
-        return source.getController().getField().getCreatures().stream().anyMatch(creature -> creature.equals(source));
+        return source.getController().getField().getCards().stream().anyMatch(creature -> creature.equals(source));
     };
 }

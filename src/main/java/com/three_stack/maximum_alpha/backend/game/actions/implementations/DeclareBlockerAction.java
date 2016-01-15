@@ -21,7 +21,7 @@ public class DeclareBlockerAction extends ExistingCardAction {
 
         Creature blocker = (Creature) card;
 
-        List<Card> blockableTargets = state.getTurnPlayer().getField().getCreatures().stream()
+        List<Card> blockableTargets = state.getTurnPlayer().getField().getCards().stream()
                 .filter(creature -> creature.isAttacking())
                 .collect(Collectors.toList());
 
@@ -39,7 +39,7 @@ public class DeclareBlockerAction extends ExistingCardAction {
 		boolean playerTurn = !isPlayerTurn(state);
 		boolean isCreature = card instanceof Creature;
 		Creature blocker = (Creature) card;
-		boolean isOnPlayerField = player.getField().getCreatures().contains(blocker);
+		boolean isOnPlayerField = player.getField().getCards().contains(blocker);
 		boolean canBlock = blocker.canBlock();
 
 		return notInPrompt && correctPhase && playerTurn && isCreature && isOnPlayerField && canBlock;

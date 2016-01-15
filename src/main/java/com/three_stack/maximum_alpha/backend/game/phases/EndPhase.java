@@ -18,7 +18,7 @@ public class EndPhase extends Phase {
 
     public void start(State state) {
         state.setCurrentPhase(instance);
-        state.getTurnPlayer().getField().getCreatures().forEach(creature -> creature.setHasSummoningSickness(false));
+        state.getTurnPlayer().getField().getCards().forEach(creature -> creature.setHasSummoningSickness(false));
         end(state);
     }
 

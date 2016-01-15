@@ -22,10 +22,7 @@ public class PlayCardAction extends ExistingCardWithCostAction {
             Event playEvent = new SingleCardEvent(card, player.getUsername() + " has played " + card.getName());
             state.addEvent(playEvent);
 
-
-            Event enterFieldEvent = new SingleCardEvent(card, card.getName() + " entered the field");
-            state.addEvent(enterFieldEvent);
-            player.getField().add((Creature) card, state, enterFieldEvent);
+            player.getField().add((Creature) card, state);
 
         } else {
             //@Todo: Handle spells

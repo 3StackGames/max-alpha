@@ -7,10 +7,11 @@ import com.three_stack.maximum_alpha.backend.game.actions.abstracts.Action;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
+import com.three_stack.maximum_alpha.backend.game.cards.StructureDeck;
 import com.three_stack.maximum_alpha.backend.game.events.Effect;
 import com.three_stack.maximum_alpha.backend.game.events.Trigger;
 import com.three_stack.maximum_alpha.backend.game.events.TriggeredEffect;
-import com.three_stack.maximum_alpha.backend.game.player.Deck;
+import com.three_stack.maximum_alpha.backend.game.player.MainDeck;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.prompts.Prompt;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
@@ -20,6 +21,7 @@ import com.three_stack.maximum_alpha.backend.game.utilities.DatabaseClientFactor
 import com.three_stack.maximum_alpha.backend.game.utilities.Serializer;
 import com.three_stack.maximum_alpha.backend.server.Connection;
 import com.three_stack.maximum_alpha.database_client.DatabaseClient;
+import com.three_stack.maximum_alpha.database_client.pojos.DBDeck;
 import org.bson.types.ObjectId;
 
 public class State {
@@ -71,39 +73,53 @@ public class State {
         gameOver = false;
 
         for (Connection connection : parameters.players) {
+            //initialize player
             Player player = new Player(connection, parameters.TOTAL_HEALTH);
             players.add(player);
-            //load deck
+            //load decks
             DatabaseClient client = DatabaseClientFactory.create();
             ObjectId deckId = player.getConnection().deckId;
-            Deck deck = new Deck(client.getDeckWithCards(deckId));
-
-            //add effects and mark controller
-            for (Card card : deck.getCards()) {
-
-                card.setController(player);
-
-                Map<Trigger, List<Effect>> effectsMap = card.getEffects();
-                if (card.hasEffects() && !card.getEffects().isEmpty()) {
-                    Iterator<Map.Entry<Trigger, List<Effect>>> iterator = effectsMap.entrySet().iterator();
-                    while (iterator.hasNext()) {
-                        Map.Entry<Trigger, List<Effect>> entry = (Map.Entry<Trigger, List<Effect>>) iterator.next();
-
-                        for (Effect effect : entry.getValue()) {
-                            effect.setSource(card);
-                            addEffect(entry.getKey(), effect);
-                        }
-                    }
-                }
-            }
-            deck.shuffle();
-            player.setDeck(deck);
+            DBDeck dbDeck = client.getDeckWithCards(deckId);
+            MainDeck mainDeck = new MainDeck(dbDeck, player);
+            StructureDeck structureDeck = new StructureDeck(dbDeck, player);
+            trackCardEffectsAndMarkController(mainDeck.getCards(), structureDeck.getCards(), player);
+            mainDeck.shuffle();
+            player.setMainDeck(mainDeck);
+            player.setStructureDeck(structureDeck);
         }
 
         initialDraw();
         StartPhase.getInstance().start(this);
         //do other things here
         resolveTriggeredEffects();
+    }
+
+    private void trackCardEffectsAndMarkController(List<Card> mainCards, List<Structure> structureCards, Player controller) {
+        for (Card card : mainCards) {
+            card.setController(controller);
+            trackCardEffects(card);
+        }
+
+        for (Structure structure : structureCards) {
+            structure.setController(controller);
+            trackCardEffects(structure);
+        }
+    }
+
+    //@Todo: @Jason consider refactoring to streams - Jason
+    private void trackCardEffects(Card card) {
+        Map<Trigger, List<Effect>> effectsMap = card.getEffects();
+        if (card.hasEffects() && !card.getEffects().isEmpty()) {
+            Iterator<Map.Entry<Trigger, List<Effect>>> iterator = effectsMap.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<Trigger, List<Effect>> entry = iterator.next();
+
+                for (Effect effect : entry.getValue()) {
+                    effect.setSource(card);
+                    addEffect(entry.getKey(), effect);
+                }
+            }
+        }
     }
 
     private void initialDraw() {
@@ -179,7 +195,7 @@ public class State {
     public void refreshTurnPlayerCards() {
         Player player = getTurnPlayer();
         //look through field
-        player.getField().getCreatures().forEach(Creature::attemptRefresh);
+        player.getField().getCards().forEach(Creature::attemptRefresh);
         //look through structures
         player.getCourtyard().getCards().forEach(Structure::attemptRefresh);
     }

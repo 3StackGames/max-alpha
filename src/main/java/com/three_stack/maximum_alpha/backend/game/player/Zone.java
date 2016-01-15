@@ -9,9 +9,9 @@ import java.util.stream.Collectors;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 
 /**
- * Be careful whenever modifying cards that you also modify cardIds. Ideally call methods rather than modifying it directly.
+ * Handles common zone operations. Any operations that modify the zone should be marked protected though. Only implementaitons should modify since triggers will occur.
  */
-public class Zone<T extends Card> {
+public abstract class Zone<T extends Card> {
     protected transient List<T> cards;
     protected transient Player owner;
 
@@ -33,7 +33,7 @@ public class Zone<T extends Card> {
      *
      * @return Unmodifiable List
      */
-    protected List<T> getCards() {
+    public List<T> getCards() {
         return Collections.unmodifiableList(cards);
     }
 
@@ -43,7 +43,7 @@ public class Zone<T extends Card> {
     }
 
     @ExposeMethodResult("cardIds")
-    protected List<UUID> getCardIds() {
+    public List<UUID> getCardIds() {
         return cards.stream().map(Card::getId).collect(Collectors.toList());
     }
 
@@ -60,7 +60,7 @@ public class Zone<T extends Card> {
         throw new IllegalArgumentException("Card Not Found");
     }
 
-    protected T findCard(UUID cardId) {
+    public T findCard(UUID cardId) {
         return cards.stream()
                 .filter( card -> card.getId().equals(cardId))
                 .collect(Collectors.toList())
@@ -85,12 +85,12 @@ public class Zone<T extends Card> {
     }
 
     //@Todo: Error Handling
-    protected boolean contains(T card) {
+    public boolean contains(T card) {
         return cards.contains(card);
     }
 
     //@Todo: Error Handling
-    protected boolean containsAll(Collection<T> cards) {
+    public boolean containsAll(Collection<T> cards) {
         return cards.containsAll(cards);
     }
 }
