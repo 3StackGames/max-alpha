@@ -44,7 +44,7 @@ public class Serializer {
 
         public boolean shouldSkipField(FieldAttributes f) {
 
-            return (Card.class.isAssignableFrom(f.getDeclaringClass()) && !f.getName().equals("timeOccurred"));
+            return (Card.class.isAssignableFrom(f.getDeclaringClass()) && !f.getName().equals("id"));
         }
 
     }
