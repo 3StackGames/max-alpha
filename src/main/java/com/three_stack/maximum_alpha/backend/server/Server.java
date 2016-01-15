@@ -178,14 +178,14 @@ public class Server extends WebSocketServer {
     public void updateGame(String gameCode, Action action, WebSocket socket) {
     	State state = startedGames.get(gameCode);
         action.setup(state);
-        if (state.isLegalAction(action)) {
-            state.processAction(action);
+        boolean validAction = state.processAction(action);
+        if (validAction) {
             sendStateUpdate(gameCode);
             if(state.isGameOver()) {
             	startedGames.remove(gameCode);
             }
         } else {
-        	sendError(socket, "Invalid Action", "");
+        	sendError(socket, "Invalid Action", ""); //TODO: Get error message from processAction
         }
     }
 

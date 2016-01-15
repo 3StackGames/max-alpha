@@ -185,10 +185,15 @@ public class State {
         return otherPlayers;
     }
 	
-	public void processAction(Action action) {
-		eventHistory.clear();
-		action.run(this);
-        resolveTriggeredEffects();
+	public synchronized boolean processAction(Action action) {
+		if(isLegalAction(action)) {
+			eventHistory.clear();
+			action.run(this);
+	        resolveTriggeredEffects();
+	        return true;
+		} else {
+			return false; //TODO: return error message from isLegalAction -> action.isValid
+		}
 	}
 	
 	public boolean isGameOver() {
