@@ -6,7 +6,6 @@ import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.*;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
 import com.three_stack.maximum_alpha.backend.server.Connection;
-import org.bson.types.ObjectId;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -22,12 +21,14 @@ public class Player {
 	private transient Connection connection;
     private final UUID playerId;
 
+    //Zones
     private Hand hand;
     private Deck deck;
     private Field field;
-    private Zone<Card> grave;
-    private Zone<Creature> town;
-    private Zone<Structure> courtyard;
+    private Graveyard graveyard;
+    private Town town;
+    private Courtyard courtyard;
+
     private Castle castle;
 
     private ResourceList resources;
@@ -43,9 +44,9 @@ public class Player {
         deck = new Deck();
         field = new Field();
 
-        grave = new Zone<>();
-        town = new Zone<>();
-        courtyard = new Zone<>();
+        graveyard = new Graveyard();
+        town = new Town();
+        courtyard = new Courtyard();
 
         resources = new ResourceList(Parameters.INITIAL_COLORLESS_MANA);
         castle = new Castle(baseMaxLife);
@@ -56,7 +57,7 @@ public class Player {
     	cards.addAll(deck.getCards());
     	cards.addAll(hand.getCards());
     	cards.addAll(field.getCreatures());
-    	cards.addAll(grave.getCards());
+    	cards.addAll(graveyard.getCards());
         cards.addAll(town.getCards());
         cards.addAll(courtyard.getCards());
         cards.addAll(deck.getBuildables().getCards());
@@ -68,7 +69,7 @@ public class Player {
     public Collection<Card> getVisibleCards() {
     	Collection<Card> cards = new HashSet<>();
     	cards.addAll(field.getCreatures());
-    	cards.addAll(grave.getCards());
+    	cards.addAll(graveyard.getCards());
         cards.addAll(town.getCards());
         cards.addAll(courtyard.getCards());
         cards.addAll(deck.getBuildables().getCards());
@@ -168,12 +169,12 @@ public class Player {
         this.field = field;
     }
 
-    public Zone<Card> getGrave() {
-        return grave;
+    public Zone<Card> getGraveyard() {
+        return graveyard;
     }
 
-    public void setGrave(Zone<Card> grave) {
-        this.grave = grave;
+    public void setGraveyard(Zone<Card> graveyard) {
+        this.graveyard = graveyard;
     }
 
     public Zone<Creature> getTown() {

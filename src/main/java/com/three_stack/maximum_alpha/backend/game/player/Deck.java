@@ -1,22 +1,15 @@
 package com.three_stack.maximum_alpha.backend.game.player;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import com.three_stack.maximum_alpha.backend.game.State;
+import com.three_stack.maximum_alpha.backend.game.cards.Card;
+import com.three_stack.maximum_alpha.backend.game.cards.CardFactory;
+import com.three_stack.maximum_alpha.backend.game.cards.Structure;
+import com.three_stack.maximum_alpha.database_client.pojos.DBDeck;
+import org.bson.types.ObjectId;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
-import com.three_stack.maximum_alpha.backend.game.State;
-import com.three_stack.maximum_alpha.backend.game.cards.Card;
-import com.three_stack.maximum_alpha.backend.game.cards.Structure;
-import com.three_stack.maximum_alpha.backend.game.cards.CardFactory;
-import com.three_stack.maximum_alpha.backend.game.utilities.DatabaseClientFactory;
-import com.three_stack.maximum_alpha.database_client.DatabaseClient;
-import com.three_stack.maximum_alpha.database_client.pojos.DBDeck;
-import org.bson.Document;
-import org.bson.types.ObjectId;
 
 public class Deck extends Zone<Card> {
     //@Todo: remove this for production

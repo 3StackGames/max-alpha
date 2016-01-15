@@ -13,34 +13,41 @@ import com.three_stack.maximum_alpha.backend.game.cards.Card;
  */
 public class Zone<T extends Card> {
     protected transient List<T> cards;
+    protected transient Player owner;
 
-    public Zone() {
+    protected Zone(Player owner) {
+        setup(owner);
         cards = new ArrayList<>();
     }
 
-    public Zone(List<T> cards) {
+    protected Zone(List<T> cards, Player owner) {
+        setup(owner);
         this.cards = new ArrayList<>(cards);
+    }
+
+    protected void setup(Player owner) {
+        this.owner = owner;
     }
 
     /**
      *
      * @return Unmodifiable List
      */
-    public List<T> getCards() {
+    protected List<T> getCards() {
         return Collections.unmodifiableList(cards);
     }
 
-    public void add(T newCard, State state) {
+    protected void add(T newCard, State state) {
         newCard.setTimeEnteredZone(state.getTime());
         cards.add(newCard);
     }
 
     @ExposeMethodResult("cardIds")
-    public List<UUID> getCardIds() {
+    protected List<UUID> getCardIds() {
         return cards.stream().map(Card::getId).collect(Collectors.toList());
     }
 
-    public T takeCard(UUID cardId) {
+    protected T takeCard(UUID cardId) {
         Iterator<T> cardIterator = cards.iterator();
 
         while(cardIterator.hasNext()) {
@@ -53,37 +60,37 @@ public class Zone<T extends Card> {
         throw new IllegalArgumentException("Card Not Found");
     }
 
-    public T findCard(UUID cardId) {
+    protected T findCard(UUID cardId) {
         return cards.stream()
                 .filter( card -> card.getId().equals(cardId))
                 .collect(Collectors.toList())
                 .get(0);
     }
 
-    public void remove(T card) {
+    protected void remove(T card) {
         cards.remove(card);
     }
 
-    public T remove(int index) {
+    protected T remove(int index) {
         T card = cards.remove(index);
         return card;
     }
 
-    public void removeAll(Collection<T> removeCards) {
+    protected void removeAll(Collection<T> removeCards) {
         cards.removeAll(removeCards);
     }
 
-    public List<T> subList(int fromIndex, int toIndex) {
+    protected List<T> subList(int fromIndex, int toIndex) {
         return cards.subList(fromIndex, toIndex);
     }
 
     //@Todo: Error Handling
-    public boolean contains(T card) {
+    protected boolean contains(T card) {
         return cards.contains(card);
     }
 
     //@Todo: Error Handling
-    public boolean containsAll(Collection<T> cards) {
+    protected boolean containsAll(Collection<T> cards) {
         return cards.containsAll(cards);
     }
 }
