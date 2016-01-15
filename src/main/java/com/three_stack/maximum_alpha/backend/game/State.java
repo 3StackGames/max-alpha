@@ -178,7 +178,7 @@ public class State {
     }
 
     public List<Player> getPlayersExcept(Player undesiredPlayer) {
-        List<Player> otherPlayers = playingPlayers.stream()
+        List<Player> otherPlayers = players.stream()
                 .filter(player -> !player.equals(undesiredPlayer))
                 .collect(Collectors.toList());
 
