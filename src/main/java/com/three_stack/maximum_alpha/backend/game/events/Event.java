@@ -13,7 +13,7 @@ public class Event {
      */
     protected int timeOccurred;
 	protected List<String> descriptions;
-    protected Player player;
+    protected transient Player player;
 	
 	public Event() {
 		setup();
@@ -42,18 +42,10 @@ public class Event {
         this.getDescriptions().add(description);
     }
 
-    public void mergeEvent(Event other) {
+    public Event mergeEvent(Event other) {
         getDescriptions().addAll(other.getDescriptions());
         this.timeOccurred = Math.min(timeOccurred, other.getTimeOccurred());
-    }
-
-    public static Event joinEvents (Event a, Event b) {
-        Event event = new Event();
-        event.getDescriptions().addAll(a.getDescriptions());
-        event.getDescriptions().addAll(b.getDescriptions());
-        int timeOccurred = Math.min(a.getTimeOccurred(), b.getTimeOccurred());
-        event.setTimeOccurred(timeOccurred);
-        return event;
+        return this;
     }
 
     public int getTimeOccurred() {

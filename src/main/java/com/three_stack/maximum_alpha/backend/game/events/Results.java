@@ -87,7 +87,11 @@ public class Results {
         }
 
         Creature victim = enemyCreatures.get(random.nextInt(enemyCreatures.size()));
-        Event damageEvent = victim.takeDamage(damage, source);
-        state.addEvent(damageEvent);
+        victim.takeDamageSingleTarget(damage, source, state);
+    };
+
+    public static Result DEAL_DAMAGE_FRIENDLY_CASTLE = (state, source, event, value) -> {
+        int damage = (int) value;
+        source.getController().getCastle().takeDamageSingleTarget(damage, source, state);
     };
 }

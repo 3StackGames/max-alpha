@@ -103,6 +103,7 @@ public class State {
 		initialDraw();
         StartPhase.getInstance().start(this);
 		//do other things here
+        resolveTriggeredEffects();
 	}
 
 
@@ -122,8 +123,10 @@ public class State {
 	}
 	
 	public void turnPlayerDraw() {
-		if(turnCount > 0)
-			getTurnPlayer().draw(this);
+		if(turnCount > 0) {
+            Player turnPlayer = getTurnPlayer();
+            turnPlayer.draw(this);
+        }
 	}
 	
 	public void gatherResources() {
@@ -326,6 +329,19 @@ public class State {
 
     public int getTime() {
         return timer++;
+    }
+
+    public void notify(Trigger trigger, Event event) {
+        List<Effect> effects = getEffects(trigger);
+        if(effects == null) {
+            return;
+        }
+
+        //add triggered effects to the queue of triggered effects
+        effects.stream()
+                .filter(effect -> effect.getChecks().parallelStream().allMatch(check -> check.run(this, effect, event)))
+                .map(effect -> new TriggeredEffect(effect, event))
+                .forEach(this::addTriggeredEffect);
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.three_stack.maximum_alpha.backend.game.cards;
 
+import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.events.Effect;
 import com.three_stack.maximum_alpha.backend.game.events.Trigger;
 import io.gsonfire.annotations.ExposeMethodResult;
@@ -45,6 +46,11 @@ public abstract class DamageableCard extends Card {
     public Event takeDamage(int damage, Card source) {
         damageTaken += damage;
         return new Event(this.getName() + " took " + damage + " damage from " + source.getName());
+    }
+
+    public void takeDamageSingleTarget(int damage, Card source, State state) {
+        Event damageEvent = takeDamage(damage, source);
+        state.addEvent(damageEvent);
     }
     
     public Event heal(int heal, Card source) {

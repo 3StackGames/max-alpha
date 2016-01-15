@@ -1,43 +1,28 @@
 package com.three_stack.maximum_alpha.backend.game.events;
 
 public enum Trigger {
-    ON_EVENT,
-    ON_RESOURCE_GENERATE,
-    ON_RESOURCE_SPEND,
-    ON_CARD_ENTER_HAND,
+    ON_ENTER_HAND,
     ON_DRAW,
     ON_PULL,
-    ON_CARD_LEAVE_HAND,
-    ON_PLAY_CARD,
+    ON_LEAVE_HAND,
+    ON_PLAY,
     /**
      * Spells occur ON_CAST
      */
     ON_CAST,
-    ON_DISCARD_CARD,
     ON_ASSIGN,
-    ON_COMBAT,
     ON_ATTACK,
     ON_BLOCK,
     ON_DAMAGE,
     ON_TARGET,
-    ON_BUILD_STRUCTURE,
     ON_STRUCTURE_COMPLETE,
     ON_ENTER_FIELD,
-    ON_LEAVE_FIELD,
     ON_DEATH,
-    ON_ENTER_GRAVEYARD,
-    ON_LEAVE_GRAVEYARD,
     ON_REFRESH,
     ON_EXHAUST,
 
     ON_BEGIN_PHASE_START,
-    ON_BEGIN_PHASE_END,
-    ON_MAIN_PHASE_START,
-    ON_MAIN_PHASE_END,
     ON_ATTACK_PHASE_START,
-    ON_ATTACK_PHASE_END,
-    ON_BLOCK_PHASE_START,
     ON_BLOCK_PHASE_END,
-    ON_END_PHASE_START,
     ON_END_PHASE_END
 }

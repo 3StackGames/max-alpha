@@ -50,7 +50,7 @@ public class Creature extends DamageableCard implements Worker {
         aggressor.exhaust();
         exhaust();
 
-        return Event.joinEvents(a, b);
+        return a.mergeEvent(b);
     }
 
     public int getDefaultAttack() {

@@ -8,7 +8,7 @@
 
     <repositories>
         <repository>
-            <timeOccurred>max-alpha-database-client</timeOccurred>
+            <id>max-alpha-database-client</id>
             <name>Max Alpha Database Client</name>
             <url>http://bamboozle.io:8081/nexus/content/repositories/max-alpha-database-client</url>
         </repository>

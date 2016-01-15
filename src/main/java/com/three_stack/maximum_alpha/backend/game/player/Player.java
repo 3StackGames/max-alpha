@@ -22,7 +22,7 @@ public class Player {
 	private transient Connection connection;
     private final UUID playerId;
 
-    private Zone<Card> hand;
+    private Hand hand;
     private Deck deck;
     private Field field;
     private Zone<Card> grave;
@@ -39,7 +39,7 @@ public class Player {
         this.connection = connection;
         playerId = UUID.randomUUID();
 
-        hand = new Zone<>();
+        hand = new Hand(this);
         deck = new Deck();
         field = new Field();
 
@@ -148,12 +148,8 @@ public class Player {
         return playerId;
     }
 
-    public Zone<Card> getHand() {
+    public Hand getHand() {
         return hand;
-    }
-
-    public void setHand(Zone<Card> hand) {
-        this.hand = hand;
     }
 
     public Deck getDeck() {

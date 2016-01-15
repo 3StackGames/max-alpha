@@ -8,7 +8,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class Effect {
-    protected UUID id;
     protected Card source;
     protected List<Check> checks;
     protected List<Result> results;
@@ -22,14 +21,6 @@ public class Effect {
                 .map(Results::getResult)
                 .collect(Collectors.toList());
         this.values = dbEffect.getValues();
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
     }
 
     public Card getSource() {

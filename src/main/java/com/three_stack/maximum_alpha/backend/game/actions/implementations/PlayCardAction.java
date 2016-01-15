@@ -15,7 +15,7 @@ public class PlayCardAction extends ExistingCardWithCostAction {
     public void run(State state) {
         Player player = getPlayer(state);
         //find card in player's hand
-        Card card = player.getHand().takeCard(cardId);
+        Card card = player.getHand().takeCard(cardId, state);
         if(card instanceof Creature) {
             player.pay(card.getCurrentCost());
 
