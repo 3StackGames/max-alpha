@@ -9,7 +9,7 @@ import java.util.UUID;
 /**
  * Always player Input
  */
-public abstract class Action extends Event {
+public abstract class Action {
     protected UUID playerId;
 
     protected transient Player player;

@@ -23,23 +23,23 @@ import com.three_stack.maximum_alpha.database_client.DatabaseClient;
 import org.bson.types.ObjectId;
 
 public class State {
-	private List<Player> players;
-	private List<Event> eventHistory;
-	private Phase currentPhase;
-	/**
-	 * Marks when combat has happened in Main Phase
-	 * Default to false
-	 */
-	private boolean combatEnded;
-	//corresponds to player indexes in the list, starts at 0
-	private int turn;
+    private final transient Parameters parameters;
+    private List<Player> players;
+    private List<Event> eventHistory;
+    private Phase currentPhase;
+    /**
+     * Marks when combat has happened in Main Phase
+     * Default to false
+     */
+    private boolean combatEnded;
+    //corresponds to player indexes in the list, starts at 0
+    private int turn;
     //two players each taking 1 turn is turnCount + 2, starts at 0
-	private int turnCount;
+    private int turnCount;
     private Queue<Prompt> promptQueue;
-	private List<Card> cardsPlayed;
-	private final transient Parameters parameters;
-	private transient Map<UUID, Card> masterCardList;
-	private boolean gameOver;
+    private List<Card> cardsPlayed;
+    private transient Map<UUID, Card> masterCardList;
+    private boolean gameOver;
     private transient Map<Trigger, List<Effect>> effects;
 
     /**
@@ -48,29 +48,29 @@ public class State {
     private int timer = 1;
     //@Todo: make this a priority queue with 2-factors: low effectCount (main priority) and low ageInZone (secondary priority)
     private transient PriorityQueue<TriggeredEffect> triggeredEffects;
-	//game over: winningPlayers, losingPlayers, tiedPlayers
-	
-	public State(Parameters parameters) {
-		this.parameters = parameters;
-		this.players = new ArrayList<>();
-		this.eventHistory = new ArrayList<>();
+    //game over: winningPlayers, losingPlayers, tiedPlayers
+
+    public State(Parameters parameters) {
+        this.parameters = parameters;
+        this.players = new ArrayList<>();
+        this.eventHistory = new ArrayList<>();
         this.promptQueue = new ArrayDeque<>();
         this.effects = new HashMap<>();
         this.triggeredEffects = new PriorityQueue<>((Comparator<TriggeredEffect>) (a, b) -> {
-            if(!a.getEvent().equals(b.getEvent())) {
+            if (!a.getEvent().equals(b.getEvent())) {
                 return a.getEvent().getTimeOccurred() - b.getEvent().getTimeOccurred();
             } else {
                 return a.getEffect().getSource().getTimeEnteredZone() - b.getEffect().getSource().getTimeEnteredZone();
             }
         });
-		setupGame();
-	}
-	
-	public void setupGame() {
+        setupGame();
+    }
+
+    private void setupGame() {
 
         gameOver = false;
-        
-        for(Connection connection : parameters.players) {
+
+        for (Connection connection : parameters.players) {
             Player player = new Player(connection, parameters.TOTAL_HEALTH);
             players.add(player);
             //load deck
@@ -79,17 +79,17 @@ public class State {
             Deck deck = new Deck(client.getDeckWithCards(deckId));
 
             //add effects and mark controller
-            for(Card card : deck.getCards()) {
+            for (Card card : deck.getCards()) {
 
                 card.setController(player);
 
                 Map<Trigger, List<Effect>> effectsMap = card.getEffects();
-                if(card.hasEffects() && !card.getEffects().isEmpty()) {
+                if (card.hasEffects() && !card.getEffects().isEmpty()) {
                     Iterator<Map.Entry<Trigger, List<Effect>>> iterator = effectsMap.entrySet().iterator();
-                    while(iterator.hasNext()) {
+                    while (iterator.hasNext()) {
                         Map.Entry<Trigger, List<Effect>> entry = (Map.Entry<Trigger, List<Effect>>) iterator.next();
 
-                        for(Effect effect : entry.getValue()) {
+                        for (Effect effect : entry.getValue()) {
                             effect.setSource(card);
                             addEffect(entry.getKey(), effect);
                         }
@@ -100,56 +100,54 @@ public class State {
             player.setDeck(deck);
         }
 
-		initialDraw();
+        initialDraw();
         StartPhase.getInstance().start(this);
-		//do other things here
+        //do other things here
         resolveTriggeredEffects();
-	}
+    }
 
+    private void initialDraw() {
+        for (Player player : players) {
+            for (int i = 0; i < parameters.INITIAL_DRAW_SIZE; i++) {
+                player.draw(this);
+            }
+        }
+    }
 
+    //Phase utilities
 
-	public void initialDraw() {
-		for (Player player : players) {
-			for(int i = 0; i < parameters.INITIAL_DRAW_SIZE; i++) {
-				player.draw(this);
-			}
-		}
-	}
-	
-	//Phase utilities
+    public void completeStructures() {
+        getTurnPlayer().completeStructures();
+    }
 
-	public void completeStructures() {
-		getTurnPlayer().completeStructures();
-	}
-	
-	public void turnPlayerDraw() {
-		if(turnCount > 0) {
+    public void turnPlayerDraw() {
+        if (turnCount > 0) {
             Player turnPlayer = getTurnPlayer();
             turnPlayer.draw(this);
         }
-	}
-	
-	public void gatherResources() {
-		getTurnPlayer().gatherResources(this);
-	}
-	
-	public void newTurn() {
-		combatEnded = false;
-		turnCount++;
-		turn++;
-		if (turn >= players.size()) {
-			turn = 0;
-		}
+    }
+
+    public void gatherResources() {
+        getTurnPlayer().gatherResources(this);
+    }
+
+    public void newTurn() {
+        combatEnded = false;
+        turnCount++;
+        turn++;
+        if (turn >= players.size()) {
+            turn = 0;
+        }
         players.forEach(Player::newTurn);
-	}
-    
+    }
+
     public Card findCard(UUID id) {
         return masterCardList.get(id);
     }
-    
+
     public Player findPlayer(UUID id) {
-        for(Player player : players) {
-            if(player.getPlayerId().equals(id)) {
+        for (Player player : players) {
+            if (player.getPlayerId().equals(id)) {
                 return player;
             }
         }
@@ -163,16 +161,16 @@ public class State {
 
         return otherPlayers;
     }
-	
-	public void processAction(Action action) {
-		eventHistory.clear();
-		action.run(this);
+
+    public void processAction(Action action) {
+        eventHistory.clear();
+        action.run(this);
         resolveTriggeredEffects();
-	}
+    }
 
     public boolean isLegalAction(Action action) {
-		return action.isValid(this);
-	}
+        return action.isValid(this);
+    }
 
     public Player getTurnPlayer() {
         return players.get(turn);
@@ -185,28 +183,28 @@ public class State {
         //look through structures
         player.getCourtyard().getCards().forEach(Structure::attemptRefresh);
     }
-    
+
     //For serialization
-    
+
     public Map<UUID, Card> generateCardList() {
-		//Gets all cards from each player, then collects them into the map
-		masterCardList = players.stream().map(Player::getAllCards).flatMap(p -> p.stream()).collect(Collectors.toMap(Card::getId, c->c));
-    	
-    	return masterCardList;
+        //Gets all cards from each player, then collects them into the map
+        masterCardList = players.stream().map(Player::getAllCards).flatMap(p -> p.stream()).collect(Collectors.toMap(Card::getId, c -> c));
+
+        return masterCardList;
     }
-    
+
     public Map<UUID, Optional<Card>> generateVisibleCardList(Player player) {
-    	List<Card> visibleCardList = getPlayersExcept(player).stream().
-    										map(Player::getVisibleCards).
-    											flatMap(p -> p.stream()).
-    												collect(Collectors.toList());
-    	visibleCardList.addAll(player.getSelfVisibleCards());
-    	
-    	Map<UUID, Optional<Card>> visibleCardMap = new HashMap<>();
+        List<Card> visibleCardList = getPlayersExcept(player).stream().
+                map(Player::getVisibleCards).
+                flatMap(p -> p.stream()).
+                collect(Collectors.toList());
+        visibleCardList.addAll(player.getSelfVisibleCards());
+
+        Map<UUID, Optional<Card>> visibleCardMap = new HashMap<>();
         masterCardList.entrySet().forEach((keyValue) -> {
             UUID key = keyValue.getKey();
             Card value = keyValue.getValue();
-            if(visibleCardList.contains(value)) {
+            if (visibleCardList.contains(value)) {
                 visibleCardMap.put(key, Optional.of(value));
             } else {
                 visibleCardMap.put(key, Optional.empty());
@@ -217,13 +215,13 @@ public class State {
     }
 
 
-	public String toString() {
-    	generateCardList();
-		return Serializer.toJsonCard(this);
-	}
+    public String toString() {
+        generateCardList();
+        return Serializer.toJsonCard(this);
+    }
 
-	//Getters and setters
-	
+    //Getters and setters
+
     public List<Player> getPlayers() {
         return players;
     }
@@ -232,10 +230,10 @@ public class State {
         this.players = players;
     }
 
-	public void addEvent(Event event) {
+    public void addEvent(Event event) {
         event.setTimeOccurred(timer++);
         eventHistory.add(event);
-	}
+    }
 
     public List<Event> getEventHistory() {
         return eventHistory;
@@ -276,17 +274,17 @@ public class State {
     public void setTurnCount(int turnCount) {
         this.turnCount = turnCount;
     }
-    
+
     public void addPrompt(Prompt prompt) {
-    	promptQueue.add(prompt);
+        promptQueue.add(prompt);
     }
 
     public Prompt getCurrentPrompt() {
         return promptQueue.peek();
     }
-    
+
     public void removePrompt() {
-    	promptQueue.remove();
+        promptQueue.remove();
     }
 
     public List<Card> getCardsPlayed() {
@@ -302,7 +300,7 @@ public class State {
     }
 
     public void addEffect(Trigger trigger, Effect effect) {
-        if(effects.containsKey(trigger)) {
+        if (effects.containsKey(trigger)) {
             effects.get(trigger).add(effect);
         } else {
             List<Effect> newEffects = new ArrayList<>();
@@ -333,7 +331,7 @@ public class State {
 
     public void notify(Trigger trigger, Event event) {
         List<Effect> effects = getEffects(trigger);
-        if(effects == null) {
+        if (effects == null) {
             return;
         }
 
@@ -348,7 +346,7 @@ public class State {
      * Traverses the "Effect Tree" and resolves them in BFS / Level-Order manner.
      */
     private void resolveTriggeredEffects() {
-        while(hasTriggeredEffect()) {
+        while (hasTriggeredEffect()) {
             TriggeredEffect triggeredEffect = getTriggeredEffect();
             Effect currentEffect = triggeredEffect.getEffect();
             Event effectEvent = triggeredEffect.getEvent();
