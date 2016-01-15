@@ -70,6 +70,10 @@ public abstract class DamageableCard extends Card {
         if(getCurrentHealth() <= 0)
         	this.dead = true;
     }
+    
+    public void setDead(boolean dead) {
+    	this.dead = dead;
+    }
 
     public boolean isDead() {
         return dead;
