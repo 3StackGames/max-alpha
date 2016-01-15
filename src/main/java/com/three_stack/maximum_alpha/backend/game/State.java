@@ -169,7 +169,7 @@ public class State {
     }
     
     public Player findPlayer(UUID id) {
-        for(Player player : playingPlayers) {
+        for(Player player : players) {
             if(player.getPlayerId().equals(id)) {
                 return player;
             }
