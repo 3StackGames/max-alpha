@@ -1,6 +1,7 @@
 package com.three_stack.maximum_alpha.backend.game.actions.implementations;
 
 import com.three_stack.maximum_alpha.backend.game.events.SingleCardEvent;
+import com.three_stack.maximum_alpha.backend.game.events.Trigger;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.ExistingCardWithCostAction;
@@ -16,12 +17,14 @@ public class PlayCardAction extends ExistingCardWithCostAction {
         Player player = getPlayer(state);
         //find card in player's hand
         Card card = player.getHand().takeCard(cardId, state);
+
+        player.pay(cost);
+
+        Event playEvent = new SingleCardEvent(card, player.getUsername() + " has played " + card.getName());
+        state.addEvent(playEvent);
+        state.notify(Trigger.ON_PLAY, playEvent);
+
         if(card instanceof Creature) {
-            player.pay(cost);
-
-            Event playEvent = new SingleCardEvent(card, player.getUsername() + " has played " + card.getName());
-            state.addEvent(playEvent);
-
             player.getField().add((Creature) card, state);
 
         } else {
