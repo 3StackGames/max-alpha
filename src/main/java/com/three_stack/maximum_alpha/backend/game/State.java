@@ -56,14 +56,14 @@ public class State {
     /**
      * begins at 1, because initialization happens "at time 0"
      */
-    private int timer = 1;
+    private transient int timer = 1;
     //@Todo: make this a priority queue with 2-factors: low effectCount (main priority) and low ageInZone (secondary priority)
     private transient PriorityQueue<TriggeredEffect> triggeredEffects;
     private List<Player> winningPlayers;
     private List<Player> losingPlayers;
     private List<Player> tiedPlayers;
     private boolean gameOver;
-    private VictoryHandler victoryHandler;
+    private transient VictoryHandler victoryHandler;
 
     public State(Parameters parameters) {
         this.parameters = parameters;
