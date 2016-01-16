@@ -31,14 +31,12 @@ public class DamagePhase extends Phase {
             if(!attacker.isBlocked()) {
             	if(!attacker.getAttackTarget().isDead()) {
 	                state.addEvent(attacker.getAttackTarget().takeDamage(attacker.getCurrentAttack(), attacker));
-	                state.resolveDeaths();
             	}
             } else {
                 attacker.getBlockers().stream().forEach(blocker -> {
                 	if(!attacker.isDead() && !blocker.isDead()) {
 	                    state.addEvent(attacker.takeDamage(blocker.getCurrentAttack(), blocker));
 	                    state.addEvent(blocker.takeDamage(attacker.getCurrentAttack(), attacker));
-	                    state.resolveDeaths();
                 	}
 	
 	                blocker.setBlockTarget(null);
@@ -49,6 +47,7 @@ public class DamagePhase extends Phase {
             attacker.setExhausted(true);
         }
 
+        state.resolveDeaths();
         end(state);
     }
 
