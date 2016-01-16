@@ -108,7 +108,7 @@ public class Player {
     }
 
     public void draw(State state) {
-        hand.add(mainDeck.draw(), state);
+        hand.add(mainDeck.draw(state), state);
     }
 
     public Event takeDamage(int damage, Card source) {
