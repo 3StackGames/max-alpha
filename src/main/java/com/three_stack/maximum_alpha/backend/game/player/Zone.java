@@ -61,14 +61,18 @@ public abstract class Zone<T extends Card> {
     }
 
     public T findCard(UUID cardId) {
-        return cards.stream()
+        List<T> possibleCards =  cards.stream()
                 .filter( card -> card.getId().equals(cardId))
-                .collect(Collectors.toList())
-                .get(0);
+                .collect(Collectors.toList());
+        if(!possibleCards.isEmpty()) {
+            return possibleCards.get(0);
+        } else {
+            throw new IllegalArgumentException("Card Not Found");
+        }
     }
 
-    protected void remove(T card) {
-        cards.remove(card);
+    protected boolean remove(T card) {
+        return cards.remove(card);
     }
 
     protected T remove(int index) {

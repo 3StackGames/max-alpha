@@ -2,9 +2,12 @@ package com.three_stack.maximum_alpha.backend.game.events;
 
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
+import io.gsonfire.annotations.ExposeMethodResult;
+
+import java.util.UUID;
 
 public class SingleCardEvent extends Event {
-    protected Card card;
+    protected transient Card card;
 
     public SingleCardEvent(Player player, String action, Card card) {
         super(player, action);
@@ -22,5 +25,10 @@ public class SingleCardEvent extends Event {
 
     public void setCard(Card card) {
         this.card = card;
+    }
+
+    @ExposeMethodResult("cardId")
+    public UUID getCardId() {
+        return card.getId();
     }
 }

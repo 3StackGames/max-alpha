@@ -17,7 +17,7 @@ public class PlayCardAction extends ExistingCardWithCostAction {
         //find card in player's hand
         Card card = player.getHand().takeCard(cardId, state);
         if(card instanceof Creature) {
-            player.pay(card.getCurrentCost());
+            player.pay(cost);
 
             Event playEvent = new SingleCardEvent(card, player.getUsername() + " has played " + card.getName());
             state.addEvent(playEvent);
@@ -35,8 +35,9 @@ public class PlayCardAction extends ExistingCardWithCostAction {
 		boolean correctPhase = isPhase(state, "Main Phase"); //TODO: FubarPhase (instant phase)
 		boolean playerTurn = isPlayerTurn(state);
 		//boolean isPlayable = card.isPlayable(); //TODO: uncomment once implemented
-		boolean hasResources = player.hasResources(card.getCurrentCost()); //technically covered by isPlayable in the future
-		
-		return notInPrompt && correctPhase && playerTurn && hasResources;
+        boolean inputCostSufficient = cost.hasResources(card.getCurrentCost());
+		boolean playerHasInputCost = player.hasResources(cost); //technically covered by isPlayable in the future
+
+		return notInPrompt && correctPhase && playerTurn && inputCostSufficient && playerHasInputCost;
 	}
 }

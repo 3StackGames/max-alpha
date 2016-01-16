@@ -2,6 +2,7 @@ package com.three_stack.maximum_alpha.backend.game.events;
 
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.utilities.Serializer;
+import io.gsonfire.annotations.ExposeMethodResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +55,13 @@ public class Event {
 
     public void setTimeOccurred(int timeOccurred) {
         this.timeOccurred = timeOccurred;
+    }
+
+    @ExposeMethodResult("concatenatedDescription")
+    public String getConcatenatedDescription() {
+        StringBuilder stringBuilder = new StringBuilder();
+        descriptions.forEach(stringBuilder::append);
+        return stringBuilder.toString();
     }
 
     @Override

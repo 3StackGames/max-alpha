@@ -9,7 +9,7 @@ import com.three_stack.maximum_alpha.backend.game.events.Trigger;
 import java.util.Collections;
 import java.util.List;
 
-public class Field extends Zone<Creature> {
+public  class Field extends Zone<Creature> {
     public Field(Player owner) {
         super(owner);
     }
@@ -20,8 +20,8 @@ public class Field extends Zone<Creature> {
         state.addEvent(event);
         state.notify(Trigger.ON_ENTER_FIELD, event);
     }
-    
-    public Zone<Creature> getCreatureZone() {
-    	return creatures;
+
+    public boolean remove(Creature creature) {
+        return super.remove(creature);
     }
 }

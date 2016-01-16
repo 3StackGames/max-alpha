@@ -14,4 +14,8 @@ public class Courtyard extends Zone<Structure> {
         SingleCardEvent event = new SingleCardEvent(owner, "added " + structure.getName() + " to their courtyard", structure);
         state.addEvent(event);
     }
+
+    public boolean remove(Structure structure) {
+        return super.remove(structure);
+    }
 }

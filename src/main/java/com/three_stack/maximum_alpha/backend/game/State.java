@@ -1,32 +1,42 @@
 package com.three_stack.maximum_alpha.backend.game;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.UUID;
 import java.util.stream.Collectors;
+
+import com.three_stack.maximum_alpha.backend.game.events.*;
+import com.three_stack.maximum_alpha.backend.game.player.*;
+import org.bson.types.ObjectId;
 
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.Action;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
 import com.three_stack.maximum_alpha.backend.game.cards.StructureDeck;
-import com.three_stack.maximum_alpha.backend.game.events.Effect;
-import com.three_stack.maximum_alpha.backend.game.events.Trigger;
-import com.three_stack.maximum_alpha.backend.game.events.TriggeredEffect;
-import com.three_stack.maximum_alpha.backend.game.player.MainDeck;
-import com.three_stack.maximum_alpha.backend.game.player.Player;
-import com.three_stack.maximum_alpha.backend.game.prompts.Prompt;
-import com.three_stack.maximum_alpha.backend.game.events.Event;
 import com.three_stack.maximum_alpha.backend.game.phases.Phase;
 import com.three_stack.maximum_alpha.backend.game.phases.StartPhase;
+import com.three_stack.maximum_alpha.backend.game.player.Player.Status;
+import com.three_stack.maximum_alpha.backend.game.prompts.Prompt;
 import com.three_stack.maximum_alpha.backend.game.utilities.DatabaseClientFactory;
 import com.three_stack.maximum_alpha.backend.game.utilities.Serializer;
+import com.three_stack.maximum_alpha.backend.game.victories.VictoryHandler;
 import com.three_stack.maximum_alpha.backend.server.Connection;
 import com.three_stack.maximum_alpha.database_client.DatabaseClient;
 import com.three_stack.maximum_alpha.database_client.pojos.DBDeck;
-import org.bson.types.ObjectId;
 
 public class State {
     private final transient Parameters parameters;
     private List<Player> players;
+    private List<Player> playingPlayers;
     private List<Event> eventHistory;
     private Phase currentPhase;
     /**
@@ -41,7 +51,6 @@ public class State {
     private Queue<Prompt> promptQueue;
     private List<Card> cardsPlayed;
     private transient Map<UUID, Card> masterCardList;
-    private boolean gameOver;
     private transient Map<Trigger, List<Effect>> effects;
 
     /**
@@ -50,14 +59,22 @@ public class State {
     private int timer = 1;
     //@Todo: make this a priority queue with 2-factors: low effectCount (main priority) and low ageInZone (secondary priority)
     private transient PriorityQueue<TriggeredEffect> triggeredEffects;
-    //game over: winningPlayers, losingPlayers, tiedPlayers
+    private List<Player> winningPlayers;
+    private List<Player> losingPlayers;
+    private List<Player> tiedPlayers;
+    private boolean gameOver;
+    private VictoryHandler victoryHandler;
 
     public State(Parameters parameters) {
         this.parameters = parameters;
         this.players = new ArrayList<>();
+        this.playingPlayers = new ArrayList<>();
         this.eventHistory = new ArrayList<>();
         this.promptQueue = new ArrayDeque<>();
         this.effects = new HashMap<>();
+        this.winningPlayers = new ArrayList<>();
+        this.losingPlayers = new ArrayList<>();
+        this.tiedPlayers = new ArrayList<>();
         this.triggeredEffects = new PriorityQueue<>((Comparator<TriggeredEffect>) (a, b) -> {
             if (!a.getEvent().equals(b.getEvent())) {
                 return a.getEvent().getTimeOccurred() - b.getEvent().getTimeOccurred();
@@ -68,8 +85,8 @@ public class State {
         setupGame();
     }
 
-    private void setupGame() {
-
+    public void setupGame() {
+        victoryHandler = parameters.victoryHandler;
         gameOver = false;
 
         for (Connection connection : parameters.players) {
@@ -87,7 +104,7 @@ public class State {
             player.setMainDeck(mainDeck);
             player.setStructureDeck(structureDeck);
         }
-
+        playingPlayers.addAll(players);
         initialDraw();
         StartPhase.getInstance().start(this);
         //do other things here
@@ -178,10 +195,19 @@ public class State {
         return otherPlayers;
     }
 
-    public void processAction(Action action) {
-        eventHistory.clear();
-        action.run(this);
-        resolveTriggeredEffects();
+    public synchronized boolean processAction(Action action) {
+        if (isLegalAction(action)) {
+            eventHistory.clear();
+            action.run(this);
+            resolveTriggeredEffects();
+            return true;
+        } else {
+            return false; //TODO: return error message from isLegalAction -> action.isValid
+        }
+    }
+
+    public boolean isGameOver() {
+        return gameOver;
     }
 
     public boolean isLegalAction(Action action) {
@@ -189,7 +215,7 @@ public class State {
     }
 
     public Player getTurnPlayer() {
-        return players.get(turn);
+        return playingPlayers.get(turn);
     }
 
     public void refreshTurnPlayerCards() {
@@ -204,7 +230,7 @@ public class State {
 
     public Map<UUID, Card> generateCardList() {
         //Gets all cards from each player, then collects them into the map
-        masterCardList = players.stream().map(Player::getAllCards).flatMap(p -> p.stream()).collect(Collectors.toMap(Card::getId, c -> c));
+        masterCardList = playingPlayers.stream().map(Player::getAllCards).flatMap(p -> p.stream()).collect(Collectors.toMap(Card::getId, c -> c));
 
         return masterCardList;
     }
@@ -238,12 +264,12 @@ public class State {
 
     //Getters and setters
 
-    public List<Player> getPlayers() {
+    public List<Player> getAllPlayers() {
         return players;
     }
 
-    public void setPlayers(List<Player> players) {
-        this.players = players;
+    public List<Player> getPlayingPlayers() {
+        return playingPlayers;
     }
 
     public void addEvent(Event event) {
@@ -370,6 +396,62 @@ public class State {
             int[] index = {0};
             currentEffect.getResults().stream()
                     .forEachOrdered(result -> result.run(this, currentEffect.getSource(), effectEvent, currentEffect.getValues().get(index[0]++)));
+            resolveDeaths();
         }
+    }
+
+    public void setPlayerStatus(Player player, Status status) {
+        switch (status) {
+            case LOSE:
+                player.setStatus(Status.LOSE);
+                playingPlayers.remove(player);
+                losingPlayers.add(player);
+                break;
+            case TIE:
+                player.setStatus(Status.TIE);
+                playingPlayers.remove(player);
+                tiedPlayers.add(player);
+                break;
+            case WIN:
+                player.setStatus(Status.WIN);
+                playingPlayers.remove(player);
+                winningPlayers.add(player);
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void resolveDeaths() {
+        for (Player player : playingPlayers) {
+            Field field = player.getField();
+            Courtyard court = player.getCourtyard();
+            Graveyard grave = player.getGraveyard();
+
+            List<Creature> deadCreatures = field.getCards().stream()
+                    .filter(Creature::isDead).collect(Collectors.toList());
+            deadCreatures.forEach(deadCreature -> {
+                field.remove(deadCreature);
+                SingleCardEvent event = new SingleCardEvent(deadCreature, deadCreature.getName() + " died");
+                addEvent(event);
+                grave.add(deadCreature, this);
+            });
+
+            List<Structure> destroyedStructures = court.getCards().stream()
+                    .filter(Structure::isDead).collect(Collectors.toList());
+            destroyedStructures.forEach(destroyedStructure -> {
+                court.remove(destroyedStructure);
+                SingleCardEvent event = new SingleCardEvent(destroyedStructure, destroyedStructure.getName() + " was destroyed");
+                addEvent(event);
+            });
+        }
+
+        if (victoryHandler.determineVictory(this)) {
+            gameOver();
+        }
+    }
+
+    public void gameOver() {
+        gameOver = true;
     }
 }
