@@ -20,4 +20,8 @@ public class Field extends Zone<Creature> {
         state.addEvent(event);
         state.notify(Trigger.ON_ENTER_FIELD, event);
     }
+    
+    public Zone<Creature> getCreatureZone() {
+    	return creatures;
+    }
 }

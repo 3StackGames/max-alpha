@@ -32,7 +32,7 @@ public abstract class Action {
     }
 
     public Player getPlayer(State state) {
-        for(Player player : state.getPlayers()) {
+        for(Player player : state.getPlayingPlayers()) {
             if(playerId.equals(player.getPlayerId())) {
                 return player;
             }

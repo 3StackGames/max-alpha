@@ -18,6 +18,7 @@ import com.three_stack.maximum_alpha.backend.game.events.Event;
 public abstract class DamageableCard extends Card {
     protected final int health;
     protected int damageTaken;
+    protected boolean dead;
 
     protected boolean exhausted;
     protected boolean refreshable;
@@ -31,6 +32,7 @@ public abstract class DamageableCard extends Card {
         this.damageTaken = 0;
         this.exhausted = false;
         this.refreshable = true;
+        this.dead = false;
         buffs = new ArrayList<Buff>();
     }
 
@@ -45,6 +47,7 @@ public abstract class DamageableCard extends Card {
 
     public Event takeDamage(int damage, Card source) {
         damageTaken += damage;
+        checkDeath();
         return new Event(this.getName() + " took " + damage + " damage from " + source.getName());
     }
 
@@ -68,9 +71,18 @@ public abstract class DamageableCard extends Card {
     public int getMaxHealth() {
         return health; //@Todo: account for buffs
     }
+    
+    public void checkDeath() {
+        if(getCurrentHealth() <= 0)
+        	this.dead = true;
+    }
+    
+    public void setDead(boolean dead) {
+    	this.dead = dead;
+    }
 
-    public boolean isAlive() {
-        return getCurrentHealth() > 0;
+    public boolean isDead() {
+        return dead;
     }
 
     public void exhaust() {
@@ -107,7 +119,13 @@ public abstract class DamageableCard extends Card {
         return buffs;
     }
 
-    public void setBuffs(List<Buff> buffs) {
-        this.buffs = buffs;
+    public void addBuff(Buff buff) {
+        buffs.add(buff);
+        checkDeath();
+    }
+    
+    public void removeBuff(Buff buff) {
+    	buffs.remove(buff);
+    	checkDeath();
     }
 }
