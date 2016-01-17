@@ -1,34 +1,25 @@
 package com.three_stack.maximum_alpha.backend.game.actions.implementations;
 
+import com.three_stack.maximum_alpha.backend.game.actions.abstracts.ExistingPairAction;
+import com.three_stack.maximum_alpha.backend.game.cards.Structure;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.State;
-import com.three_stack.maximum_alpha.backend.game.actions.abstracts.ExistingCardAction;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
-import com.three_stack.maximum_alpha.backend.game.prompts.AttackPrompt;
-import com.three_stack.maximum_alpha.backend.game.prompts.Prompt;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class DeclareAttackerAction extends ExistingCardAction {
-
+public class DeclareAttackerAction extends ExistingPairAction {
     @Override
     public void run(State state) {
-        if (!(card instanceof Creature)) {
-            throw new IllegalArgumentException("Attacking card isn't a creature");
-        }
         Creature attacker = (Creature) card;
-        List<Card> attackableTargets = state.getPlayersExcept(player).stream()
-                .map(Player::getTargets)
-                .flatMap(p -> p.stream())
-                .collect(Collectors.toList());
+        Structure targetStructure = (Structure) target;
 
-        Prompt attackPrompt = new AttackPrompt(attacker, player, attackableTargets);
-        state.addPrompt(attackPrompt);
+        attacker.setAttackTarget(targetStructure);
 
-        Event event = new Event(player, " declared " + attacker.getName() + " as attacking");
+        Event event = new Event(attacker.getName() + " is now attacking " + targetStructure.getName());
         state.addEvent(event);
     }
 
@@ -38,10 +29,22 @@ public class DeclareAttackerAction extends ExistingCardAction {
 		boolean correctPhase = isPhase(state, "Attack Phase");
 		boolean playerTurn = isPlayerTurn(state);
 		boolean isCreature = card instanceof Creature;
+        if(!isCreature) {
+            return false;
+        }
 		Creature attacker = (Creature) card;
 		boolean isOnPlayerField = player.getField().getCards().contains(attacker);
 		boolean canAttack = attacker.canAttack();
+        boolean isStructure = target instanceof Structure;
+        if(!isStructure) {
+            return false;
+        }
+        List<Card> attackableTargets = state.getPlayersExcept(player).stream()
+                .map(Player::getTargets)
+                .flatMap(p -> p.stream())
+                .collect(Collectors.toList());
+        boolean isValidTarget = attackableTargets.contains(target);
 
-		return notInPrompt && correctPhase && playerTurn && isCreature && isOnPlayerField && canAttack;
+		return notInPrompt && correctPhase && playerTurn && isCreature && isOnPlayerField && canAttack && isValidTarget;
 	}
 }

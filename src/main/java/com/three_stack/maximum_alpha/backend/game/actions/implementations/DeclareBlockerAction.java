@@ -1,34 +1,24 @@
 package com.three_stack.maximum_alpha.backend.game.actions.implementations;
 
 import com.three_stack.maximum_alpha.backend.game.State;
-import com.three_stack.maximum_alpha.backend.game.actions.abstracts.ExistingCardAction;
+import com.three_stack.maximum_alpha.backend.game.actions.abstracts.ExistingPairAction;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
-import com.three_stack.maximum_alpha.backend.game.prompts.BlockPrompt;
-import com.three_stack.maximum_alpha.backend.game.prompts.Prompt;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class DeclareBlockerAction extends ExistingCardAction {
+public class DeclareBlockerAction extends ExistingPairAction {
 
     @Override
     public void run(State state) {
-        if(!(card instanceof Creature)) {
-            throw new IllegalArgumentException("Blocking card isn't a creature");
-        }
-
         Creature blocker = (Creature) card;
+        Creature blockedTarget = (Creature) target;
 
-        List<Card> blockableTargets = state.getTurnPlayer().getField().getCards().stream()
-                .filter(creature -> creature.isAttacking())
-                .collect(Collectors.toList());
+        blocker.setBlockTarget(blockedTarget);
 
-        Prompt blockPrompt = new BlockPrompt(card, player, blockableTargets);
-        state.addPrompt(blockPrompt);
-
-        Event event = new Event(player, " declared " + blocker.getName() + " as a blocker");
+        Event event = new Event(blocker.getName() + " is now blocking " + blockedTarget.getName());
         state.addEvent(event);
     }
 
@@ -38,10 +28,21 @@ public class DeclareBlockerAction extends ExistingCardAction {
 		boolean correctPhase = isPhase(state, "Block Phase");
 		boolean playerTurn = !isPlayerTurn(state);
 		boolean isCreature = card instanceof Creature;
+        if(!isCreature) {
+            return false;
+        }
 		Creature blocker = (Creature) card;
 		boolean isOnPlayerField = player.getField().getCards().contains(blocker);
 		boolean canBlock = blocker.canBlock();
+        boolean isTargetCreature = target instanceof Creature;
+        if(!isTargetCreature) {
+            return false;
+        }
+        List<Card> blockableTargets = state.getTurnPlayer().getField().getCards().stream()
+                .filter(creature -> creature.isAttacking())
+                .collect(Collectors.toList());
+        boolean isValidBlockTarget = blockableTargets.contains(target);
 
-		return notInPrompt && correctPhase && playerTurn && isCreature && isOnPlayerField && canBlock;
+		return notInPrompt && correctPhase && playerTurn && isOnPlayerField && canBlock && isValidBlockTarget;
 	}
 }

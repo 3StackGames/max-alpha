@@ -8,9 +8,11 @@ import java.util.UUID;
 public abstract class ExistingPairAction extends ExistingCardAction {
     protected UUID targetId;
 
-    protected Card targetCard;
+    protected Card target;
+
     @Override
-    public void run(State state) {
-        targetCard = state.findCard(targetId);
+    public void setup(State state) {
+        super.setup(state);
+        target = state.findCard(targetId);
     }
 }

@@ -9,6 +9,9 @@ import com.three_stack.maximum_alpha.backend.game.events.Event;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.prompts.steps.TargetStep;
 
+/**
+ * @Deprecated no longer used since we've chosen smooth combat
+ */
 public class BlockPrompt extends Prompt {
 
     public BlockPrompt(Card source, Player player, List<Card> targetables) {
