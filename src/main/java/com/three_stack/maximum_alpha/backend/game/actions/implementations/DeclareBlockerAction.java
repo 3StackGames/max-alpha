@@ -17,6 +17,7 @@ public class DeclareBlockerAction extends ExistingPairAction {
         Creature blockedTarget = (Creature) target;
 
         blocker.setBlockTarget(blockedTarget);
+        blockedTarget.addBlocker(blocker);
 
         Event event = new Event(blocker.getName() + " is now blocking " + blockedTarget.getName());
         state.addEvent(event);
