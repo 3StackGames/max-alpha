@@ -1,7 +1,10 @@
 package com.three_stack.maximum_alpha.backend.game.prompts;
 
+import io.gsonfire.annotations.ExposeMethodResult;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
@@ -12,7 +15,7 @@ public abstract class Prompt {
     protected final Card source;
     protected List<Step> steps;
     protected int currentStep;
-	protected final Player player;
+	protected transient final Player player;
 	protected boolean isMandatory;
 
     protected Prompt(Card source, Player player) {
@@ -81,5 +84,10 @@ public abstract class Prompt {
 		} else {
 			return true;
 		}
+	}
+	
+	@ExposeMethodResult("playerId")
+	public UUID getPlayerId() {
+		return player.getPlayerId();
 	}
 }
