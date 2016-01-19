@@ -135,20 +135,22 @@ public class ResourceList {
 	}
 	
 	public boolean hasResources(ResourceList other) {	
-		int totalManaReserve = 0;
+		int totalColorless = 0;
 	    for (Color color : Color.values()) {
-            int value = colors.get(color);
+            int colorValue = getColor(color);
+            int otherColorValue = other.getColor(color);
 
-            totalManaReserve += getColor(color);
             if (color != Color.COLORLESS) {
-                if (value > getColor(color))
+                if (otherColorValue > colorValue)
                     return false;
-                
-                totalManaReserve -= value;
+                else
+                    totalColorless += colorValue - otherColorValue;
             }
             else {
-                if (totalManaReserve < value) {
-                	return false;
+                totalColorless += colorValue;
+
+                if(totalColorless < otherColorValue) {
+                    return false;
                 }
             }
 	    }
