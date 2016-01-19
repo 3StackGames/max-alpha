@@ -2,6 +2,9 @@ package com.three_stack.maximum_alpha.backend.game.actions.implementations;
 
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.ExistingPairAction;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
+import com.three_stack.maximum_alpha.backend.game.events.PairEvent;
+import com.three_stack.maximum_alpha.backend.game.events.SingleCardEvent;
+import com.three_stack.maximum_alpha.backend.game.events.Trigger;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
@@ -19,8 +22,10 @@ public class DeclareAttackerAction extends ExistingPairAction {
 
         attacker.setAttackTarget(targetStructure);
 
-        Event event = new Event(attacker.getName() + " is now attacking " + targetStructure.getName());
+        Event event = new PairEvent(attacker, targetStructure, attacker.getName() + " is now attacking " + targetStructure.getName());
         state.addEvent(event);
+
+        state.notify(Trigger.ON_ATTACK, event);
     }
 
 	@Override
