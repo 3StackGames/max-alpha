@@ -138,5 +138,13 @@ public class Creature extends DamageableCard implements Worker {
 		return true;
 	}
 
-
+	@Override
+	public void reset() {
+		super.reset();
+		attackTarget = null;
+		blockTarget =null;
+		canAttack = true;
+		canBlock = true;
+        hasSummoningSickness = true;
+	}
 }

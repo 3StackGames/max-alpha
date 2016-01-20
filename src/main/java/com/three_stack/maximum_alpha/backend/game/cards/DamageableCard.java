@@ -28,7 +28,6 @@ public abstract class DamageableCard extends Card {
     protected DamageableCard(String name, ResourceList cost, String text, String flavorText, int health, Map<Trigger, List<Effect>> effects) {
         super(name, cost, text, flavorText, effects);
         this.health = health;
-        this.refreshable = true;
         this.damageTaken = 0;
         this.exhausted = false;
         this.refreshable = true;
@@ -127,5 +126,12 @@ public abstract class DamageableCard extends Card {
     public void removeBuff(Buff buff) {
     	buffs.remove(buff);
     	checkDeath();
+    }
+    
+    public void reset() {
+        this.refreshable = true;
+        this.damageTaken = 0;
+        this.exhausted = false;
+        buffs.clear();
     }
 }

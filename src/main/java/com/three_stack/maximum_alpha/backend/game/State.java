@@ -431,6 +431,7 @@ public class State {
             List<Creature> deadCreatures = field.getCards().stream()
                     .filter(Creature::isDead).collect(Collectors.toList());
             deadCreatures.forEach(deadCreature -> {
+            	deadCreature.reset();
                 field.remove(deadCreature);
                 SingleCardEvent event = new SingleCardEvent(deadCreature, deadCreature.getName() + " died");
                 addEvent(event);
