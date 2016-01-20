@@ -22,10 +22,11 @@ import org.java_websocket.server.WebSocketServer;
 import org.json.JSONObject;
 
 import com.three_stack.maximum_alpha.backend.game.Parameters;
-import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.actions.ActionService;
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.Action;
+import com.three_stack.maximum_alpha.backend.game.player.Player;
+import com.three_stack.maximum_alpha.backend.game.prompts.Prompt;
 import com.three_stack.maximum_alpha.backend.game.utilities.Serializer;
 
 public class Server extends WebSocketServer {
@@ -180,10 +181,15 @@ public class Server extends WebSocketServer {
         action.setup(state);
         boolean validAction = state.processAction(action);
         if (validAction) {
-            sendStateUpdate(gameCode);
-            if(state.isGameOver()) {
-            	startedGames.remove(gameCode);
-            }
+        	if(state.getCurrentPrompt() != null) {
+        		sendPrompt(gameCode);
+        	}
+        	else {
+        		sendStateUpdate(gameCode);
+	            if(state.isGameOver()) {
+	            	startedGames.remove(gameCode);
+	            }
+        	}
         } else {
         	sendError(socket, "Invalid Action", ""); //TODO: Get error message from processAction
         }
@@ -282,7 +288,6 @@ public class Server extends WebSocketServer {
             Message stateUpdate = new Message("State Update");
             stateUpdate.add("state", new JSONObject(state));
             stateUpdate.add("gameCode", gameCode);
-            //@Todo: Find a better way to do this.
             stateUpdate.add("cardList", new JSONObject(Serializer.toJson(game.generateVisibleCardList(player))));
             JSONObject currentPlayer = new JSONObject();
             currentPlayer.put("playerId", player.getPlayerId());
@@ -312,5 +317,14 @@ public class Server extends WebSocketServer {
         	Message gameFound = new Message("Game Declined");
             player.socket.send(gameFound.toString());
         }
+    }
+    
+    public void sendPrompt(String gameCode) {
+    	State game = startedGames.get(gameCode); 
+    	Prompt prompt = game.getCurrentPrompt();
+    	Message promptMessage = new Message("Player Prompt");
+    	promptMessage.add("gameCode", gameCode);
+    	promptMessage.add("prompt", prompt);
+    	prompt.getPlayer().getConnection().socket.send(promptMessage.toString());
     }
 }
