@@ -1,21 +1,16 @@
-package com.three_stack.maximum_alpha.backend.game.events;
+package com.three_stack.maximum_alpha.backend.game.events.outcomes;
 
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
-import com.three_stack.maximum_alpha.backend.game.player.Player;
+import com.three_stack.maximum_alpha.backend.game.events.outcomes.Outcome;
 import io.gsonfire.annotations.ExposeMethodResult;
 
 import java.util.UUID;
 
-public class SingleCardEvent extends Event {
+public class SingleCardOutcome extends Outcome {
     protected transient Card card;
 
-    public SingleCardEvent(Player player, String action, Card card) {
-        super(player, action);
-        this.card = card;
-    }
-
-    public SingleCardEvent(Card card, String description) {
-        super(description);
+    public SingleCardOutcome(Card card) {
+        super();
         this.card = card;
     }
 
