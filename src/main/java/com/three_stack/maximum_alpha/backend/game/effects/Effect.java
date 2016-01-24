@@ -1,10 +1,9 @@
-package com.three_stack.maximum_alpha.backend.game.events;
+package com.three_stack.maximum_alpha.backend.game.effects;
 
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.database_client.pojos.DBEffect;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class Effect {

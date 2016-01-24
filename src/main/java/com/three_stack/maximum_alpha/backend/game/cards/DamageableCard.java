@@ -1,9 +1,11 @@
 package com.three_stack.maximum_alpha.backend.game.cards;
 
 import com.three_stack.maximum_alpha.backend.game.State;
-import com.three_stack.maximum_alpha.backend.game.events.*;
-import com.three_stack.maximum_alpha.backend.game.events.outcomes.SingleCardOutcome;
-import com.three_stack.maximum_alpha.backend.game.events.outcomes.SourceDamageTargetsOutcome;
+import com.three_stack.maximum_alpha.backend.game.Time;
+import com.three_stack.maximum_alpha.backend.game.effects.*;
+import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
+import com.three_stack.maximum_alpha.backend.game.effects.events.SingleCardEvent;
+import com.three_stack.maximum_alpha.backend.game.effects.events.SourceDamageTargetEvent;
 import io.gsonfire.annotations.ExposeMethodResult;
 
 import java.util.ArrayList;
@@ -44,17 +46,15 @@ public abstract class DamageableCard extends Card {
         this.buffs = other.buffs;
     }
 
-    public SourceDamageTargetsOutcome takeDamage(int damage, Card source) {
+    public SourceDamageTargetEvent takeDamage(int damage, Card source, Time time) {
         damageTaken += damage;
         checkDeath();
-        return new SourceDamageTargetsOutcome(source, this, damage);
+        return new SourceDamageTargetEvent(time, source, this, damage);
     }
 
-    public Event die(State state) {
-        Event deathEvent = new Event();
-        deathEvent.addOutcome(new SingleCardOutcome("death", this));
-        state.addEvent(deathEvent);
-        state.notify(Trigger.ON_DEATH, deathEvent);
+    public SingleCardEvent die(Time time, State state) {
+        SingleCardEvent deathEvent = new SingleCardEvent(time, "death", this);
+        state.addEvent(deathEvent, Trigger.ON_DEATH);
         return deathEvent;
     }
 

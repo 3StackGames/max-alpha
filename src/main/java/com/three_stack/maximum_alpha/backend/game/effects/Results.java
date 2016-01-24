@@ -1,6 +1,5 @@
-package com.three_stack.maximum_alpha.backend.game.events;
+package com.three_stack.maximum_alpha.backend.game.effects;
 
-import com.three_stack.maximum_alpha.backend.game.cards.Castle;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.cards.DamageableCard;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
@@ -42,7 +41,7 @@ public class Results {
                 .flatMap(Collection::stream);
 
         List<DamageableCard> victims = Stream.concat(castleStream, structureStream).collect(Collectors.toList());
-        source.dealDamage(victims, damage, state);
+        source.dealDamage(victims, damage, state.getTime(), state);
     };
 
     public static Result DEAL_DAMAGE_ALL_CREATURES = (state, source, event, value) -> {
@@ -51,7 +50,7 @@ public class Results {
                 .map(player -> player.getField().getCards())
                 .flatMap(creatures -> creatures.stream())
                 .collect(Collectors.toList());
-        source.dealDamage(victims, damage, state);
+        source.dealDamage(victims, damage, state.getTime(), state);
     };
 
     public static Result DEAL_DAMAGE_ENEMY_CASTLES = (state, source, event, value) -> {
@@ -60,7 +59,7 @@ public class Results {
         List<DamageableCard> castles = state.getPlayersExcept(controller).stream()
                 .map(Player::getCastle)
                 .collect(Collectors.toList());
-        source.dealDamage(castles, damage, state);
+        source.dealDamage(castles, damage, state.getTime(), state);
     };
 
     public static Result DEAL_DAMAGE_RANDOM_ENEMY_CREATURE = (state, source, event, value) -> {
@@ -78,11 +77,11 @@ public class Results {
         }
 
         Creature victim = enemyCreatures.get(random.nextInt(enemyCreatures.size()));
-        source.dealDamage(victim, damage, state);
+        source.dealDamage(victim, damage, state.getTime(), state);
     };
 
     public static Result DEAL_DAMAGE_FRIENDLY_CASTLE = (state, source, event, value) -> {
         int damage = (int) value;
-        source.dealDamage(source.getController().getCastle(), damage, state);
+        source.dealDamage(source.getController().getCastle(), damage, state.getTime(), state);
     };
 }

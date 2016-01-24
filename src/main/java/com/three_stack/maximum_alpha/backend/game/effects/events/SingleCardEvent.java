@@ -1,18 +1,17 @@
-package com.three_stack.maximum_alpha.backend.game.events.outcomes;
+package com.three_stack.maximum_alpha.backend.game.effects.events;
 
+import com.three_stack.maximum_alpha.backend.game.Time;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
-import com.three_stack.maximum_alpha.backend.game.events.outcomes.Outcome;
 import io.gsonfire.annotations.ExposeMethodResult;
 
 import java.util.UUID;
 
-public class SingleCardOutcome extends Outcome {
+public class SingleCardEvent extends Event {
     protected transient Card card;
 
-    public SingleCardOutcome(String type, Card card) {
-        super(type);
+    public SingleCardEvent(Time time, String type, Card card) {
+        super(time, type);
         this.card = card;
-        this.type = type;
     }
 
     public Card getCard() {

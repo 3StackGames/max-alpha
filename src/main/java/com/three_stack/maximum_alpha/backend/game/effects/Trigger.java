@@ -1,4 +1,4 @@
-package com.three_stack.maximum_alpha.backend.game.events;
+package com.three_stack.maximum_alpha.backend.game.effects;
 
 public enum Trigger {
     ON_ENTER_HAND,

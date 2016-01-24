@@ -2,12 +2,12 @@ package com.three_stack.maximum_alpha.backend.game.actions.implementations;
 
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.ExistingPairAction;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
-import com.three_stack.maximum_alpha.backend.game.events.Trigger;
+import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
-import com.three_stack.maximum_alpha.backend.game.events.Event;
+import com.three_stack.maximum_alpha.backend.game.Time;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,12 +18,7 @@ public class DeclareAttackerAction extends ExistingPairAction {
         Creature attacker = (Creature) card;
         Structure targetStructure = (Structure) target;
 
-        attacker.setAttackTarget(targetStructure);
-
-        Event event = new PairEvent(attacker, targetStructure, attacker.getName() + " is now attacking " + targetStructure.getName());
-        state.addEvent(event);
-
-        state.notify(Trigger.ON_ATTACK, event);
+        attacker.setAttackTarget(targetStructure, state.getTime(), state);
     }
 
 	@Override

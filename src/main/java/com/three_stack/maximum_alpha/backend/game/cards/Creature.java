@@ -1,15 +1,14 @@
 package com.three_stack.maximum_alpha.backend.game.cards;
 
-import com.three_stack.maximum_alpha.backend.game.events.Effect;
-import com.three_stack.maximum_alpha.backend.game.events.Trigger;
-import com.three_stack.maximum_alpha.backend.game.events.outcomes.FightOutcome;
-import com.three_stack.maximum_alpha.backend.game.events.outcomes.Outcome;
-import com.three_stack.maximum_alpha.backend.game.events.outcomes.SourceDamageTargetsOutcome;
+import com.three_stack.maximum_alpha.backend.game.effects.Effect;
+import com.three_stack.maximum_alpha.backend.game.Time;
+import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
+import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
+import com.three_stack.maximum_alpha.backend.game.effects.events.SourceTargetEvent;
 import io.gsonfire.annotations.ExposeMethodResult;
 
 import com.three_stack.maximum_alpha.backend.game.ResourceList;
 import com.three_stack.maximum_alpha.backend.game.State;
-import com.three_stack.maximum_alpha.backend.game.events.Event;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,40 +47,31 @@ public class Creature extends DamageableCard implements Worker {
      * @param state
      * @return
      */
-    public Event attack(State state) {
+    public void attack(Time time, State state) {
         if(isBlocked()) {
             throw new IllegalStateException("must not be blocked");
         } else if(!isAttacking()) {
             throw new IllegalStateException("must be attacking");
         }
-
-        Event damageEvent = dealDamage(attackTarget, this.getCurrentAttack(), state);
-
+        dealDamage(attackTarget, this.getCurrentAttack(), time, state);
         exhaust();
-        setAttackTarget(null);
-        return damageEvent;
+        clearAttackTarget();
     }
 
-    public Event block(State state) {
+    public void block(Time time, State state) {
         if(isBlocking()) {
             throw new IllegalStateException("blockTarget must be set");
         }
 
-        Outcome a = this.takeDamage(blockTarget.getCurrentAttack(), blockTarget);
-        Outcome b = blockTarget.takeDamage(this.getCurrentAttack(), this);
+        Event a = this.takeDamage(blockTarget.getCurrentAttack(), blockTarget, time);
+        Event b = blockTarget.takeDamage(this.getCurrentAttack(), this, time);
+        state.addEvent(a, Trigger.ON_DAMAGE);
+        state.addEvent(b, Trigger.ON_DAMAGE);
 
-        Event fightEvent = new Event();
-        fightEvent.addOutcome(a);
-        fightEvent.addOutcome(b);
-        state.addEvent(fightEvent);
-        state.notify(Trigger.ON_DAMAGE, fightEvent);
-
-        blockTarget.setAttackTarget(null);
-        setBlockTarget(null);
+        blockTarget.clearAttackTarget();
+        clearBlockTarget();
         blockTarget.exhaust();
         exhaust();
-
-        return fightEvent;
     }
 
     public int getDefaultAttack() {
@@ -109,8 +99,13 @@ public class Creature extends DamageableCard implements Worker {
         return attackTarget != null;
     }
 
-    public void setAttackTarget(Structure c) {
-        attackTarget = c;
+    public void clearAttackTarget() {
+        attackTarget = null;
+    }
+    public void setAttackTarget(Structure structure, Time time, State state) {
+        attackTarget = structure;
+        SourceTargetEvent attackEvent = new SourceTargetEvent(time, "attack", this, structure);
+        state.addEvent(attackEvent, Trigger.ON_BLOCK);
     }
 
     public boolean isBlocked() {
@@ -134,8 +129,15 @@ public class Creature extends DamageableCard implements Worker {
         return blockTarget != null;
     }
 
-    public void setBlockTarget(Creature c) {
-        blockTarget = c;
+    public void clearBlockTarget() {
+        blockTarget = null;
+    }
+
+    public void setBlockTarget(Creature creature, Time time, State state) {
+        blockTarget = creature;
+        creature.addBlocker(this);
+        SourceTargetEvent blockEvent = new SourceTargetEvent(time, "block", this, creature);
+        state.addEvent(blockEvent, Trigger.ON_BLOCK);
     }
 
     @ExposeMethodResult("canBlock")

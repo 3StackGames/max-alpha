@@ -1,6 +1,7 @@
 package com.three_stack.maximum_alpha.backend.game.phases;
 
 import com.three_stack.maximum_alpha.backend.game.State;
+import com.three_stack.maximum_alpha.backend.game.Time;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 
 import java.util.List;
@@ -26,23 +27,23 @@ public class DamagePhase extends Phase {
         List<Creature> attackers = state.getTurnPlayer().getField().getCards().stream()
                 .filter(Creature::isAttacking)
                 .collect(Collectors.toList());
-
+        Time battleTime = state.getTime();
         for(Creature attacker : attackers) {
             if(!attacker.isBlocked()) {
             	if(!attacker.getAttackTarget().isDead()) {
-	                attacker.attack(state);
+	                attacker.attack(battleTime, state);
             	}
             } else {
                 attacker.getBlockers().stream().forEach(blocker -> {
                 	if(!attacker.isDead() && !blocker.isDead()) {
-                        blocker.block(state);
+                        blocker.block(battleTime, state);
                     }
-	                blocker.setBlockTarget(null);
+	                blocker.clearBlockTarget();
                 });
                 attacker.resetBlockers();
             }
-            attacker.setAttackTarget(null);
-            attacker.setExhausted(true);
+            attacker.clearAttackTarget();
+            attacker.exhaust();
         }
 
         state.resolveDeaths();

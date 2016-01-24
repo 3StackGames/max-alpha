@@ -4,9 +4,6 @@ import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.ExistingCardAction;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
-import com.three_stack.maximum_alpha.backend.game.events.Event;
-import com.three_stack.maximum_alpha.backend.game.events.outcomes.Outcome;
-import com.three_stack.maximum_alpha.backend.game.events.outcomes.SingleCardOutcome;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 
 public class BuildStructureAction extends ExistingCardAction {
@@ -15,9 +12,7 @@ public class BuildStructureAction extends ExistingCardAction {
         Player player = getPlayer(state);
         Card card = state.findCard(cardId);
         player.pay(card.getCurrentCost());
-        player.getCourtyard().add(new Structure((Structure) card), state);
-
-        state.createEventWithSingleCardOutcome(card, "construct", null);
+        player.getCourtyard().add(new Structure((Structure) card), state.getTime(), state);
     }
 
     @Override

@@ -1,7 +1,7 @@
-package com.three_stack.maximum_alpha.backend.game.events;
+package com.three_stack.maximum_alpha.backend.game.effects;
 
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
-import com.three_stack.maximum_alpha.backend.game.events.outcomes.SingleCardOutcome;
+import com.three_stack.maximum_alpha.backend.game.effects.events.SingleCardEvent;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 import org.apache.log4j.Logger;
 
@@ -36,7 +36,7 @@ public class Checks {
      * Check if the source and triggerer are the same
      */
     public static Check S_T = (state, effect, event) -> {
-        SingleCardOutcome singleCardOutcome = (SingleCardOutcome) event;
+        SingleCardEvent singleCardOutcome = (SingleCardEvent) event;
         return effect.getSource().equals(singleCardOutcome.getCard());
     };
 
@@ -49,7 +49,7 @@ public class Checks {
      * Check if the triggerer is friendly with the source
      */
     public static Check T_FRIENDLY = (state, effect, event) -> {
-        SingleCardOutcome singleCardOutcome = (SingleCardOutcome) event;
+        SingleCardEvent singleCardOutcome = (SingleCardEvent) event;
         Player effectController = effect.getSource().getController();
         Player eventController = singleCardOutcome.getCard().getController();
         return effectController.equals(eventController);

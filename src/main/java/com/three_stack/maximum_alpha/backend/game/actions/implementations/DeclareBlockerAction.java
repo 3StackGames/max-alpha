@@ -1,11 +1,10 @@
 package com.three_stack.maximum_alpha.backend.game.actions.implementations;
 
 import com.three_stack.maximum_alpha.backend.game.State;
+import com.three_stack.maximum_alpha.backend.game.Time;
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.ExistingPairAction;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
-import com.three_stack.maximum_alpha.backend.game.events.Event;
-import com.three_stack.maximum_alpha.backend.game.events.Trigger;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,12 +16,7 @@ public class DeclareBlockerAction extends ExistingPairAction {
         Creature blocker = (Creature) card;
         Creature blockedTarget = (Creature) target;
 
-        blocker.setBlockTarget(blockedTarget);
-        blockedTarget.addBlocker(blocker);
-
-        Event event = new PairEvent(blocker, blockedTarget, blocker.getName() + " is now blocking " + blockedTarget.getName());
-        state.addEvent(event);
-        state.notify(Trigger.ON_BLOCK, event);
+        blocker.setBlockTarget(blockedTarget, state.getTime(), state);
     }
 
 	@Override

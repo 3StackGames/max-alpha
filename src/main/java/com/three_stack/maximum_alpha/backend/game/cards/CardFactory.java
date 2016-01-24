@@ -1,15 +1,9 @@
 package com.three_stack.maximum_alpha.backend.game.cards;
 
 import com.three_stack.maximum_alpha.backend.game.ResourceList;
-import com.three_stack.maximum_alpha.backend.game.cards.Card;
-import com.three_stack.maximum_alpha.backend.game.cards.Creature;
-import com.three_stack.maximum_alpha.backend.game.events.*;
+import com.three_stack.maximum_alpha.backend.game.effects.*;
 import com.three_stack.maximum_alpha.database_client.pojos.DBCard;
-import com.three_stack.maximum_alpha.database_client.pojos.DBEffect;
-import org.bson.Document;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;

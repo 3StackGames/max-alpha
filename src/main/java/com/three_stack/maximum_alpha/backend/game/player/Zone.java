@@ -1,6 +1,8 @@
 package com.three_stack.maximum_alpha.backend.game.player;
 
 import com.three_stack.maximum_alpha.backend.game.State;
+import com.three_stack.maximum_alpha.backend.game.Time;
+import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
 import io.gsonfire.annotations.ExposeMethodResult;
 
 import java.util.*;
@@ -20,14 +22,13 @@ public abstract class Zone<T extends Card> {
         cards = new ArrayList<>();
     }
 
-    protected Zone(List<T> cards, Player owner) {
-        setup(owner);
-        this.cards = new ArrayList<>(cards);
-    }
-
     protected void setup(Player owner) {
         this.owner = owner;
     }
+
+    public abstract Trigger getOnEnterTrigger();
+
+    public abstract Trigger getOnLeaveTrigger();
 
     /**
      *
@@ -37,27 +38,63 @@ public abstract class Zone<T extends Card> {
         return Collections.unmodifiableList(cards);
     }
 
-    protected void add(T newCard, State state) {
-        newCard.setTimeEnteredZone(state.getTime());
-        cards.add(newCard);
+    public void add(T card, Time time, State state) {
+        card.setTimeEnteredZone(time);
+        cards.add(card);
+        createEnterZoneEvent(card, time, state);
     }
 
-    @ExposeMethodResult("cardIds")
-    public List<UUID> getCardIds() {
-        return cards.stream().map(Card::getId).collect(Collectors.toList());
+    public void addAll(List<T> cards, Time time, State state) {
+        cards.forEach(card -> add(card, time, state));
     }
 
-    protected T takeCard(UUID cardId) {
+    public T takeCard(UUID cardId, Time time, State state) {
         Iterator<T> cardIterator = cards.iterator();
 
         while(cardIterator.hasNext()) {
             T card = cardIterator.next();
             if(card.getId().equals(cardId)) {
                 cardIterator.remove();
+                createLeaveZoneEvent(card, time, state);
                 return card;
             }
         }
         throw new IllegalArgumentException("Card Not Found");
+    }
+
+    public boolean remove(T card, Time time, State state) {
+        boolean removed = cards.remove(card);
+        if(removed) {
+            createLeaveZoneEvent(card, time, state);
+        }
+        return removed;
+    }
+
+    public T remove(int index, Time time, State state) {
+        T card = cards.remove(index);
+        createLeaveZoneEvent(card, time, state);
+        return card;
+    }
+
+    public void removeAll(Collection<T> removeCards, Time time, State state) {
+        removeCards.forEach(removeCard -> remove(removeCard, time, state));
+    }
+
+    protected void createEnterZoneEvent(T card, Time time, State state) {
+        String type = "enter " + getClass().getSimpleName();
+        state.createSingleCardEvent(card, type, time, getOnEnterTrigger());
+    }
+    protected void createLeaveZoneEvent(T card, Time time, State state) {
+        String type = "leave " + getClass().getSimpleName();
+        state.createSingleCardEvent(card, type, time, getOnLeaveTrigger());
+    }
+
+    protected T removeWithoutEvent(int index) {
+        return cards.remove(index);
+    }
+    @ExposeMethodResult("cardIds")
+    public List<UUID> getCardIds() {
+        return cards.stream().map(Card::getId).collect(Collectors.toList());
     }
 
     public T findCard(UUID cardId) {
@@ -69,19 +106,6 @@ public abstract class Zone<T extends Card> {
         } else {
             throw new IllegalArgumentException("Card Not Found");
         }
-    }
-
-    protected boolean remove(T card) {
-        return cards.remove(card);
-    }
-
-    protected T remove(int index) {
-        T card = cards.remove(index);
-        return card;
-    }
-
-    protected void removeAll(Collection<T> removeCards) {
-        cards.removeAll(removeCards);
     }
 
     protected List<T> subList(int fromIndex, int toIndex) {

@@ -1,12 +1,13 @@
-package com.three_stack.maximum_alpha.backend.game.events.outcomes;
+package com.three_stack.maximum_alpha.backend.game.effects.events;
 
+import com.three_stack.maximum_alpha.backend.game.Time;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 
-public class PlayerOutcome extends Outcome {
+public class PlayerEvent extends Event {
     protected Player player;
 
-    public PlayerOutcome(String type, Player player) {
-        super(type);
+    public PlayerEvent(Time time, String type, Player player) {
+        super(time, type);
         this.player = player;
     }
 

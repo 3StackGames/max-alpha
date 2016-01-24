@@ -1,13 +1,11 @@
 package com.three_stack.maximum_alpha.backend.game.actions.implementations;
 
-import com.three_stack.maximum_alpha.backend.game.events.outcomes.SingleCardOutcome;
-import com.three_stack.maximum_alpha.backend.game.events.Trigger;
-import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.ExistingCardWithCostAction;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
-import com.three_stack.maximum_alpha.backend.game.events.Event;
+import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
+import com.three_stack.maximum_alpha.backend.game.player.Player;
 
 public class PlayCardAction extends ExistingCardWithCostAction {
     
@@ -15,17 +13,14 @@ public class PlayCardAction extends ExistingCardWithCostAction {
     public void run(State state) {
         Player player = getPlayer(state);
         //find a in player's hand
-        Card card = player.getHand().takeCard(cardId, state);
+        Card card = player.getHand().takeCard(cardId, state.getTime(), state);
 
         player.pay(cost);
 
-        Event playEvent = new SingleCardOutcome(card, player.getUsername() + " has played " + card.getName());
-        state.addEvent(playEvent);
-        state.notify(Trigger.ON_PLAY, playEvent);
+        state.createSingleCardEvent(card, "play", state.getTime(), Trigger.ON_PLAY);
 
         if(card instanceof Creature) {
-            player.getField().add((Creature) card, state);
-
+            player.getField().add((Creature) card, state.getTime(), state);
         } else {
             //@Todo: Handle spells
         }
