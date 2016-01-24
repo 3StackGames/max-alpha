@@ -14,6 +14,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.three_stack.maximum_alpha.backend.game.events.*;
+import com.three_stack.maximum_alpha.backend.game.events.outcomes.PlayerOutcome;
+import com.three_stack.maximum_alpha.backend.game.events.outcomes.SingleCardOutcome;
 import com.three_stack.maximum_alpha.backend.game.player.*;
 import org.bson.types.ObjectId;
 
@@ -229,7 +231,7 @@ public class State {
     //For serialization
 
     public Map<UUID, Card> generateCardList() {
-        //Gets all cards from each player, then collects them into the map
+        //Gets all targets from each player, then collects them into the map
         masterCardList = playingPlayers.stream().map(Player::getAllCards).flatMap(p -> p.stream()).collect(Collectors.toMap(Card::getId, c -> c));
 
         return masterCardList;
@@ -384,6 +386,17 @@ public class State {
                 .forEach(this::addTriggeredEffect);
     }
 
+    public Event createEventWithSingleCardOutcome(Card card, String type, Trigger trigger) {
+        Event event = new Event();
+        SingleCardOutcome outcome = new SingleCardOutcome(type, card);
+        event.addOutcome(outcome);
+        addEvent(event);
+        if(trigger != null) {
+            notify(trigger, event);
+        }
+        return event;
+    }
+
     /**
      * Traverses the "Effect Tree" and resolves them in BFS / Level-Order manner.
      */
@@ -433,8 +446,7 @@ public class State {
             deadCreatures.forEach(deadCreature -> {
             	deadCreature.reset();
                 field.remove(deadCreature);
-                SingleCardEvent event = new SingleCardEvent(deadCreature, deadCreature.getName() + " died");
-                addEvent(event);
+                deadCreature.die(this);
                 grave.add(deadCreature, this);
             });
 
@@ -442,8 +454,7 @@ public class State {
                     .filter(Structure::isDead).collect(Collectors.toList());
             destroyedStructures.forEach(destroyedStructure -> {
                 court.remove(destroyedStructure);
-                SingleCardEvent event = new SingleCardEvent(destroyedStructure, destroyedStructure.getName() + " was destroyed");
-                addEvent(event);
+                destroyedStructure.die(this);
             });
         }
 

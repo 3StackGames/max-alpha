@@ -2,8 +2,6 @@ package com.three_stack.maximum_alpha.backend.game.actions.implementations;
 
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.ExistingPairAction;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
-import com.three_stack.maximum_alpha.backend.game.events.PairEvent;
-import com.three_stack.maximum_alpha.backend.game.events.SingleCardEvent;
 import com.three_stack.maximum_alpha.backend.game.events.Trigger;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.State;

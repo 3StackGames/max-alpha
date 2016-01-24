@@ -4,7 +4,7 @@ import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.ExistingCardAction;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
-import com.three_stack.maximum_alpha.backend.game.events.SingleCardEvent;
+import com.three_stack.maximum_alpha.backend.game.events.outcomes.SingleCardOutcome;
 import com.three_stack.maximum_alpha.backend.game.events.Trigger;
 
 public class AssignCardAction extends ExistingCardAction {
@@ -17,7 +17,7 @@ public class AssignCardAction extends ExistingCardAction {
         player.getTown().add(assignCard, state);
         player.setHasAssignedOrPulled(true);
 
-        Event event = new SingleCardEvent(player, " assigned " + assignCard.getName() + " as a worker.", assignCard);
+        Event event = new SingleCardOutcome(player, " assigned " + assignCard.getName() + " as a worker.", assignCard);
         state.addEvent(event);
         state.notify(Trigger.ON_ASSIGN, event);
     }

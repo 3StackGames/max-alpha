@@ -5,7 +5,6 @@ import com.three_stack.maximum_alpha.backend.game.actions.abstracts.ExistingPair
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.events.Event;
-import com.three_stack.maximum_alpha.backend.game.events.PairEvent;
 import com.three_stack.maximum_alpha.backend.game.events.Trigger;
 
 import java.util.List;

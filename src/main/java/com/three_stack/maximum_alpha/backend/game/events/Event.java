@@ -1,52 +1,33 @@
 package com.three_stack.maximum_alpha.backend.game.events;
 
-import com.three_stack.maximum_alpha.backend.game.player.Player;
+import com.three_stack.maximum_alpha.backend.game.events.outcomes.Outcome;
 import com.three_stack.maximum_alpha.backend.game.utilities.Serializer;
-import io.gsonfire.annotations.ExposeMethodResult;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class Event {
 
     /**
      * time occurred is essentially an id since no two events can occur at the same time.
+     *
+     * It gets set when it's added to the state.
      */
     protected int timeOccurred;
-	protected List<String> descriptions;
-    protected transient Player player;
-	
+	protected List<Outcome> outcomes;
+
 	public Event() {
-		setup();
+        setup();
 	}
 
-    public Event(String description) {
+    public Event(Outcome outcome) {
         setup();
-        this.descriptions.add(description);
-    }
-
-    public Event(Player player, String action) {
-        setup();
-        this.descriptions.add(player.getUsername() + " has " + action);
-        this.player = player;
+        outcomes.add(outcome);
     }
 
     protected void setup() {
-        this.descriptions = new ArrayList<>();
-    }
-
-    public List<String> getDescriptions() {
-        return descriptions;
-    }
-
-    public void addDescription(String description) {
-        this.getDescriptions().add(description);
-    }
-
-    public Event mergeEvent(Event other) {
-        getDescriptions().addAll(other.getDescriptions());
-        this.timeOccurred = Math.min(timeOccurred, other.getTimeOccurred());
-        return this;
+        outcomes = new ArrayList<>();
     }
 
     public int getTimeOccurred() {
@@ -57,11 +38,16 @@ public class Event {
         this.timeOccurred = timeOccurred;
     }
 
-    @ExposeMethodResult("concatenatedDescription")
-    public String getConcatenatedDescription() {
-        StringBuilder stringBuilder = new StringBuilder();
-        descriptions.forEach(stringBuilder::append);
-        return stringBuilder.toString();
+    public void addOutcome(Outcome outcome) {
+        outcomes.add(outcome);
+    }
+
+    public void addAllOutcomes(Collection<Outcome> outcomes) {
+        this.outcomes.addAll(outcomes);
+    }
+
+    public List<Outcome> getOutcomes() {
+        return outcomes;
     }
 
     @Override

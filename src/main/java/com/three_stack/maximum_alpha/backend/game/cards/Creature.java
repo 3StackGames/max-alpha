@@ -2,6 +2,9 @@ package com.three_stack.maximum_alpha.backend.game.cards;
 
 import com.three_stack.maximum_alpha.backend.game.events.Effect;
 import com.three_stack.maximum_alpha.backend.game.events.Trigger;
+import com.three_stack.maximum_alpha.backend.game.events.outcomes.FightOutcome;
+import com.three_stack.maximum_alpha.backend.game.events.outcomes.Outcome;
+import com.three_stack.maximum_alpha.backend.game.events.outcomes.SourceDamageTargetsOutcome;
 import io.gsonfire.annotations.ExposeMethodResult;
 
 import com.three_stack.maximum_alpha.backend.game.ResourceList;
@@ -41,16 +44,44 @@ public class Creature extends DamageableCard implements Worker {
         return resourceList;
     }
 
-    public Event block(Creature aggressor) {
-        Event a = this.takeDamage(aggressor.getCurrentAttack(), this);
-        Event b = aggressor.takeDamage(this.getCurrentAttack(), aggressor);
+    /**
+     * @param state
+     * @return
+     */
+    public Event attack(State state) {
+        if(isBlocked()) {
+            throw new IllegalStateException("must not be blocked");
+        } else if(!isAttacking()) {
+            throw new IllegalStateException("must be attacking");
+        }
 
-        aggressor.setAttackTarget(null);
+        Event damageEvent = dealDamage(attackTarget, this.getCurrentAttack(), state);
+
+        exhaust();
+        setAttackTarget(null);
+        return damageEvent;
+    }
+
+    public Event block(State state) {
+        if(isBlocking()) {
+            throw new IllegalStateException("blockTarget must be set");
+        }
+
+        Outcome a = this.takeDamage(blockTarget.getCurrentAttack(), blockTarget);
+        Outcome b = blockTarget.takeDamage(this.getCurrentAttack(), this);
+
+        Event fightEvent = new Event();
+        fightEvent.addOutcome(a);
+        fightEvent.addOutcome(b);
+        state.addEvent(fightEvent);
+        state.notify(Trigger.ON_DAMAGE, fightEvent);
+
+        blockTarget.setAttackTarget(null);
         setBlockTarget(null);
-        aggressor.exhaust();
+        blockTarget.exhaust();
         exhaust();
 
-        return a.mergeEvent(b);
+        return fightEvent;
     }
 
     public int getDefaultAttack() {

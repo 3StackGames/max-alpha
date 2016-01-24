@@ -2,13 +2,13 @@ package com.three_stack.maximum_alpha.backend.game.cards;
 
 import com.three_stack.maximum_alpha.backend.game.*;
 import com.three_stack.maximum_alpha.backend.game.events.Effect;
+import com.three_stack.maximum_alpha.backend.game.events.Event;
+import com.three_stack.maximum_alpha.backend.game.events.outcomes.Outcome;
 import com.three_stack.maximum_alpha.backend.game.events.Trigger;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class Card {
 	protected final UUID id;
@@ -64,6 +64,26 @@ public abstract class Card {
 
     protected void setup() {
         this.timeEnteredZone = 0;
+    }
+
+    public Event dealDamage(DamageableCard victim, int amount, State state) {
+        List<DamageableCard> victims = new ArrayList<>();
+        victims.add(victim);
+        return dealDamage(victims, amount, state);
+    }
+
+    public Event dealDamage(List<DamageableCard> victims, int amount, State state) {
+        if(victims.size() < 1) {
+            throw new IllegalArgumentException("Must have at least one victim");
+        }
+        List<Outcome> damageOutcomes = victims.stream()
+                .map(victim -> victim.takeDamage(amount, this))
+                .collect(Collectors.toList());
+        Event damageEvent = new Event();
+        damageEvent.addAllOutcomes(damageOutcomes);
+        state.addEvent(damageEvent);
+        state.notify(Trigger.ON_DAMAGE, damageEvent);
+        return damageEvent;
     }
 
     public ResourceList.Color calculateDominantColor() {

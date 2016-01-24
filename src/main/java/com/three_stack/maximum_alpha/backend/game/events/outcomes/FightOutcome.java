@@ -19,6 +19,10 @@ public class FightOutcome extends Outcome {
         this.bToADamage = bToADamage;
     }
 
+    public FightOutcome(SourceDamageTargetsOutcome a, SourceDamageTargetsOutcome b) {
+
+    }
+
     public int getaToBDamage() {
         return aToBDamage;
     }

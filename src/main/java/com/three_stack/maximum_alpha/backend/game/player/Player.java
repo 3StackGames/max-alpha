@@ -111,11 +111,6 @@ public class Player {
         hand.add(mainDeck.draw(state), state);
     }
 
-    public Event takeDamage(int damage, Card source) {
-    	castle.takeDamage(damage, source);
-        return new Event(username + " took " + damage + " damage from " + source.getName() + ".");
-    }
-
     public void gatherResources(State state) {
         for(Card workerCard : town.getCards()) {
             Worker worker = (Worker) workerCard;

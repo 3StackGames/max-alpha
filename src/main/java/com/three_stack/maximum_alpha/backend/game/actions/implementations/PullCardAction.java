@@ -1,6 +1,6 @@
 package com.three_stack.maximum_alpha.backend.game.actions.implementations;
 
-import com.three_stack.maximum_alpha.backend.game.events.SingleCardEvent;
+import com.three_stack.maximum_alpha.backend.game.events.outcomes.SingleCardOutcome;
 import com.three_stack.maximum_alpha.backend.game.events.Trigger;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.State;
@@ -18,7 +18,7 @@ public class PullCardAction extends ExistingCardAction {
         player.getHand().add(pullCard, state);
         player.setHasAssignedOrPulled(true);
 
-        Event event = new SingleCardEvent(player, player.getUsername() + " has pulled " + pullCard.getName() + " from work", pullCard);
+        Event event = new SingleCardOutcome(player, player.getUsername() + " has pulled " + pullCard.getName() + " from work", pullCard);
         state.addEvent(event);
         state.notify(Trigger.ON_PULL, event);
     }

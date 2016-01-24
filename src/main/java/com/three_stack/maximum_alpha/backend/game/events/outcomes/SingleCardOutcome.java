@@ -9,9 +9,10 @@ import java.util.UUID;
 public class SingleCardOutcome extends Outcome {
     protected transient Card card;
 
-    public SingleCardOutcome(Card card) {
-        super();
+    public SingleCardOutcome(String type, Card card) {
+        super(type);
         this.card = card;
+        this.type = type;
     }
 
     public Card getCard() {

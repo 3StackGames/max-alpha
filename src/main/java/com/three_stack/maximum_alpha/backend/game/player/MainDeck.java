@@ -3,7 +3,7 @@ package com.three_stack.maximum_alpha.backend.game.player;
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.CardFactory;
-import com.three_stack.maximum_alpha.backend.game.events.SingleCardEvent;
+import com.three_stack.maximum_alpha.backend.game.events.outcomes.SingleCardOutcome;
 import com.three_stack.maximum_alpha.backend.game.events.Trigger;
 import com.three_stack.maximum_alpha.database_client.pojos.DBDeck;
 
@@ -23,9 +23,7 @@ public class MainDeck extends Zone<Card> {
 
     public Card draw(State state) {
         Card cardDrawn = remove(0);
-        SingleCardEvent cardDrawEvent = new SingleCardEvent(owner, " has drawn " + cardDrawn.getName(), cardDrawn);
-        state.addEvent(cardDrawEvent);
-        state.notify(Trigger.ON_DRAW, cardDrawEvent);
+        state.createEventWithSingleCardOutcome(cardDrawn, "draw", Trigger.ON_DRAW);
         return cardDrawn;
     }
 }

@@ -1,8 +1,9 @@
 package com.three_stack.maximum_alpha.backend.game.cards;
 
 import com.three_stack.maximum_alpha.backend.game.State;
-import com.three_stack.maximum_alpha.backend.game.events.Effect;
-import com.three_stack.maximum_alpha.backend.game.events.Trigger;
+import com.three_stack.maximum_alpha.backend.game.events.*;
+import com.three_stack.maximum_alpha.backend.game.events.outcomes.SingleCardOutcome;
+import com.three_stack.maximum_alpha.backend.game.events.outcomes.SourceDamageTargetsOutcome;
 import io.gsonfire.annotations.ExposeMethodResult;
 
 import java.util.ArrayList;
@@ -10,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.three_stack.maximum_alpha.backend.game.ResourceList;
-import com.three_stack.maximum_alpha.backend.game.events.Event;
 
 /**
  * Damageable, Buffable, Refreshable / Exhaustable
@@ -44,21 +44,18 @@ public abstract class DamageableCard extends Card {
         this.buffs = other.buffs;
     }
 
-    public Event takeDamage(int damage, Card source) {
+    public SourceDamageTargetsOutcome takeDamage(int damage, Card source) {
         damageTaken += damage;
         checkDeath();
-        return new Event(this.getName() + " took " + damage + " damage from " + source.getName());
+        return new SourceDamageTargetsOutcome(source, this, damage);
     }
 
-    public void takeDamageSingleTarget(int damage, Card source, State state) {
-        Event damageEvent = takeDamage(damage, source);
-        state.addEvent(damageEvent);
-    }
-    
-    public Event heal(int heal, Card source) {
-    	heal = Math.min(heal, getMaxHealth() - getCurrentHealth());
-    	damageTaken -= heal;
-    	return new Event(this.getName() + " healed " + heal + " damage from " + source.getName());
+    public Event die(State state) {
+        Event deathEvent = new Event();
+        deathEvent.addOutcome(new SingleCardOutcome("death", this));
+        state.addEvent(deathEvent);
+        state.notify(Trigger.ON_DEATH, deathEvent);
+        return deathEvent;
     }
 
     @ExposeMethodResult("currentHealth")
