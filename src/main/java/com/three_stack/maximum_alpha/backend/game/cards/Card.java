@@ -57,13 +57,13 @@ public abstract class Card {
         this.timeEnteredZone = Time.getSetup();
     }
 
-    public void dealDamage(DamageableCard victim, int amount, Time time, State state) {
-        List<DamageableCard> victims = new ArrayList<>();
+    public void dealDamage(NonSpellCard victim, int amount, Time time, State state) {
+        List<NonSpellCard> victims = new ArrayList<>();
         victims.add(victim);
         dealDamage(victims, amount, time, state);
     }
 
-    public void dealDamage(List<DamageableCard> victims, int amount, Time time, State state) {
+    public void dealDamage(List<NonSpellCard> victims, int amount, Time time, State state) {
         if(victims.size() < 1) {
             throw new IllegalArgumentException("Must have at least one victim");
         }

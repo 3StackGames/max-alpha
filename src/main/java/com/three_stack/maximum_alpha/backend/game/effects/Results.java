@@ -40,13 +40,13 @@ public class Results {
                 .map(player -> player.getCourtyard().getCards())
                 .flatMap(Collection::stream);
 
-        List<DamageableCard> victims = Stream.concat(castleStream, structureStream).collect(Collectors.toList());
+        List<NonSpellCard> victims = Stream.concat(castleStream, structureStream).collect(Collectors.toList());
         source.dealDamage(victims, damage, state.getTime(), state);
     };
 
     public static Result DEAL_DAMAGE_ALL_CREATURES = (state, source, event, value) -> {
         int damage = (int) value;
-        List<DamageableCard> victims = state.getPlayingPlayers().stream()
+        List<NonSpellCard> victims = state.getPlayingPlayers().stream()
                 .map(player -> player.getField().getCards())
                 .flatMap(creatures -> creatures.stream())
                 .collect(Collectors.toList());
@@ -56,7 +56,7 @@ public class Results {
     public static Result DEAL_DAMAGE_ENEMY_CASTLES = (state, source, event, value) -> {
         Player controller = source.getController();
         int damage = (int) value;
-        List<DamageableCard> castles = state.getPlayersExcept(controller).stream()
+        List<NonSpellCard> castles = state.getPlayersExcept(controller).stream()
                 .map(Player::getCastle)
                 .collect(Collectors.toList());
         source.dealDamage(castles, damage, state.getTime(), state);

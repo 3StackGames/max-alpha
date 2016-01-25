@@ -2,7 +2,7 @@ package com.three_stack.maximum_alpha.backend.game.cards;
 
 import java.util.List;
 
-import com.three_stack.maximum_alpha.backend.game.events.Effect;
+import com.three_stack.maximum_alpha.backend.game.effects.Effect;
 
 /**
  * @Todo: Do the following
