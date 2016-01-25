@@ -3,7 +3,7 @@ package com.three_stack.maximum_alpha.backend.game.effects;
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
-import com.three_stack.maximum_alpha.backend.game.cards.DamageableCard;
+import com.three_stack.maximum_alpha.backend.game.cards.NonSpellCard;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.player.Zone;
 import com.three_stack.maximum_alpha.backend.game.prompts.Prompt;
@@ -39,20 +39,20 @@ public class Results {
     public static Result DEAL_DAMAGE_ALL_STRUCTURES_AND_CASTLES = (state, source, event, value) -> {
         int damage = (int) value;
 
-        Stream<DamageableCard> castleStream = state.getPlayingPlayers().stream()
+        Stream<NonSpellCard> castleStream = state.getPlayingPlayers().stream()
                 .map(Player::getCastle);
 
-        Stream<DamageableCard> structureStream = state.getPlayingPlayers().stream()
+        Stream<NonSpellCard> structureStream = state.getPlayingPlayers().stream()
                 .map(player -> player.getCourtyard().getCards())
                 .flatMap(Collection::stream);
 
-        List<DamageableCard> victims = Stream.concat(castleStream, structureStream).collect(Collectors.toList());
+        List<NonSpellCard> victims = Stream.concat(castleStream, structureStream).collect(Collectors.toList());
         source.dealDamage(victims, damage, state.getTime(), state);
     };
 
     public static Result DEAL_DAMAGE_ALL_CREATURES = (state, source, event, value) -> {
         int damage = (int) value;
-        List<DamageableCard> victims = state.getPlayingPlayers().stream()
+        List<NonSpellCard> victims = state.getPlayingPlayers().stream()
                 .map(player -> player.getField().getCards())
                 .flatMap(creatures -> creatures.stream())
                 .collect(Collectors.toList());
@@ -62,7 +62,7 @@ public class Results {
     public static Result DEAL_DAMAGE_ENEMY_CASTLES = (state, source, event, value) -> {
         Player controller = source.getController();
         int damage = (int) value;
-        List<DamageableCard> castles = state.getPlayersExcept(controller).stream()
+        List<NonSpellCard> castles = state.getPlayersExcept(controller).stream()
                 .map(Player::getCastle)
                 .collect(Collectors.toList());
         source.dealDamage(castles, damage, state.getTime(), state);
