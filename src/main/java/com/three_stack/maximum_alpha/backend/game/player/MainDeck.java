@@ -1,10 +1,10 @@
 package com.three_stack.maximum_alpha.backend.game.player;
 
 import com.three_stack.maximum_alpha.backend.game.State;
+import com.three_stack.maximum_alpha.backend.game.Time;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.CardFactory;
-import com.three_stack.maximum_alpha.backend.game.events.SingleCardEvent;
-import com.three_stack.maximum_alpha.backend.game.events.Trigger;
+import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
 import com.three_stack.maximum_alpha.database_client.pojos.DBDeck;
 
 import java.util.Collections;
@@ -17,15 +17,23 @@ public class MainDeck extends Zone<Card> {
         cards = deck.getMainCards().stream().map(CardFactory::create).collect(Collectors.toList());
     }
 
+    @Override
+    public Trigger getOnEnterTrigger() {
+        return null;
+    }
+
+    @Override
+    public Trigger getOnLeaveTrigger() {
+        return null;
+    }
+
     public void shuffle() {
         Collections.shuffle(cards);
     }
 
-    public Card draw(State state) {
-        Card cardDrawn = remove(0);
-        SingleCardEvent cardDrawEvent = new SingleCardEvent(owner, " has drawn " + cardDrawn.getName(), cardDrawn);
-        state.addEvent(cardDrawEvent);
-        state.notify(Trigger.ON_DRAW, cardDrawEvent);
+    public Card draw(Time time, State state) {
+        Card cardDrawn = removeWithoutEvent(0);
+        state.createSingleCardEvent(cardDrawn, "draw", time, Trigger.ON_DRAW);
         return cardDrawn;
     }
 }

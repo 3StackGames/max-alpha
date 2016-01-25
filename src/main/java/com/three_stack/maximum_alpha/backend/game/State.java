@@ -13,7 +13,9 @@ import java.util.Queue;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import com.three_stack.maximum_alpha.backend.game.events.*;
+import com.three_stack.maximum_alpha.backend.game.effects.*;
+import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
+import com.three_stack.maximum_alpha.backend.game.effects.events.SingleCardEvent;
 import com.three_stack.maximum_alpha.backend.game.player.*;
 import org.bson.types.ObjectId;
 
@@ -21,7 +23,7 @@ import com.three_stack.maximum_alpha.backend.game.actions.abstracts.Action;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
-import com.three_stack.maximum_alpha.backend.game.cards.StructureDeck;
+import com.three_stack.maximum_alpha.backend.game.player.StructureDeck;
 import com.three_stack.maximum_alpha.backend.game.phases.Phase;
 import com.three_stack.maximum_alpha.backend.game.phases.StartPhase;
 import com.three_stack.maximum_alpha.backend.game.player.Player.Status;
@@ -57,7 +59,6 @@ public class State {
      * begins at 1, because initialization happens "at time 0"
      */
     private transient int timer = 1;
-    //@Todo: make this a priority queue with 2-factors: low effectCount (main priority) and low ageInZone (secondary priority)
     private transient PriorityQueue<TriggeredEffect> triggeredEffects;
     private List<Player> winningPlayers;
     private List<Player> losingPlayers;
@@ -76,10 +77,10 @@ public class State {
         this.losingPlayers = new ArrayList<>();
         this.tiedPlayers = new ArrayList<>();
         this.triggeredEffects = new PriorityQueue<>((Comparator<TriggeredEffect>) (a, b) -> {
-            if (!a.getEvent().equals(b.getEvent())) {
-                return a.getEvent().getTimeOccurred() - b.getEvent().getTimeOccurred();
+            if (!a.getTrigerringEvent().getTime().equals(b.getTrigerringEvent().getTime())) {
+                return a.getTrigerringEvent().getTime().getValue() - b.getTrigerringEvent().getTime().getValue();
             } else {
-                return a.getEffect().getSource().getTimeEnteredZone() - b.getEffect().getSource().getTimeEnteredZone();
+                return a.getEffect().getSource().getTimeEnteredZone().getValue() - b.getEffect().getSource().getTimeEnteredZone().getValue();
             }
         });
         setupGame();
@@ -142,7 +143,7 @@ public class State {
     private void initialDraw() {
         for (Player player : players) {
             for (int i = 0; i < parameters.INITIAL_DRAW_SIZE; i++) {
-                player.draw(this);
+                player.draw(getTime(), this);
             }
         }
     }
@@ -156,7 +157,7 @@ public class State {
     public void turnPlayerDraw() {
         if (turnCount > 0) {
             Player turnPlayer = getTurnPlayer();
-            turnPlayer.draw(this);
+            turnPlayer.draw(getTime(), this);
         }
     }
 
@@ -229,7 +230,7 @@ public class State {
     //For serialization
 
     public Map<UUID, Card> generateCardList() {
-        //Gets all cards from each player, then collects them into the map
+        //Gets all target from each player, then collects them into the map
         masterCardList = playingPlayers.stream().map(Player::getAllCards).flatMap(p -> p.stream()).collect(Collectors.toMap(Card::getId, c -> c));
 
         return masterCardList;
@@ -270,11 +271,6 @@ public class State {
 
     public List<Player> getPlayingPlayers() {
         return playingPlayers;
-    }
-
-    public void addEvent(Event event) {
-        event.setTimeOccurred(timer++);
-        eventHistory.add(event);
     }
 
     public List<Event> getEventHistory() {
@@ -367,11 +363,20 @@ public class State {
         return !triggeredEffects.isEmpty();
     }
 
-    public int getTime() {
-        return timer++;
+    public Time getTime() {
+        return new Time(timer++);
     }
 
-    public void notify(Trigger trigger, Event event) {
+    /**
+     * Call whenever an event is created to let the state know about the event.
+     * The trigger parameter is optional and can be null.
+     * @param event
+     * @param trigger
+     */
+    public void addEvent(Event event, Trigger trigger) {
+        eventHistory.add(event);
+        if(trigger == null) return;
+
         List<Effect> effects = getEffects(trigger);
         if (effects == null) {
             return;
@@ -384,6 +389,12 @@ public class State {
                 .forEach(this::addTriggeredEffect);
     }
 
+    public Event createSingleCardEvent(Card card, String type, Time time, Trigger trigger) {
+        Event event = new SingleCardEvent(time, type, card);
+        addEvent(event, trigger);
+        return event;
+    }
+
     /**
      * Traverses the "Effect Tree" and resolves them in BFS / Level-Order manner.
      */
@@ -391,11 +402,11 @@ public class State {
         while (hasTriggeredEffect()) {
             TriggeredEffect triggeredEffect = getTriggeredEffect();
             Effect currentEffect = triggeredEffect.getEffect();
-            Event effectEvent = triggeredEffect.getEvent();
+            Event triggeringEvent = triggeredEffect.getTrigerringEvent();
             //index tracks which result / value pair we're on so we can pass the proper value to the run() method
             int[] index = {0};
             currentEffect.getResults().stream()
-                    .forEachOrdered(result -> result.run(this, currentEffect.getSource(), effectEvent, currentEffect.getValues().get(index[0]++)));
+                    .forEachOrdered(result -> result.run(this, currentEffect.getSource(), triggeringEvent, currentEffect.getValues().get(index[0]++)));
             resolveDeaths();
         }
     }
@@ -427,23 +438,21 @@ public class State {
             Field field = player.getField();
             Courtyard court = player.getCourtyard();
             Graveyard grave = player.getGraveyard();
-
+            Time deathTime = getTime();
             List<Creature> deadCreatures = field.getCards().stream()
                     .filter(Creature::isDead).collect(Collectors.toList());
             deadCreatures.forEach(deadCreature -> {
             	deadCreature.reset();
-                field.remove(deadCreature);
-                SingleCardEvent event = new SingleCardEvent(deadCreature, deadCreature.getName() + " died");
-                addEvent(event);
-                grave.add(deadCreature, this);
+                field.remove(deadCreature, getTime(), this);
+                deadCreature.die(deathTime, this);
+                grave.add(deadCreature, getTime(), this);
             });
 
             List<Structure> destroyedStructures = court.getCards().stream()
                     .filter(Structure::isDead).collect(Collectors.toList());
             destroyedStructures.forEach(destroyedStructure -> {
-                court.remove(destroyedStructure);
-                SingleCardEvent event = new SingleCardEvent(destroyedStructure, destroyedStructure.getName() + " was destroyed");
-                addEvent(event);
+                court.remove(destroyedStructure, getTime(), this);
+                destroyedStructure.die(deathTime, this);
             });
         }
 

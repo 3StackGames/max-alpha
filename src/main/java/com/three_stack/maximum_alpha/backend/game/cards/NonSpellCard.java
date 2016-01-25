@@ -1,8 +1,11 @@
 package com.three_stack.maximum_alpha.backend.game.cards;
 
 import com.three_stack.maximum_alpha.backend.game.State;
-import com.three_stack.maximum_alpha.backend.game.events.Effect;
-import com.three_stack.maximum_alpha.backend.game.events.Trigger;
+import com.three_stack.maximum_alpha.backend.game.Time;
+import com.three_stack.maximum_alpha.backend.game.effects.*;
+import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
+import com.three_stack.maximum_alpha.backend.game.effects.events.SingleCardEvent;
+import com.three_stack.maximum_alpha.backend.game.effects.events.SourceDamageTargetEvent;
 import io.gsonfire.annotations.ExposeMethodResult;
 
 import java.util.ArrayList;
@@ -10,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.three_stack.maximum_alpha.backend.game.ResourceList;
-import com.three_stack.maximum_alpha.backend.game.events.Event;
 
 /**
  * Damageable, Buffable, Refreshable / Exhaustable
@@ -44,21 +46,16 @@ public abstract class NonSpellCard extends Card {
         this.buffs = other.buffs;
     }
 
-    public Event takeDamage(int damage, Card source) {
+    public SourceDamageTargetEvent takeDamage(int damage, Card source, Time time) {
         damageTaken += damage;
         checkDeath();
-        return new Event(this.getName() + " took " + damage + " damage from " + source.getName());
+        return new SourceDamageTargetEvent(time, source, this, damage);
     }
 
-    public void takeDamageSingleTarget(int damage, Card source, State state) {
-        Event damageEvent = takeDamage(damage, source);
-        state.addEvent(damageEvent);
-    }
-    
-    public Event heal(int heal, Card source) {
-    	heal = Math.min(heal, getMaxHealth() - getCurrentHealth());
-    	damageTaken -= heal;
-    	return new Event(this.getName() + " healed " + heal + " damage from " + source.getName());
+    public SingleCardEvent die(Time time, State state) {
+        SingleCardEvent deathEvent = new SingleCardEvent(time, "death", this);
+        state.addEvent(deathEvent, Trigger.ON_DEATH);
+        return deathEvent;
     }
 
     @ExposeMethodResult("currentHealth")

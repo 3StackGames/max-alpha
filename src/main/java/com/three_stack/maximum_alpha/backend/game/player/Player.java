@@ -3,8 +3,8 @@ package com.three_stack.maximum_alpha.backend.game.player;
 import com.three_stack.maximum_alpha.backend.game.Parameters;
 import com.three_stack.maximum_alpha.backend.game.ResourceList;
 import com.three_stack.maximum_alpha.backend.game.State;
+import com.three_stack.maximum_alpha.backend.game.Time;
 import com.three_stack.maximum_alpha.backend.game.cards.*;
-import com.three_stack.maximum_alpha.backend.game.events.Event;
 import com.three_stack.maximum_alpha.backend.server.Connection;
 
 import java.util.Collection;
@@ -107,13 +107,9 @@ public class Player {
     public void newTurn() {
     }
 
-    public void draw(State state) {
-        hand.add(mainDeck.draw(state), state);
-    }
-
-    public Event takeDamage(int damage, Card source) {
-    	castle.takeDamage(damage, source);
-        return new Event(username + " took " + damage + " damage from " + source.getName() + ".");
+    public void draw(Time time, State state) {
+        Card card = mainDeck.draw(time, state);
+        hand.add(card, time, state);
     }
 
     public void gatherResources(State state) {

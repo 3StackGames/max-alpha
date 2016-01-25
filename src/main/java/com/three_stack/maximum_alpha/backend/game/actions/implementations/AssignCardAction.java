@@ -3,23 +3,18 @@ package com.three_stack.maximum_alpha.backend.game.actions.implementations;
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.ExistingCardAction;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
-import com.three_stack.maximum_alpha.backend.game.events.Event;
-import com.three_stack.maximum_alpha.backend.game.events.SingleCardEvent;
-import com.three_stack.maximum_alpha.backend.game.events.Trigger;
+import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
 
 public class AssignCardAction extends ExistingCardAction {
 
     @Override
     public void run(State state) {
 
-        Creature assignCard = (Creature) player.getHand().takeCard(cardId, state);
-
-        player.getTown().add(assignCard, state);
+        Creature assignCard = (Creature) player.getHand().takeCard(cardId, state.getTime(), state);
         player.setHasAssignedOrPulled(true);
+        player.getTown().add(assignCard, state.getTime(), state);
 
-        Event event = new SingleCardEvent(player, " assigned " + assignCard.getName() + " as a worker.", assignCard);
-        state.addEvent(event);
-        state.notify(Trigger.ON_ASSIGN, event);
+        state.createSingleCardEvent(assignCard, "assign", state.getTime(), Trigger.ON_ASSIGN);
     }
 
     @Override

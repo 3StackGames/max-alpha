@@ -1,14 +1,12 @@
 package com.three_stack.maximum_alpha.backend.game.cards;
 
 import com.three_stack.maximum_alpha.backend.game.*;
-import com.three_stack.maximum_alpha.backend.game.events.Effect;
-import com.three_stack.maximum_alpha.backend.game.events.Trigger;
+import com.three_stack.maximum_alpha.backend.game.effects.Effect;
+import com.three_stack.maximum_alpha.backend.game.Time;
+import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public abstract class Card {
 	protected final UUID id;
@@ -22,7 +20,7 @@ public abstract class Card {
     /**
      * timeEnteredZone is used only when determining effect order. lower values indicate earlier times.
      */
-    protected transient int timeEnteredZone;
+    protected transient Time timeEnteredZone;
 
     /**
      * ONLY FOR GSON. DON'T TOUCH.
@@ -32,14 +30,6 @@ public abstract class Card {
 
     protected transient Map<Trigger, List<Effect>> effects;
 
-    protected Card() {
-        setup();
-        this.id = UUID.randomUUID();
-        name = null;
-        defaultCost = null;
-        flavorText = null;
-    }
-
     protected Card(String name, ResourceList defaultCost, String text, String flavorText, Map<Trigger, List<Effect>> effects) {
         setup();
         this.id = UUID.randomUUID();
@@ -47,6 +37,7 @@ public abstract class Card {
         this.name = name;
         this.defaultCost = defaultCost;
         this.currentCost = defaultCost;
+        this.text = text;
         this.flavorText = flavorText;
         this.dominantColor = calculateDominantColor();
 	}
@@ -63,7 +54,23 @@ public abstract class Card {
     }
 
     protected void setup() {
-        this.timeEnteredZone = 0;
+        this.timeEnteredZone = Time.getSetup();
+    }
+
+    public void dealDamage(DamageableCard victim, int amount, Time time, State state) {
+        List<DamageableCard> victims = new ArrayList<>();
+        victims.add(victim);
+        dealDamage(victims, amount, time, state);
+    }
+
+    public void dealDamage(List<DamageableCard> victims, int amount, Time time, State state) {
+        if(victims.size() < 1) {
+            throw new IllegalArgumentException("Must have at least one victim");
+        }
+
+        victims.stream()
+            .map(victim -> victim.takeDamage(amount, this, time))
+            .forEach( damageEvent -> state.addEvent(damageEvent, Trigger.ON_DAMAGE));
     }
 
     public ResourceList.Color calculateDominantColor() {
@@ -143,11 +150,11 @@ public abstract class Card {
         return this.effects != null;
     }
 
-    public int getTimeEnteredZone() {
+    public Time getTimeEnteredZone() {
         return timeEnteredZone;
     }
 
-    public void setTimeEnteredZone(int timeEnteredZone) {
+    public void setTimeEnteredZone(Time timeEnteredZone) {
         this.timeEnteredZone = timeEnteredZone;
     }
 

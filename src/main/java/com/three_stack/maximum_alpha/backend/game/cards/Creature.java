@@ -1,12 +1,14 @@
 package com.three_stack.maximum_alpha.backend.game.cards;
 
-import com.three_stack.maximum_alpha.backend.game.events.Effect;
-import com.three_stack.maximum_alpha.backend.game.events.Trigger;
+import com.three_stack.maximum_alpha.backend.game.effects.Effect;
+import com.three_stack.maximum_alpha.backend.game.Time;
+import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
+import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
+import com.three_stack.maximum_alpha.backend.game.effects.events.SourceTargetEvent;
 import io.gsonfire.annotations.ExposeMethodResult;
 
 import com.three_stack.maximum_alpha.backend.game.ResourceList;
 import com.three_stack.maximum_alpha.backend.game.State;
-import com.three_stack.maximum_alpha.backend.game.events.Event;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,16 +43,35 @@ public class Creature extends NonSpellCard implements Worker {
         return resourceList;
     }
 
-    public Event block(Creature aggressor) {
-        Event a = this.takeDamage(aggressor.getCurrentAttack(), this);
-        Event b = aggressor.takeDamage(this.getCurrentAttack(), aggressor);
-
-        aggressor.setAttackTarget(null);
-        setBlockTarget(null);
-        aggressor.exhaust();
+    /**
+     * @param state
+     * @return
+     */
+    public void attack(Time time, State state) {
+        if(isBlocked()) {
+            throw new IllegalStateException("must not be blocked");
+        } else if(!isAttacking()) {
+            throw new IllegalStateException("must be attacking");
+        }
+        dealDamage(attackTarget, this.getCurrentAttack(), time, state);
         exhaust();
+        clearAttackTarget();
+    }
 
-        return a.mergeEvent(b);
+    public void block(Time time, State state) {
+        if(isBlocking()) {
+            throw new IllegalStateException("blockTarget must be set");
+        }
+
+        Event a = this.takeDamage(blockTarget.getCurrentAttack(), blockTarget, time);
+        Event b = blockTarget.takeDamage(this.getCurrentAttack(), this, time);
+        state.addEvent(a, Trigger.ON_DAMAGE);
+        state.addEvent(b, Trigger.ON_DAMAGE);
+
+        blockTarget.clearAttackTarget();
+        clearBlockTarget();
+        blockTarget.exhaust();
+        exhaust();
     }
 
     public int getDefaultAttack() {
@@ -78,8 +99,13 @@ public class Creature extends NonSpellCard implements Worker {
         return attackTarget != null;
     }
 
-    public void setAttackTarget(Structure c) {
-        attackTarget = c;
+    public void clearAttackTarget() {
+        attackTarget = null;
+    }
+    public void setAttackTarget(Structure structure, Time time, State state) {
+        attackTarget = structure;
+        SourceTargetEvent attackEvent = new SourceTargetEvent(time, "attack", this, structure);
+        state.addEvent(attackEvent, Trigger.ON_BLOCK);
     }
 
     public boolean isBlocked() {
@@ -103,8 +129,15 @@ public class Creature extends NonSpellCard implements Worker {
         return blockTarget != null;
     }
 
-    public void setBlockTarget(Creature c) {
-        blockTarget = c;
+    public void clearBlockTarget() {
+        blockTarget = null;
+    }
+
+    public void setBlockTarget(Creature creature, Time time, State state) {
+        blockTarget = creature;
+        creature.addBlocker(this);
+        SourceTargetEvent blockEvent = new SourceTargetEvent(time, "block", this, creature);
+        state.addEvent(blockEvent, Trigger.ON_BLOCK);
     }
 
     @ExposeMethodResult("canBlock")
