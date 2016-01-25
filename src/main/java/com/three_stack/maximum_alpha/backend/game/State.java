@@ -50,7 +50,7 @@ public class State {
     private int turn;
     //two players each taking 1 turn is turnCount + 2, starts at 0
     private int turnCount;
-    private Queue<Prompt> promptQueue;
+    private transient Queue<Prompt> promptQueue;
     private List<Card> cardsPlayed;
     private transient Map<UUID, Card> masterCardList;
     private transient Map<Trigger, List<Effect>> effects;
