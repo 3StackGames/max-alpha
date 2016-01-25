@@ -93,7 +93,7 @@ public class Results {
 
     public static Result DEAL_DAMAGE_TARGET_CREATURE = (state, source, event, value) -> {
         int damage = (int) value;
-        List<DamageableCard> potentialTargets = state.getAllPlayers().stream()
+        List<NonSpellCard> potentialTargets = state.getAllPlayers().stream()
                 .map(Player::getField)
                 .map(Zone::getCards)
                 .flatMap(Collection::stream)
