@@ -1,7 +1,7 @@
 package com.three_stack.maximum_alpha.backend.game.events;
 
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
-import com.three_stack.maximum_alpha.backend.game.cards.DamageableCard;
+import com.three_stack.maximum_alpha.backend.game.cards.NonSpellCard;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 import org.apache.log4j.Logger;
 
@@ -33,10 +33,10 @@ public class Results {
     public static Result DEAL_DAMAGE_ALL_STRUCTURES_AND_CASTLES = (state, source, event, value) -> {
         int damage = (int) value;
 
-        Stream<DamageableCard> castleStream = state.getPlayingPlayers().stream()
+        Stream<NonSpellCard> castleStream = state.getPlayingPlayers().stream()
                 .map(Player::getCastle);
 
-        Stream<DamageableCard> structureStream = state.getPlayingPlayers().stream()
+        Stream<NonSpellCard> structureStream = state.getPlayingPlayers().stream()
                 .map(player -> player.getCourtyard().getCards())
                 .flatMap(Collection::stream);
 

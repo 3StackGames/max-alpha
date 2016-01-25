@@ -15,7 +15,7 @@ import com.three_stack.maximum_alpha.backend.game.events.Event;
 /**
  * Damageable, Buffable, Refreshable / Exhaustable
  */
-public abstract class DamageableCard extends Card {
+public abstract class NonSpellCard extends Card {
     protected final int health;
     protected int damageTaken;
     protected boolean dead;
@@ -25,7 +25,7 @@ public abstract class DamageableCard extends Card {
 
     protected List<Buff> buffs;
 
-    protected DamageableCard(String name, ResourceList cost, String text, String flavorText, int health, Map<Trigger, List<Effect>> effects) {
+    protected NonSpellCard(String name, ResourceList cost, String text, String flavorText, int health, Map<Trigger, List<Effect>> effects) {
         super(name, cost, text, flavorText, effects);
         this.health = health;
         this.damageTaken = 0;
@@ -35,7 +35,7 @@ public abstract class DamageableCard extends Card {
         buffs = new ArrayList<Buff>();
     }
 
-    public DamageableCard(DamageableCard other) {
+    public NonSpellCard(NonSpellCard other) {
         super(other);
         this.health = other.health;
         this.damageTaken = other.damageTaken;

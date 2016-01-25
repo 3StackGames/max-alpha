@@ -7,7 +7,7 @@ import com.three_stack.maximum_alpha.backend.game.events.Trigger;
 import java.util.List;
 import java.util.Map;
 
-public class Structure extends DamageableCard {
+public class Structure extends NonSpellCard {
     protected boolean underConstruction;
     protected boolean attackable;
 

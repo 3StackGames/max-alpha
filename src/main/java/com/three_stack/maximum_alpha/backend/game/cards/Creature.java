@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Creature extends DamageableCard implements Worker {
+public class Creature extends NonSpellCard implements Worker {
     //@Todo: Add Classes / Roles
     //@Todo: Add Tags
     protected final int attack;
