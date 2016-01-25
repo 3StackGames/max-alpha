@@ -8,7 +8,7 @@ public class SingleTargetPromptAction extends ExistingCardAction {
     @Override
     public void run(State state) {
         Prompt prompt = state.getCurrentPrompt();
-        prompt.processCurrentStep(card);
+        prompt.completeCurrentStep(card);
         if(prompt.isDone()) {
             prompt.resolve(state);
             state.removePrompt();

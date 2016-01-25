@@ -15,8 +15,8 @@ public abstract class Prompt {
     protected final Card source;
     protected List<Step> steps;
     protected int currentStep;
-	protected transient final Player player;
-	protected boolean isMandatory;
+    protected transient final Player player;
+    protected boolean isMandatory;
 
     protected Prompt(Card source, Player player) {
         this.source = source;
@@ -25,7 +25,7 @@ public abstract class Prompt {
         isMandatory = false;
         currentStep = 0;
     }
-    
+
     protected Prompt(Card source, Player player, boolean isMandatory) {
         this.source = source;
         this.steps = new ArrayList<>();
@@ -34,10 +34,11 @@ public abstract class Prompt {
         currentStep = 0;
     }
 
-	public void processCurrentStep(Card input) {
+    public void completeCurrentStep(Card input) {
         currentStep++;
+        getCurrentStep().complete(input);
     }
-    
+
     public abstract boolean isValidInput(Card input);
 
     public abstract void resolve(State state);
@@ -49,45 +50,58 @@ public abstract class Prompt {
     public Card getSource() {
         return source;
     }
-    
+
     public Step getCurrentStep() {
-    	return steps.get(currentStep);
+        return steps.get(currentStep);
     }
-    
+
     public Player getPlayer() {
-		return player;
-	}
+        return player;
+    }
 
     public boolean isMandatory() {
-		return isMandatory;
-	}
+        return isMandatory;
+    }
 
-	public void setMandatory(boolean isMandatory) {
-		this.isMandatory = isMandatory;
-	}
-	
-	public boolean canUndo() {
-		if(isMandatory() && currentStep == 0)
-			return false;
-		return true;
-	}
-	
-	/**
-	 * Undoes the current step.
-	 * @return True if the prompt should be removed from the queue, false otherwise.
-	 */
-	public boolean undo() {
-		if (currentStep > 0) {
-			currentStep--;
-			getCurrentStep().reset();
-			return false;
-		} else {
-			return true;
-		}
-	}
-	
-	@ExposeMethodResult("playerId")
-	public UUID getPlayerId() {
-		return player.getPlayerId();
-	}
+    public void setMandatory(boolean isMandatory) {
+        this.isMandatory = isMandatory;
+    }
+
+    public List<Step> getSteps() {
+        return steps;
+    }
+
+    public void setSteps(List<Step> steps) {
+        this.steps = steps;
+    }
+
+    public void setCurrentStep(int currentStep) {
+        this.currentStep = currentStep;
+    }
+
+    public boolean canUndo() {
+        if (isMandatory() && currentStep == 0)
+            return false;
+        return true;
+    }
+
+    /**
+     * Undoes the current step.
+     *
+     * @return True if the prompt should be removed from the queue, false otherwise.
+     */
+    public boolean undo() {
+        if (currentStep > 0) {
+            currentStep--;
+            getCurrentStep().reset();
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    @ExposeMethodResult("playerId")
+    public UUID getPlayerId() {
+        return player.getPlayerId();
+    }
 }

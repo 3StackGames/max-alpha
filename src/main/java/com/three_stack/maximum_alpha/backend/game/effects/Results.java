@@ -1,8 +1,14 @@
 package com.three_stack.maximum_alpha.backend.game.effects;
 
+import com.three_stack.maximum_alpha.backend.game.State;
+import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.cards.DamageableCard;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
+import com.three_stack.maximum_alpha.backend.game.player.Zone;
+import com.three_stack.maximum_alpha.backend.game.prompts.Prompt;
+import com.three_stack.maximum_alpha.backend.game.prompts.SingleTargetDamagePrompt;
+import com.three_stack.maximum_alpha.backend.game.prompts.steps.TargetStep;
 import org.apache.log4j.Logger;
 
 import java.util.Collection;
@@ -83,5 +89,16 @@ public class Results {
     public static Result DEAL_DAMAGE_FRIENDLY_CASTLE = (state, source, event, value) -> {
         int damage = (int) value;
         source.dealDamage(source.getController().getCastle(), damage, state.getTime(), state);
+    };
+
+    public static Result DEAL_DAMAGE_TARGET_CREATURE = (state, source, event, value) -> {
+        int damage = (int) value;
+        List<DamageableCard> potentialTargets = state.getAllPlayers().stream()
+                .map(Player::getField)
+                .map(Zone::getCards)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+        SingleTargetDamagePrompt prompt = new SingleTargetDamagePrompt(source, source.getController(), true, damage, potentialTargets);
+        state.addPrompt(prompt);
     };
 }
