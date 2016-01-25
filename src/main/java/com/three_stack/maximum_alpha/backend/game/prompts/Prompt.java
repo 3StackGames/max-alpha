@@ -12,7 +12,7 @@ import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.prompts.steps.Step;
 
 public abstract class Prompt {
-    protected final Card source;
+    protected final transient Card source;
     protected List<Step> steps;
     protected int currentStep;
     protected transient final Player player;
@@ -103,5 +103,10 @@ public abstract class Prompt {
     @ExposeMethodResult("playerId")
     public UUID getPlayerId() {
         return player.getPlayerId();
+    }
+
+    @ExposeMethodResult("sourceId")
+    public UUID getSourceId() {
+        return source.getId();
     }
 }

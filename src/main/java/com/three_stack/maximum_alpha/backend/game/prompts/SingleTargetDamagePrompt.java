@@ -23,6 +23,7 @@ public class SingleTargetDamagePrompt extends Prompt {
 
     @Override
     public boolean isValidInput(Card input) {
+        if(input == null) return false;
         TargetStep step = (TargetStep) getCurrentStep();
         return step.getTargetables().contains(input);
     }

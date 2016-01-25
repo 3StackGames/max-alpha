@@ -19,9 +19,10 @@ public class SingleTargetPromptAction extends ExistingCardAction {
 	public boolean isValid(State state) {
 		Prompt prompt = state.getCurrentPrompt();
 		boolean hasPrompt = (prompt != null);
+        if(!hasPrompt) return false;
 		boolean isValidStepInput = prompt.isValidInput(card);
 		boolean isCorrectPlayer = (player == prompt.getPlayer());
 		
-		return hasPrompt && isValidStepInput && isCorrectPlayer;
+		return isValidStepInput && isCorrectPlayer;
 	}
 }
