@@ -127,9 +127,18 @@ public abstract class NonSpellCard extends Card {
     }
     
     public void removeBuff(Buff buff, State state) {
-    	buff.onRemove(this, state);
-    	buffs.remove(buff);
+    	int idx = buffs.indexOf(buff);
+    	for(int i = buffs.size()-1; i >= idx; i--) {
+    		Buff curr = buffs.get(i);
+        	curr.onRemove(this, state);
+    	}
+		for(int i = idx+1; i < buffs.size(); i++) {
+    		Buff curr = buffs.get(i);
+        	curr.onAdd(this, state);
+		}
+		buffs.remove(buff);
         buffHealth -= buff.getHealthModifier();
+        
     	checkDeath();
     }
     
@@ -141,7 +150,8 @@ public abstract class NonSpellCard extends Card {
     }
     
     public void buffReset(State state) {
-    	for(Buff buff : buffs) {
+    	for(int i = buffs.size()-1; i >= 0; i--) {
+    		Buff buff = buffs.get(i);
     		buff.onRemove(this, state);
     	}
     	buffs.clear();
