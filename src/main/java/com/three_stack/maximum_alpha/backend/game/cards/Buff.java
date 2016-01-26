@@ -43,18 +43,20 @@ public abstract class Buff {
 	}
 	
 	public void onAdd(NonSpellCard c, State s) {
-		for(Trigger t : effects.keySet()) {
-			for(Effect e : effects.get(t)) {
-				s.addEffect(t, e);
+		if(effects != null)
+			for(Trigger t : effects.keySet()) {
+				for(Effect e : effects.get(t)) {
+					s.addEffect(t, e);
+				}
 			}
-		}
 	}
 	
 	public void onRemove(NonSpellCard c, State s) {
-		for(Trigger t : effects.keySet()) {
-			for(Effect e : effects.get(t)) {
-				s.removeEffect(t, e);
+		if(effects != null)
+			for(Trigger t : effects.keySet()) {
+				for(Effect e : effects.get(t)) {
+					s.removeEffect(t, e);
+				}
 			}
-		}
 	}
 }
