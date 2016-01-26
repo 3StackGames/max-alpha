@@ -11,12 +11,13 @@ public class PullCardAction extends ExistingCardAction {
     @Override
     public void run(State state) {
         Player player = state.getTurnPlayer();
-        Card pullCard = player.getTown().takeCard(cardId, state.getTime(), state);
+        Creature pullCreature = player.getTown().findCard(cardId);
+        state.createSingleCardEvent(pullCreature, "pull", state.getTime(), Trigger.ON_PULL);
 
-        player.getHand().add(pullCard, state.getTime(), state);
+        player.getTown().remove(pullCreature, state.getTime(), state);
+
+        player.getHand().add(pullCreature, state.getTime(), state);
         player.setHasAssignedOrPulled(true);
-
-        state.createSingleCardEvent(pullCard, "pull", state.getTime(), Trigger.ON_PULL);
     }
 
     @Override

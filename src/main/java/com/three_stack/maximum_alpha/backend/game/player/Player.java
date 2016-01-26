@@ -5,6 +5,7 @@ import com.three_stack.maximum_alpha.backend.game.ResourceList;
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.Time;
 import com.three_stack.maximum_alpha.backend.game.cards.*;
+import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
 import com.three_stack.maximum_alpha.backend.server.Connection;
 
 import java.util.Collection;
@@ -98,9 +99,10 @@ public class Player {
     	return targets;
     }
     
-    public void completeStructures() {
+    public void completeStructures(Time time, State state) {
     	courtyard.getCards().stream().filter(Structure::isUnderConstruction).forEach((structure) -> {
     		structure.setUnderConstruction(false);
+            state.createSingleCardEvent(structure,"complete", time, Trigger.ON_STRUCTURE_COMPLETE);
     	});
     }
 

@@ -81,7 +81,12 @@ public abstract class NonSpellCard extends Card {
         return dead;
     }
 
-    public void exhaust() {
+    public void exhaust(Time time, State state) {
+        if(exhausted) {
+            //don't do anything
+            return;
+        }
+        state.createSingleCardEvent(this, "exhaust", time, Trigger.ON_EXHAUST);
         exhausted = true;
     }
 

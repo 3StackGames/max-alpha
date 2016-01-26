@@ -10,11 +10,11 @@ public class Town extends Zone<Creature> {
 
     @Override
     public Trigger getOnEnterTrigger() {
-        return null;
+        return Trigger.ON_ENTER_TOWN;
     }
 
     @Override
     public Trigger getOnLeaveTrigger() {
-        return null;
+        return Trigger.ON_LEAVE_TOWN;
     }
 }

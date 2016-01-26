@@ -151,7 +151,7 @@ public class State {
     //Phase utilities
 
     public void completeStructures() {
-        getTurnPlayer().completeStructures();
+        getTurnPlayer().completeStructures(getTime(), this);
     }
 
     public void turnPlayerDraw() {

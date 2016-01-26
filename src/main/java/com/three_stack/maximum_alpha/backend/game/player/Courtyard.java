@@ -10,11 +10,11 @@ public class Courtyard extends Zone<Structure> {
 
     @Override
     public Trigger getOnEnterTrigger() {
-        return null;
+        return Trigger.ON_ENTER_COURTYARD;
     }
 
     @Override
     public Trigger getOnLeaveTrigger() {
-        return null;
+        return Trigger.ON_LEAVE_COURTYARD;
     }
 }

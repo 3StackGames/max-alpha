@@ -15,6 +15,6 @@ public  class Field extends Zone<Creature> {
 
     @Override
     public Trigger getOnLeaveTrigger() {
-        return null;
+        return Trigger.ON_LEAVE_FIELD;
     }
 }

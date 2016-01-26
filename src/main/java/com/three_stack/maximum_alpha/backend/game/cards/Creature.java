@@ -54,7 +54,7 @@ public class Creature extends NonSpellCard implements Worker {
             throw new IllegalStateException("must be attacking");
         }
         dealDamage(attackTarget, this.getCurrentAttack(), time, state);
-        exhaust();
+        exhaust(state.getTime(), state);
         clearAttackTarget();
     }
 
@@ -70,7 +70,7 @@ public class Creature extends NonSpellCard implements Worker {
 
         blockTarget.clearAttackTarget();
         clearBlockTarget();
-        blockTarget.exhaust();
+        blockTarget.exhaust(state.getTime(), state);
         exhaust();
     }
 
@@ -105,7 +105,7 @@ public class Creature extends NonSpellCard implements Worker {
     public void setAttackTarget(Structure structure, Time time, State state) {
         attackTarget = structure;
         SourceTargetEvent attackEvent = new SourceTargetEvent(time, "attack", this, structure);
-        state.addEvent(attackEvent, Trigger.ON_BLOCK);
+        state.addEvent(attackEvent, Trigger.ON_DECLARE_ATTACK);
     }
 
     public boolean isBlocked() {
@@ -137,7 +137,7 @@ public class Creature extends NonSpellCard implements Worker {
         blockTarget = creature;
         creature.addBlocker(this);
         SourceTargetEvent blockEvent = new SourceTargetEvent(time, "block", this, creature);
-        state.addEvent(blockEvent, Trigger.ON_BLOCK);
+        state.addEvent(blockEvent, Trigger.ON_DECLARE_BLOCK);
     }
 
     @ExposeMethodResult("canBlock")
