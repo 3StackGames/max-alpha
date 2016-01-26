@@ -143,10 +143,10 @@ public abstract class NonSpellCard extends Card {
     }
     
     public void reset(State state) {
+    	buffReset(state); //do first
         this.refreshable = true;
         this.damageTaken = 0;
         this.exhausted = false;
-    	buffReset(state);
     }
     
     public void buffReset(State state) {
