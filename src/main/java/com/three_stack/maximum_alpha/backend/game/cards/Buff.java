@@ -42,7 +42,7 @@ public abstract class Buff {
 		return attackModifier;
 	}
 	
-	public void onAdd(Card c, State s) {
+	public void onAdd(NonSpellCard c, State s) {
 		for(Trigger t : effects.keySet()) {
 			for(Effect e : effects.get(t)) {
 				s.addEffect(t, e);
@@ -50,7 +50,7 @@ public abstract class Buff {
 		}
 	}
 	
-	public void onRemove(Card c, State s) {
+	public void onRemove(NonSpellCard c, State s) {
 		for(Trigger t : effects.keySet()) {
 			for(Effect e : effects.get(t)) {
 				s.removeEffect(t, e);
