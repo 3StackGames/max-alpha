@@ -15,11 +15,11 @@ public abstract class Buff {
 	final boolean isAura;
 	
 	public Buff(int attack, int health, Map<Trigger, List<Effect>> effects, Card source, boolean isAura) {
+		this.attackModifier = attack;
 		this.healthModifier = health;
 		this.effects = effects;
 		this.source = source;
 		this.isAura = isAura;
-		this.attackModifier = attack;
 	}
 	
 	public boolean isAura() {
