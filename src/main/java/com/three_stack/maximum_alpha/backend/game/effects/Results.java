@@ -1,12 +1,10 @@
 package com.three_stack.maximum_alpha.backend.game.effects;
 
 import com.three_stack.maximum_alpha.backend.game.ResourceList;
-import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.cards.NonSpellCard;
 import com.three_stack.maximum_alpha.backend.game.cards.Spell;
-import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.player.Zone;
 import com.three_stack.maximum_alpha.backend.game.prompts.InputChecker;
@@ -42,6 +40,10 @@ public class Results {
     public static Result DO_NOTHING = (state, source, event, value) -> {
 
     };
+
+    /**
+     * NO INPUT
+     */
 
     public static Result DEAL_DAMAGE_ALL_STRUCTURES_AND_CASTLES = (state, source, event, value) -> {
         int damage = (int) value;
@@ -104,15 +106,17 @@ public class Results {
         return targetStep.getTargetables().contains(input);
     };
 
-
-
     protected static final Resolver dealTargetDamage = (event, state, prompt) -> {
         TargetStep step = (TargetStep) prompt.getSteps().get(0);
         int damage = (int) step.getValue();
         prompt.getSource().dealDamage(step.getTarget(), damage, state.getTime(), state);
     };
 
-    public static Result DEAL_DAMAGE_TARGET_CREATURE = (state, source, event, value) -> {
+    /**
+     * TARGET
+     */
+
+    public static Result TARGET_CREATURE_DEAL_DAMAGE = (state, source, event, value) -> {
         int damage = (int) value;
         List<NonSpellCard> potentialTargets = state.getAllPlayers().stream()
                 .map(Player::getField)
@@ -160,7 +164,11 @@ public class Results {
         return damageAllCreatures;
     }
 
-    public static Result CHOICE_DEAL_DAMAGE_ENEMY_CASTLES_OR_ALL_CREATURES = (state, source, event, value) -> {
+    /**
+     * CHOOSE
+     */
+
+    public static Result CHOOSE_DEAL_DAMAGE_ENEMY_CASTLES_OR_DEAL_DAMAGE_ALL_CREATURES = (state, source, event, value) -> {
         int damage = (int) value;
         List<Card> choices = new ArrayList<>();
         choices.add(getDamageAllEnemyCastles(source, damage));
