@@ -35,8 +35,8 @@ public abstract class Prompt {
     }
 
     public void completeCurrentStep(Card input) {
-        currentStep++;
         getCurrentStep().complete(input);
+        currentStep++;
     }
 
     public abstract boolean isValidInput(Card input);

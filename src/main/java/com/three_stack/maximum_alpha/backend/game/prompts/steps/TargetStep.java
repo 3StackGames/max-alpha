@@ -50,6 +50,7 @@ public class TargetStep extends Step {
 
     @ExposeMethodResult("targetId")
     public UUID getTargetId() {
+        if(target == null) return null;
         return target.getId();
     }
 }
