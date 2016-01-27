@@ -4,6 +4,7 @@ import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.ExistingCardAction;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
+import com.three_stack.maximum_alpha.backend.game.phases.MainPhase;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 
 public class BuildStructureAction extends ExistingCardAction {
@@ -18,7 +19,7 @@ public class BuildStructureAction extends ExistingCardAction {
     @Override
     public boolean isValid(State state) {
         boolean notInPrompt = notInPrompt(state);
-        boolean correctPhase = isPhase(state, "Main Phase");
+        boolean correctPhase = isPhase(state, MainPhase.class);
         boolean playerTurn = isPlayerTurn(state);
         Card structure = state.findCard(cardId);
         boolean isStructure = (structure != null && structure instanceof Structure);

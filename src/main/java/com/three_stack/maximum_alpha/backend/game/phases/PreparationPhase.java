@@ -6,7 +6,7 @@ public class PreparationPhase extends Phase {
     protected static PreparationPhase instance;
 
     protected PreparationPhase() {
-        super("PREPARATION_PHASE");
+        super();
     }
 
     public static PreparationPhase getInstance() {
@@ -23,5 +23,10 @@ public class PreparationPhase extends Phase {
 
     public void end(State state) {
         DamagePhase.getInstance().start(state);
+    }
+
+    @Override
+    public String getType() {
+        return "PREPARATION_PHASE";
     }
 }

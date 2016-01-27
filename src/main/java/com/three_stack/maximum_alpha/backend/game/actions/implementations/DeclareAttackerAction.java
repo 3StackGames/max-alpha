@@ -3,6 +3,7 @@ package com.three_stack.maximum_alpha.backend.game.actions.implementations;
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.ExistingPairAction;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
 import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
+import com.three_stack.maximum_alpha.backend.game.phases.AttackPhase;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
@@ -24,7 +25,7 @@ public class DeclareAttackerAction extends ExistingPairAction {
 	@Override
 	public boolean isValid(State state) {
 		boolean notInPrompt = notInPrompt(state);
-		boolean correctPhase = isPhase(state, "Attack Phase");
+		boolean correctPhase = isPhase(state, AttackPhase.class);
 		boolean playerTurn = isPlayerTurn(state);
 		boolean isCreature = card instanceof Creature;
         if(!isCreature) {

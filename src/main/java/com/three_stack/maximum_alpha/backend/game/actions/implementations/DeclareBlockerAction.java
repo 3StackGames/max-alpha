@@ -1,10 +1,10 @@
 package com.three_stack.maximum_alpha.backend.game.actions.implementations;
 
 import com.three_stack.maximum_alpha.backend.game.State;
-import com.three_stack.maximum_alpha.backend.game.Time;
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.ExistingPairAction;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
+import com.three_stack.maximum_alpha.backend.game.phases.BlockPhase;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,7 +22,7 @@ public class DeclareBlockerAction extends ExistingPairAction {
 	@Override
 	public boolean isValid(State state) {
 		boolean notInPrompt = notInPrompt(state);
-		boolean correctPhase = isPhase(state, "Block Phase");
+		boolean correctPhase = isPhase(state, BlockPhase.class);
 		boolean playerTurn = !isPlayerTurn(state);
 		boolean isCreature = card instanceof Creature;
         if(!isCreature) {

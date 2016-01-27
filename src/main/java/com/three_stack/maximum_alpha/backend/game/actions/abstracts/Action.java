@@ -43,8 +43,8 @@ public abstract class Action {
 		return (player == state.getTurnPlayer()); 	
     }
     
-    public boolean isPhase(State state, String phaseName) {
-    	return state.getCurrentPhase().getType().equals(phaseName);
+    public boolean isPhase(State state, Class phase) {
+    	return state.getCurrentPhase().getClass().equals(phase);
     }
     
     public boolean notInPrompt(State state) {

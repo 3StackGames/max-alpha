@@ -6,7 +6,7 @@ public class MainPhase extends Phase {
     protected static MainPhase instance;
 
     protected MainPhase() {
-        super("MAIN_PHASE");
+        super();
     }
 
     public static MainPhase getInstance() {
@@ -27,5 +27,10 @@ public class MainPhase extends Phase {
         else {
             AttackPhase.getInstance().start(state);
         }
+    }
+
+    @Override
+    public String getType() {
+        return "MAIN_PHASE";
     }
 }

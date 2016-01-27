@@ -5,6 +5,7 @@ import com.three_stack.maximum_alpha.backend.game.actions.abstracts.Action;
 import com.three_stack.maximum_alpha.backend.game.Time;
 import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.backend.game.effects.events.PlayerEvent;
+import com.three_stack.maximum_alpha.backend.game.phases.MainPhase;
 
 public class EndTurnWithoutCombatAction extends Action {
     @Override
@@ -17,7 +18,7 @@ public class EndTurnWithoutCombatAction extends Action {
     @Override
     public boolean isValid(State state) {
         boolean notInPrompt = notInPrompt(state);
-        boolean correctPhase = isPhase(state, "Main Phase");
+        boolean correctPhase = isPhase(state, MainPhase.class);
         boolean playerTurn = isPlayerTurn(state);
         boolean combatNotStarted = !state.isCombatEnded();
 

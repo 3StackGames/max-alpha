@@ -1,18 +1,15 @@
 package com.three_stack.maximum_alpha.backend.game.phases;
 
 import com.three_stack.maximum_alpha.backend.game.State;
+import io.gsonfire.annotations.ExposeMethodResult;
 
 public abstract class Phase {
-    protected final String type;
-
-    protected Phase(String type){
-        this.type = type;
+    protected Phase(){
     }
 
     public abstract void start(State state);
     public abstract void end(State state);
 
-    public String getType() {
-        return type;
-    }
+    @ExposeMethodResult("type")
+    public abstract String getType();
 }

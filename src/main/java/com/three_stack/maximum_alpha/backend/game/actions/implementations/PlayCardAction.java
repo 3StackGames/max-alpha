@@ -5,6 +5,7 @@ import com.three_stack.maximum_alpha.backend.game.actions.abstracts.ExistingCard
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
+import com.three_stack.maximum_alpha.backend.game.phases.MainPhase;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 
 public class PlayCardAction extends ExistingCardWithCostAction {
@@ -29,7 +30,7 @@ public class PlayCardAction extends ExistingCardWithCostAction {
 	@Override
 	public boolean isValid(State state) {
 		boolean notInPrompt = notInPrompt(state);
-		boolean correctPhase = isPhase(state, "Main Phase"); //TODO: FubarPhase (instant phase)
+		boolean correctPhase = isPhase(state, MainPhase.class); //TODO: FubarPhase (instant phase)
 		boolean playerTurn = isPlayerTurn(state);
 		//boolean isPlayable = a.isPlayable(); //TODO: uncomment once implemented
         boolean inputCostSufficient = cost.hasResources(card.getCurrentCost());
