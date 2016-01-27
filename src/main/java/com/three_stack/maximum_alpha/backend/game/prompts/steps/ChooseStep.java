@@ -11,11 +11,6 @@ public class ChooseStep extends Step {
     protected List<Card> choices;
     protected transient Card choice;
 
-    public ChooseStep(String instruction, List<Card> choices) {
-        super(instruction);
-        this.choices = choices;
-    }
-
     public ChooseStep(String instruction, Object value, List<Card> choices) {
         super(instruction, value);
         this.choices = choices;

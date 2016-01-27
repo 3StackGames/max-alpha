@@ -14,11 +14,6 @@ public class TargetStep extends Step {
 
     protected transient NonSpellCard target;
 
-    public TargetStep(String instruction, List<NonSpellCard> targetables) {
-        super(instruction);
-        this.targetables = targetables;
-    }
-
     public TargetStep(String instruction, Object value, List<NonSpellCard> targetables) {
         super(instruction, value);
         this.targetables = targetables;
