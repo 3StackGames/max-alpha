@@ -8,7 +8,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class ChooseStep extends Step {
-    protected transient List<Card> choices;
+    protected List<Card> choices;
     protected transient Card choice;
 
     public ChooseStep(String instruction, List<Card> choices) {
@@ -24,13 +24,6 @@ public class ChooseStep extends Step {
     @Override
     public void reset() {
 
-    }
-
-    @ExposeMethodResult("choiceIds")
-    public List<UUID> getChoiceIds() {
-        return choices.stream()
-                .map(Card::getId)
-                .collect(Collectors.toList());
     }
 
     @ExposeMethodResult("choiceId")
