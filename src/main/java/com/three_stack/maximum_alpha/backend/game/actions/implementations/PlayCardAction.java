@@ -4,7 +4,10 @@ import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.ExistingCardWithCostAction;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
+import com.three_stack.maximum_alpha.backend.game.cards.Spell;
 import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
+import com.three_stack.maximum_alpha.backend.game.effects.TriggeredEffect;
+import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.backend.game.phases.MainPhase;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 
@@ -18,12 +21,13 @@ public class PlayCardAction extends ExistingCardWithCostAction {
 
         player.pay(cost);
 
-        state.createSingleCardEvent(card, "play", state.getTime(), Trigger.ON_PLAY);
+        Event playEvent = state.createSingleCardEvent(card, "play", state.getTime(), Trigger.ON_PLAY);
 
         if(card instanceof Creature) {
             player.getField().add((Creature) card, state.getTime(), state);
-        } else {
-            //@Todo: Handle spells
+        } else if(card instanceof Spell){
+            Spell spell = (Spell) card;
+            spell.cast(playEvent, state);
         }
     }
 

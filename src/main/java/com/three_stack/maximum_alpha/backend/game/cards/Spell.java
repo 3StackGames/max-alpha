@@ -1,21 +1,44 @@
 package com.three_stack.maximum_alpha.backend.game.cards;
 
 import com.three_stack.maximum_alpha.backend.game.ResourceList;
-import com.three_stack.maximum_alpha.backend.game.effects.Result;
+import com.three_stack.maximum_alpha.backend.game.State;
+import com.three_stack.maximum_alpha.backend.game.effects.Effect;
+import com.three_stack.maximum_alpha.backend.game.effects.TriggeredEffect;
+import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 
-//@Todo: most of spell logic still needs to be done. whats done is solely for prompts
+import java.util.ArrayList;
+import java.util.List;
+
 public class Spell extends Card {
-    protected transient Result result;
-    public Spell(String name, ResourceList defaultCost, String text, String flavorText, Result result) {
-        super(name, defaultCost, text, flavorText, null);
-        this.result = result;
+    protected transient List<Effect> effects;
+
+    public Spell(String name, ResourceList defaultCost, String text, String flavorText) {
+        super(name, defaultCost, text, flavorText);
+        this.effects = new ArrayList<>();
     }
 
-    public Result getResult() {
-        return result;
+    public void addEffect(Effect effect) {
+        getEffects().add(effect);
     }
 
-    public void setResult(Result result) {
-        this.result = result;
+    public void cast(Event event, State state) {
+        getEffects().stream()
+                .filter(effect -> effect.getChecks().stream().allMatch(check -> check.run(state, effect, event)))
+                .forEach(effect -> {
+                    TriggeredEffect triggeredEffect = new TriggeredEffect(effect, event);
+                    state.addTriggeredEffect(triggeredEffect);
+                });
+    }
+    /**
+     * AUTO-GENERATED GETTERS AND SETTERS
+     *
+     */
+
+    public List<Effect> getEffects() {
+        return effects;
+    }
+
+    public void setEffects(List<Effect> effects) {
+        this.effects = effects;
     }
 }

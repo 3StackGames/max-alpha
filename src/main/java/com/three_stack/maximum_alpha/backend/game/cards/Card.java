@@ -28,12 +28,11 @@ public abstract class Card {
     private boolean playable;
     private ResourceList.Color dominantColor;
 
-    protected transient Map<Trigger, List<Effect>> effects;
+    protected transient Map<Trigger, List<Effect>> triggerEffects;
 
-    protected Card(String name, ResourceList defaultCost, String text, String flavorText, Map<Trigger, List<Effect>> effects) {
+    protected Card(String name, ResourceList defaultCost, String text, String flavorText) {
         setup();
         this.id = UUID.randomUUID();
-        this.effects = effects;
         this.name = name;
         this.defaultCost = defaultCost;
         this.currentCost = defaultCost;
@@ -138,16 +137,16 @@ public abstract class Card {
         this.controller = controller;
     }
 
-    public Map<Trigger, List<Effect>> getEffects() {
-        return effects;
+    public Map<Trigger, List<Effect>> getTriggerEffects() {
+        return triggerEffects;
     }
 
-    public void setEffects(Map<Trigger, List<Effect>> effects) {
-        this.effects = effects;
+    public void setTriggerEffects(Map<Trigger, List<Effect>> triggerEffects) {
+        this.triggerEffects = triggerEffects;
     }
 
     public boolean hasEffects() {
-        return this.effects != null;
+        return this.triggerEffects != null;
     }
 
     public Time getTimeEnteredZone() {

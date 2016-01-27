@@ -3,6 +3,7 @@ package com.three_stack.maximum_alpha.backend.game.effects;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.database_client.pojos.DBEffect;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,7 +13,8 @@ public class Effect {
     protected List<Result> results;
     protected List<Object> values;
 
-    public Effect(DBEffect dbEffect) {
+    public Effect(Card source, DBEffect dbEffect) {
+        this.source = source;
         this.checks = dbEffect.getChecks().stream()
                 .map(Checks::getCheck)
                 .collect(Collectors.toList());
@@ -21,6 +23,42 @@ public class Effect {
                 .collect(Collectors.toList());
         this.values = dbEffect.getValues();
     }
+
+    public Effect(Card source, List<Check> checks, List<Result> results, List<Object> values) {
+        this.source = source;
+        this.checks = checks;
+        this.results = results;
+        this.values = values;
+    }
+
+    public Effect(Card source) {
+        this.source = source;
+        this.checks = new ArrayList<>();
+        this.results = new ArrayList<>();
+        this.values = new ArrayList<>();
+    }
+
+    public void addCheck(Check check) {
+        getChecks().add(check);
+    }
+
+    public void addResult(Result result) {
+        getResults().add(result);
+    }
+
+    public void addValue(Object value) {
+        getValues().add(value);
+    }
+
+    public void addResult(Result result, Object value) {
+        addResult(result);
+        addValue(value);
+    }
+
+    /**
+     * Auto Generated Getters and Setters
+     *
+     */
 
     public Card getSource() {
         return source;

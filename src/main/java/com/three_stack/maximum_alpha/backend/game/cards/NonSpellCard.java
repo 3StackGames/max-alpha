@@ -27,14 +27,14 @@ public abstract class NonSpellCard extends Card {
 
     protected List<Buff> buffs;
 
-    protected NonSpellCard(String name, ResourceList cost, String text, String flavorText, int health, Map<Trigger, List<Effect>> effects) {
-        super(name, cost, text, flavorText, effects);
+    protected NonSpellCard(String name, ResourceList cost, String text, String flavorText, int health) {
+        super(name, cost, text, flavorText);
         this.health = health;
         this.damageTaken = 0;
         this.exhausted = false;
         this.refreshable = true;
         this.dead = false;
-        buffs = new ArrayList<Buff>();
+        buffs = new ArrayList<>();
     }
 
     public NonSpellCard(NonSpellCard other) {

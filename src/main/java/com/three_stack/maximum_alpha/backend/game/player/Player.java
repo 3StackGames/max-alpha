@@ -209,7 +209,7 @@ public class Player {
         this.structureDeck = structureDeck;
     }
 
-    //TODO: add support for effects which give extra assigns/pulls? or should those be separate effects
+    //TODO: add support for triggerEffects which give extra assigns/pulls? or should those be separate triggerEffects
     public boolean canAssignOrPull() {
         return !hasAssignedOrPulled;
     }

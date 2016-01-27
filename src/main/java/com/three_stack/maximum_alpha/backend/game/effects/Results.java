@@ -1,12 +1,12 @@
 package com.three_stack.maximum_alpha.backend.game.effects;
 
-import com.sun.corba.se.spi.orbutil.fsm.Input;
 import com.three_stack.maximum_alpha.backend.game.ResourceList;
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.cards.NonSpellCard;
 import com.three_stack.maximum_alpha.backend.game.cards.Spell;
+import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.player.Zone;
 import com.three_stack.maximum_alpha.backend.game.prompts.InputChecker;
@@ -106,7 +106,7 @@ public class Results {
 
 
 
-    protected static final Resolver dealTargetDamage = (state, prompt) -> {
+    protected static final Resolver dealTargetDamage = (event, state, prompt) -> {
         TargetStep step = (TargetStep) prompt.getSteps().get(0);
         int damage = (int) step.getValue();
         prompt.getSource().dealDamage(step.getTarget(), damage, state.getTime(), state);
@@ -134,23 +134,41 @@ public class Results {
         return chooseStep.getChoices().contains(input);
     };
 
-    protected static final Resolver activateChosenEffect = (state, prompt) -> {
+    protected static final Resolver playChosenSpell = (event, state, prompt) -> {
         ChooseStep step = (ChooseStep) prompt.getSteps().get(0);
         Spell chosenSpell = (Spell) step.getChoice();
-        chosenSpell.getResult().run(state, prompt.getSource(), prompt.getEvent(), step.getValue());
+        chosenSpell.cast(event, state);
     };
+
+    protected static Spell getDamageAllEnemyCastles(Card source, int damage) {
+        Spell damageEnemyCastles = new Spell("Damage All Enemy Castles", new ResourceList(), "Deal " + damage + " damage to all enemy castles", "");
+
+        Effect effect = new Effect(source);
+        effect.addResult(Results.DEAL_DAMAGE_ENEMY_CASTLES, damage);
+        damageEnemyCastles.addEffect(effect);
+
+        return damageEnemyCastles;
+    }
+    
+    protected static Spell getDamageAllCreatures(Card source, int damage) {
+        Spell damageAllCreatures = new Spell("Damage All Creatures", new ResourceList(), "Deal " + damage + " damage to all creatures", "");
+        
+        Effect effect = new Effect(source);
+        effect.addResult(Results.DEAL_DAMAGE_ALL_CREATURES, damage);
+        damageAllCreatures.addEffect(effect);
+
+        return damageAllCreatures;
+    }
 
     public static Result CHOICE_DEAL_DAMAGE_ENEMY_CASTLES_OR_ALL_CREATURES = (state, source, event, value) -> {
         int damage = (int) value;
         List<Card> choices = new ArrayList<>();
-        Spell damageEnemyCastles = new Spell("Deal Damage to All Enemy Castles", new ResourceList(), "Deal " + damage + " damage to all enemy castles", "", Results.DEAL_DAMAGE_ENEMY_CASTLES);
-        choices.add(damageEnemyCastles);
-        Spell damageAllCreatures = new Spell("Deal Damage to All Creatures", new ResourceList(), "Deal " + damage + " damage to all creatures", "", Results.DEAL_DAMAGE_ALL_CREATURES);
-        choices.add(damageAllCreatures);
+        choices.add(getDamageAllEnemyCastles(source, damage));
+        choices.add(getDamageAllCreatures(source, damage));
         List<Step> steps = new ArrayList<>();
         ChooseStep chooseStep = new ChooseStep("Choose a result", value, choices);
         steps.add(chooseStep);
-        Prompt prompt = new Prompt(source, source.getController(), event, steps, inCurrentChoices, activateChosenEffect);
+        Prompt prompt = new Prompt(source, source.getController(), event, steps, inCurrentChoices, playChosenSpell);
         state.addPrompt(prompt);
     };
 }

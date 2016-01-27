@@ -11,8 +11,8 @@ public class Structure extends NonSpellCard {
     protected boolean underConstruction;
     protected boolean attackable;
 
-    public Structure(String name, ResourceList cost, String text, String flavorText, int health, Map<Trigger, List<Effect>> effects) {
-        super(name, cost, text, flavorText, health, effects);
+    public Structure(String name, ResourceList cost, String text, String flavorText, int health) {
+        super(name, cost, text, flavorText, health);
         underConstruction = true;
         attackable = true;
     }

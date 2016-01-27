@@ -25,8 +25,8 @@ public class Creature extends NonSpellCard implements Worker {
     protected boolean hasSummoningSickness;
     protected List<Creature> blockers;
 
-    public Creature(String name, ResourceList cost, String text, String flavorText, int attack, int health, Map<Trigger, List<Effect>> effects) {
-        super(name, cost, text, flavorText, health, effects);
+    public Creature(String name, ResourceList cost, String text, String flavorText, int attack, int health) {
+        super(name, cost, text, flavorText, health);
         this.attack = attack;
         attackTarget = null;
         canAttack = true;

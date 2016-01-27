@@ -12,9 +12,6 @@ import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.prompts.steps.Step;
 
-/**
- * @Todo: Make prompt methods that need to be overriden lambdas instead
- */
 public class Prompt {
     protected transient Card source;
     protected List<Step> steps;
@@ -23,6 +20,9 @@ public class Prompt {
     protected boolean isMandatory;
     protected transient InputChecker inputChecker;
     protected transient Resolver resolver;
+    /**
+     * event is the event that caused the prompt. For example, an event triggered by ON_PLAY.
+     */
     protected Event event;
 
     public Prompt(Card source, Player player, Event event, List<Step> steps, InputChecker inputChecker, Resolver resolver) {
@@ -58,7 +58,7 @@ public class Prompt {
     }
 
     public void resolve(State state) {
-        resolver.run(state, this);
+        resolver.run(event, state, this);
     }
 
     public boolean isDone() {

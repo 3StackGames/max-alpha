@@ -127,8 +127,8 @@ public class State {
 
     //@Todo: @Jason consider refactoring to streams - Jason
     private void trackCardEffects(Card card) {
-        Map<Trigger, List<Effect>> effectsMap = card.getEffects();
-        if (card.hasEffects() && !card.getEffects().isEmpty()) {
+        Map<Trigger, List<Effect>> effectsMap = card.getTriggerEffects();
+        if (card.hasEffects() && !card.getTriggerEffects().isEmpty()) {
             Iterator<Map.Entry<Trigger, List<Effect>>> iterator = effectsMap.entrySet().iterator();
             while (iterator.hasNext()) {
                 Map.Entry<Trigger, List<Effect>> entry = iterator.next();
@@ -383,7 +383,7 @@ public class State {
             return;
         }
 
-        //add triggered effects to the queue of triggered effects
+        //add triggered triggerEffects to the queue of triggered triggerEffects
         effects.stream()
                 .filter(effect -> effect.getChecks().parallelStream().allMatch(check -> check.run(this, effect, event)))
                 .map(effect -> new TriggeredEffect(effect, event))
