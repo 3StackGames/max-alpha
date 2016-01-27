@@ -4,6 +4,7 @@ import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.ExistingCardAction;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
+import com.three_stack.maximum_alpha.backend.game.phases.MainPhase;
 
 public class AssignCardAction extends ExistingCardAction {
 
@@ -19,7 +20,7 @@ public class AssignCardAction extends ExistingCardAction {
     @Override
     public boolean isValid(State state) {
         boolean notInPrompt = notInPrompt(state);
-        boolean correctPhase = isPhase(state, "Main Phase");
+        boolean correctPhase = isPhase(state, MainPhase.class);
         boolean playerTurn = isPlayerTurn(state);
         boolean playerCanAssign = player.canAssignOrPull();
         Creature creature = (Creature) player.getHand().findCard(cardId);

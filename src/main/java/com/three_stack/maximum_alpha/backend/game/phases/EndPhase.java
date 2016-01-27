@@ -6,7 +6,7 @@ public class EndPhase extends Phase {
     protected static EndPhase instance;
 
     protected EndPhase() {
-        super("END_PHASE");
+        super();
     }
 
     public static EndPhase getInstance() {
@@ -25,5 +25,10 @@ public class EndPhase extends Phase {
     public void end(State state) {
         state.newTurn();
         StartPhase.getInstance().start(state);
+    }
+
+    @Override
+    public String getType() {
+        return "END_PHASE";
     }
 }

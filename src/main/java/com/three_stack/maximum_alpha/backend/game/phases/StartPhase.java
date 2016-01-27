@@ -7,7 +7,7 @@ public class StartPhase extends Phase {
     protected static StartPhase instance;
 
     protected StartPhase() {
-        super("START_PHASE");
+        super();
     }
 
     public static StartPhase getInstance() {
@@ -47,5 +47,8 @@ public class StartPhase extends Phase {
         MainPhase.getInstance().start(state);
     }
 
-
+    @Override
+    public String getType() {
+        return "START_PHASE";
+    }
 }

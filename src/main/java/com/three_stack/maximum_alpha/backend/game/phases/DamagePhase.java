@@ -11,7 +11,7 @@ public class DamagePhase extends Phase {
     protected static DamagePhase instance;
 
     protected DamagePhase () {
-        super("DAMAGE_PHASE");
+        super();
     }
 
     public static DamagePhase getInstance() {
@@ -51,5 +51,10 @@ public class DamagePhase extends Phase {
     public void end(State state) {
         state.setCombatEnded(true);
         MainPhase.getInstance().start(state);
+    }
+
+    @Override
+    public String getType() {
+        return "DAMAGE_PHASE";
     }
 }

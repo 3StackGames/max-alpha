@@ -5,6 +5,7 @@ import com.three_stack.maximum_alpha.backend.game.actions.abstracts.Action;
 import com.three_stack.maximum_alpha.backend.game.Time;
 import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.backend.game.effects.events.PlayerEvent;
+import com.three_stack.maximum_alpha.backend.game.phases.BlockPhase;
 
 public class FinishPhaseAction extends Action {
     @Override
@@ -16,7 +17,7 @@ public class FinishPhaseAction extends Action {
     @Override
     public boolean isValid(State state) {
 		boolean notInPrompt = notInPrompt(state);
-		boolean playerTurn = isPhase(state, "Block Phase") ? !isPlayerTurn(state) : isPlayerTurn(state);
+		boolean playerTurn = isPhase(state, BlockPhase.class) ? !isPlayerTurn(state) : isPlayerTurn(state);
 		
     	return notInPrompt && playerTurn;
     }

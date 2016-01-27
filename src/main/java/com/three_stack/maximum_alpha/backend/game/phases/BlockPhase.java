@@ -6,7 +6,7 @@ public class BlockPhase extends Phase {
     protected static BlockPhase instance;
 
     protected BlockPhase() {
-        super("BLOCK_PHASE");
+        super();
     }
 
     public static BlockPhase getInstance() {
@@ -24,5 +24,10 @@ public class BlockPhase extends Phase {
         DamagePhase.getInstance().start(state);
         //@Todo: Implement Preparation Phase
 //        PreparationPhase.getInstance().start(state);
+    }
+
+    @Override
+    public String getType() {
+        return "BLOCK_PHASE";
     }
 }
