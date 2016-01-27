@@ -15,28 +15,34 @@ import com.three_stack.maximum_alpha.backend.game.prompts.steps.Step;
  * @Todo: Make prompt methods that need to be overriden lambdas instead
  */
 public abstract class Prompt {
-    protected final transient Card source;
+    protected transient Card source;
     protected List<Step> steps;
     protected int currentStep;
-    protected transient final Player player;
+    protected transient Player player;
     protected boolean isMandatory;
+    protected InputChecker inputChecker;
+    protected Resolver resolver;
 
-    protected Prompt(Card source, Player player, List<Step> steps) {
-        this.source = source;
-        this.steps = new ArrayList<>();
-        this.player = player;
-        this.steps = steps;
-        isMandatory = false;
-        currentStep = 0;
+    protected Prompt(Card source, Player player, List<Step> steps, InputChecker inputChecker, Resolver resolver) {
+        setup(source, player, steps, inputChecker, resolver);
     }
 
-    protected Prompt(Card source, Player player, List<Step> steps, boolean isMandatory) {
+    protected Prompt(Card source, Player player, List<Step> steps, InputChecker inputChecker, Resolver resolver, boolean isMandatory) {
+        setup(source, player, steps, inputChecker, resolver);
+        this.isMandatory = isMandatory;
+    }
+
+    protected void setup(Card source, Player player, List<Step> steps, InputChecker inputChecker, Resolver resolver) {
         this.source = source;
         this.steps = new ArrayList<>();
         this.player = player;
         this.steps = steps;
-        this.isMandatory = isMandatory;
-        currentStep = 0;
+        this.inputChecker = inputChecker;
+        this.resolver = resolver;
+
+        this.currentStep = 0;
+        this.isMandatory = false;
+
     }
 
     public void completeCurrentStep(Card input) {
@@ -44,9 +50,13 @@ public abstract class Prompt {
         currentStep++;
     }
 
-    public abstract boolean isValidInput(Card input);
+    public boolean isValidInput(Card input) {
+        return inputChecker.run(input, this);
+    }
 
-    public abstract void resolve(State state);
+    public void resolve(State state) {
+        resolver.run(state, this);
+    }
 
     public boolean isDone() {
         return currentStep >= steps.size();

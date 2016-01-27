@@ -106,16 +106,23 @@ public class Results {
             List<Step> steps = new ArrayList<>();
             TargetStep step = new TargetStep("Select a creature to deal " + damage + " damage to", potentialTargets);
             steps.add(step);
-            Prompt prompt = new Prompt(source, source.getController(), steps, true) {
-                @Override
-                public boolean isValidInput(Card input) {
-                    return input != null && potentialTargets.contains(input);
-                }
-                @Override
-                public void resolve(State state) {
-                    source.dealDamage(step.getTarget(), damage, state.getTime(), state);
-                }
-            };
+//            Prompt prompt = new Prompt(source, source.getController(), steps, true) {
+//                @Override
+//                public boolean isValidInput(Card input) {
+//                    return input != null && potentialTargets.contains(input);
+//                }
+//                @Override
+//                public void resolve(State state) {
+//                    source.dealDamage(step.getTarget(), damage, state.getTime(), state);
+//                }
+//            };
+            Prompt prompt = new Prompt(source, source.getController(), steps, true,
+                    (input, prompt1) -> {
+                        input != null && potentialTargets.contains(input);
+                    },
+                    state -> {
+                        source.dealDamage(step.getTarget(), damage, state.getTime(), state);
+                    });
             state.addPrompt(prompt);
         }
     };
