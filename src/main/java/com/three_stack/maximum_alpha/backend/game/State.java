@@ -202,6 +202,7 @@ public class State {
             eventHistory.clear();
             action.run(this);
             resolveTriggeredEffects();
+            resolveDeaths();
             return true;
         } else {
             return false; //TODO: return error message from isLegalAction -> action.isValid
