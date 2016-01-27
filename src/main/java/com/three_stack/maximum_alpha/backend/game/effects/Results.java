@@ -1,16 +1,20 @@
 package com.three_stack.maximum_alpha.backend.game.effects;
 
+import com.three_stack.maximum_alpha.backend.game.ResourceList;
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.cards.NonSpellCard;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.player.Zone;
+import com.three_stack.maximum_alpha.backend.game.prompts.ChooseDamagePrompt;
+import com.three_stack.maximum_alpha.backend.game.prompts.ChoosePrompt;
 import com.three_stack.maximum_alpha.backend.game.prompts.Prompt;
 import com.three_stack.maximum_alpha.backend.game.prompts.SingleTargetDamagePrompt;
 import com.three_stack.maximum_alpha.backend.game.prompts.steps.TargetStep;
 import org.apache.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
@@ -102,5 +106,14 @@ public class Results {
             SingleTargetDamagePrompt prompt = new SingleTargetDamagePrompt(source, source.getController(), true, damage, potentialTargets);
             state.addPrompt(prompt);
         }
+    };
+
+    public static Result CHOICE_DEAL_DAMAGE_CASTLE_OR_CREATURE = (state, source, event, value) -> {
+        int damage = (int) value;
+        List<Card> options = new ArrayList<>();
+        options.add(new Creature("Deal Damage Castles", new ResourceList(0, 0, 0, 0, 0, 0, 0), "Deal " + damage + " damage to all castles", "", 0, 0, null));
+        options.add(new Creature("Deal Damage Creatures", new ResourceList(0, 0, 0, 0, 0, 0, 0), "Deal " + damage + " damage to all creatures", "", 0, 0, null));
+        ChoosePrompt prompt = new ChooseDamagePrompt(source, source.getController(), options, damage);
+        state.addPrompt(prompt);
     };
 }

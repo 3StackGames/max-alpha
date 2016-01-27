@@ -5,6 +5,7 @@ import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.NonSpellCard;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.prompts.steps.TargetStep;
+import io.gsonfire.annotations.ExposeMethodResult;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,5 +33,10 @@ public class SingleTargetDamagePrompt extends Prompt {
     public void resolve(State state) {
         TargetStep step = (TargetStep) getSteps().get(0);
         source.dealDamage((NonSpellCard) step.getTarget(), damage, state.getTime(), state);
+    }
+
+    @ExposeMethodResult("type")
+    public String getType() {
+        return "TargetPrompt";
     }
 }
