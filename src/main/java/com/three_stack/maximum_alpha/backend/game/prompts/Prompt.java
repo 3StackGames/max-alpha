@@ -21,8 +21,8 @@ public class Prompt {
     protected int currentStep;
     protected transient Player player;
     protected boolean isMandatory;
-    protected InputChecker inputChecker;
-    protected Resolver resolver;
+    protected transient InputChecker inputChecker;
+    protected transient Resolver resolver;
     protected Event event;
 
     public Prompt(Card source, Player player, Event event, List<Step> steps, InputChecker inputChecker, Resolver resolver) {
