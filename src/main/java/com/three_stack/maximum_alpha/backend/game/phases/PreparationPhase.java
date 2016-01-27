@@ -6,7 +6,7 @@ public class PreparationPhase extends Phase {
     protected static PreparationPhase instance;
 
     protected PreparationPhase() {
-        super("Preparation Phase");
+        super("PREPARATION_PHASE");
     }
 
     public static PreparationPhase getInstance() {

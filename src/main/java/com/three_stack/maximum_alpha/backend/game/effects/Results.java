@@ -5,12 +5,12 @@ import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.cards.NonSpellCard;
+import com.three_stack.maximum_alpha.backend.game.cards.Spell;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.player.Zone;
-import com.three_stack.maximum_alpha.backend.game.prompts.ChooseDamagePrompt;
-import com.three_stack.maximum_alpha.backend.game.prompts.ChoosePrompt;
 import com.three_stack.maximum_alpha.backend.game.prompts.Prompt;
-import com.three_stack.maximum_alpha.backend.game.prompts.SingleTargetDamagePrompt;
+import com.three_stack.maximum_alpha.backend.game.prompts.steps.ChooseStep;
+import com.three_stack.maximum_alpha.backend.game.prompts.steps.Step;
 import com.three_stack.maximum_alpha.backend.game.prompts.steps.TargetStep;
 import org.apache.log4j.Logger;
 
@@ -103,17 +103,49 @@ public class Results {
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
         if(potentialTargets.size() > 0) {
-            SingleTargetDamagePrompt prompt = new SingleTargetDamagePrompt(source, source.getController(), true, damage, potentialTargets);
+            List<Step> steps = new ArrayList<>();
+            TargetStep step = new TargetStep("Select a creature to deal " + damage + " damage to", potentialTargets);
+            steps.add(step);
+            Prompt prompt = new Prompt(source, source.getController(), steps, true) {
+                @Override
+                public boolean isValidInput(Card input) {
+                    return input != null && potentialTargets.contains(input);
+                }
+                @Override
+                public void resolve(State state) {
+                    source.dealDamage(step.getTarget(), damage, state.getTime(), state);
+                }
+            };
             state.addPrompt(prompt);
         }
     };
 
-    public static Result CHOICE_DEAL_DAMAGE_CASTLE_OR_CREATURE = (state, source, event, value) -> {
+    public static Result CHOICE_DEAL_DAMAGE_ENEMY_CASTLES_OR_ALL_CREATURES = (state, source, event, value) -> {
         int damage = (int) value;
-        List<Card> options = new ArrayList<>();
-        options.add(new Creature("Deal Damage Castles", new ResourceList(0, 0, 0, 0, 0, 0, 0), "Deal " + damage + " damage to all castles", "", 0, 0, null));
-        options.add(new Creature("Deal Damage Creatures", new ResourceList(0, 0, 0, 0, 0, 0, 0), "Deal " + damage + " damage to all creatures", "", 0, 0, null));
-        Prompt prompt = new ChooseDamagePrompt(source, source.getController(), options, damage);
+        List<Card> choices = new ArrayList<>();
+        Spell damageEnemyCastles = new Spell("Deal Damage to All Enemy Castles", new ResourceList(), "Deal " + damage + " damage to all enemy castles", "", Results.DEAL_DAMAGE_ENEMY_CASTLES);
+        choices.add(damageEnemyCastles);
+        Spell damageAllCreatures = new Spell("Deal Damage to All Creatures", new ResourceList(), "Deal " + damage + " damage to all creatures", "", Results.DEAL_DAMAGE_ALL_CREATURES);
+        choices.add(damageAllCreatures);
+        List<Step> steps = new ArrayList<>();
+        ChooseStep chooseStep = new ChooseStep("Choose a result", choices);
+        Prompt prompt = new Prompt(source, source.getController(), steps) {
+            @Override
+            public boolean isValidInput(Card input) {
+                return input != null && choices.contains(input);
+            }
+
+            @Override
+            public void resolve(State state) {
+                if(chooseStep.getChoice().equals(damageEnemyCastles)) {
+                    damageEnemyCastles.getResult().run(state, source, event, value);
+                } else if(chooseStep.getChoice().equals(damageAllCreatures)) {
+                    damageAllCreatures.getResult().run(state, source, event, value);
+                } else {
+                    throw new IllegalStateException("User Chose an invalid option");
+                }
+            }
+        };
         state.addPrompt(prompt);
     };
 }

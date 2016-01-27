@@ -1,8 +1,7 @@
 package com.three_stack.maximum_alpha.backend.game.actions.abstracts;
 
-import com.three_stack.maximum_alpha.backend.game.Time;
-import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.State;
+import com.three_stack.maximum_alpha.backend.game.player.Player;
 
 import java.util.UUID;
 
@@ -45,7 +44,7 @@ public abstract class Action {
     }
     
     public boolean isPhase(State state, String phaseName) {
-    	return state.getCurrentPhase().getName().equals(phaseName);
+    	return state.getCurrentPhase().getType().equals(phaseName);
     }
     
     public boolean notInPrompt(State state) {

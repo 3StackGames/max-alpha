@@ -6,7 +6,7 @@ public class BlockPhase extends Phase {
     protected static BlockPhase instance;
 
     protected BlockPhase() {
-        super("Block Phase");
+        super("BLOCK_PHASE");
     }
 
     public static BlockPhase getInstance() {

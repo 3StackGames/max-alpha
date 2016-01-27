@@ -5,7 +5,7 @@ import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 //@Todo: rename this since it's confusing
 public class TriggeredEffect {
     protected Effect effect;
-    //trigerringEvent is what triggered the effect
+    //trigerringEvent is what triggered the result
     protected Event trigerringEvent;
 
     public TriggeredEffect(Effect effect, Event trigerringEvent) {

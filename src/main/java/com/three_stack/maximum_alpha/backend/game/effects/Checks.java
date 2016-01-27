@@ -7,8 +7,8 @@ import org.apache.log4j.Logger;
 
 /**
  * Terminology:
- *  T = Triggerer = a that triggered the effect
- *  S = Source = source of the effect
+ *  T = Triggerer = a that triggered the result
+ *  S = Source = source of the result
  *
  *  How to read checks:
  *  [Subject]_[CONTENT] becomes [Subject] is [Content]

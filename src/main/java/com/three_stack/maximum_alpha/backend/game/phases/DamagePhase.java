@@ -11,7 +11,7 @@ public class DamagePhase extends Phase {
     protected static DamagePhase instance;
 
     protected DamagePhase () {
-        super("Damage Phase");
+        super("DAMAGE_PHASE");
     }
 
     public static DamagePhase getInstance() {

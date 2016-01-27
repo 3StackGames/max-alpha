@@ -1,6 +1,7 @@
 package com.three_stack.maximum_alpha.backend.game.prompts.steps;
 
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
+import com.three_stack.maximum_alpha.backend.game.cards.NonSpellCard;
 import com.three_stack.maximum_alpha.backend.game.prompts.steps.Step;
 import io.gsonfire.annotations.ExposeMethodResult;
 
@@ -9,38 +10,43 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class TargetStep extends Step {
-    protected transient List<Card> targetables;
+    protected transient List<NonSpellCard> targetables;
 
-    protected transient Card target;
+    protected transient NonSpellCard target;
 
-    public TargetStep(String instruction, List<Card> targetables) {
+    public TargetStep(String instruction, List<NonSpellCard> targetables) {
         super(instruction);
         this.targetables = targetables;
     }
 
     @Override
     public void complete(Card target) {
-        setTarget(target);
+        setTarget((NonSpellCard) target);
     }
 
-    public List<Card> getTargetables() {
+    public List<NonSpellCard> getTargetables() {
         return targetables;
     }
 
-    public void setTargetables(List<Card> targetables) {
+    public void setTargetables(List<NonSpellCard> targetables) {
         this.targetables = targetables;
     }
 
-    public Card getTarget() {
+    public NonSpellCard getTarget() {
         return target;
     }
 
-    public void setTarget(Card target) {
+    public void setTarget(NonSpellCard target) {
         this.target = target;
     }
     
     public void reset() {
     	target = null;
+    }
+
+    @ExposeMethodResult("type")
+    public String getType() {
+        return "TARGET";
     }
 
     @ExposeMethodResult("targetableIds")

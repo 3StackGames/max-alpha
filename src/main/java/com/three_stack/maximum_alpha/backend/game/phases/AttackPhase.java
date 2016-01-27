@@ -6,7 +6,7 @@ public class AttackPhase extends Phase {
     protected static AttackPhase instance;
 
     protected AttackPhase () {
-        super("Attack Phase");
+        super("ATTACK_PHASE");
     }
 
     public static AttackPhase getInstance() {

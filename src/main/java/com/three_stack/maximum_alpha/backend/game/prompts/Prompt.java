@@ -11,6 +11,9 @@ import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.prompts.steps.Step;
 
+/**
+ * @Todo: Make prompt methods that need to be overriden lambdas instead
+ */
 public abstract class Prompt {
     protected final transient Card source;
     protected List<Step> steps;
@@ -18,18 +21,20 @@ public abstract class Prompt {
     protected transient final Player player;
     protected boolean isMandatory;
 
-    protected Prompt(Card source, Player player) {
+    protected Prompt(Card source, Player player, List<Step> steps) {
         this.source = source;
         this.steps = new ArrayList<>();
         this.player = player;
+        this.steps = steps;
         isMandatory = false;
         currentStep = 0;
     }
 
-    protected Prompt(Card source, Player player, boolean isMandatory) {
+    protected Prompt(Card source, Player player, List<Step> steps, boolean isMandatory) {
         this.source = source;
         this.steps = new ArrayList<>();
         this.player = player;
+        this.steps = steps;
         this.isMandatory = isMandatory;
         currentStep = 0;
     }

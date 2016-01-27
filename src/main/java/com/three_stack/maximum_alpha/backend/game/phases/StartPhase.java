@@ -7,7 +7,7 @@ public class StartPhase extends Phase {
     protected static StartPhase instance;
 
     protected StartPhase() {
-        super("Start Phase");
+        super("START_PHASE");
     }
 
     public static StartPhase getInstance() {

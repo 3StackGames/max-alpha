@@ -6,7 +6,7 @@ public class EndPhase extends Phase {
     protected static EndPhase instance;
 
     protected EndPhase() {
-        super("End Phase");
+        super("END_PHASE");
     }
 
     public static EndPhase getInstance() {

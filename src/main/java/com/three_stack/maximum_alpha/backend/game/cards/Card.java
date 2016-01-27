@@ -18,7 +18,7 @@ public abstract class Card {
     protected final String flavorText;
     protected List<Counter> counters;
     /**
-     * timeEnteredZone is used only when determining effect order. lower values indicate earlier times.
+     * timeEnteredZone is used only when determining result order. lower values indicate earlier times.
      */
     protected transient Time timeEnteredZone;
 

@@ -1,16 +1,11 @@
 package com.three_stack.maximum_alpha.backend.game.actions.implementations;
 
 import com.three_stack.maximum_alpha.backend.game.State;
-import com.three_stack.maximum_alpha.backend.game.actions.abstracts.Action;
-import com.three_stack.maximum_alpha.backend.game.cards.Card;
+import com.three_stack.maximum_alpha.backend.game.actions.abstracts.CardAction;
 import com.three_stack.maximum_alpha.backend.game.prompts.Prompt;
 import com.three_stack.maximum_alpha.backend.game.prompts.steps.ChooseStep;
 
-import java.util.UUID;
-
-public class ChoosePromptTargetAction extends Action {
-    protected UUID cardId;
-    protected Card card;
+public class ChoosePromptTargetAction extends CardAction {
 
     @Override
     public void setup(State state) {

@@ -6,7 +6,7 @@ public class MainPhase extends Phase {
     protected static MainPhase instance;
 
     protected MainPhase() {
-        super("Main Phase");
+        super("MAIN_PHASE");
     }
 
     public static MainPhase getInstance() {

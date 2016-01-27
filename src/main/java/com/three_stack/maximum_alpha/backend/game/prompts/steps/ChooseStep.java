@@ -26,6 +26,11 @@ public class ChooseStep extends Step {
 
     }
 
+    @ExposeMethodResult("type")
+    public String getType() {
+        return "CHOOSE";
+    }
+
     @ExposeMethodResult("choiceId")
     public UUID getChoiceId() {
         return choice.getId();
