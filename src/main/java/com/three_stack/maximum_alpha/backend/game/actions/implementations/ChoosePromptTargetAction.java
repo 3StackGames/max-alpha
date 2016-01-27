@@ -2,8 +2,8 @@ package com.three_stack.maximum_alpha.backend.game.actions.implementations;
 
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.CardAction;
-import com.three_stack.maximum_alpha.backend.game.prompts.Prompt;
-import com.three_stack.maximum_alpha.backend.game.prompts.steps.ChooseStep;
+import com.three_stack.maximum_alpha.backend.game.effects.prompts.Prompt;
+import com.three_stack.maximum_alpha.backend.game.effects.prompts.steps.ChooseStep;
 
 public class ChoosePromptTargetAction extends CardAction {
 

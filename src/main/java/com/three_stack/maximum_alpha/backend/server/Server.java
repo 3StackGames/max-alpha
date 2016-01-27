@@ -26,7 +26,7 @@ import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.actions.ActionService;
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.Action;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
-import com.three_stack.maximum_alpha.backend.game.prompts.Prompt;
+import com.three_stack.maximum_alpha.backend.game.effects.prompts.Prompt;
 import com.three_stack.maximum_alpha.backend.game.utilities.Serializer;
 
 public class Server extends WebSocketServer {

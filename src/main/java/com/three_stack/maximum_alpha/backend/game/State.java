@@ -28,7 +28,7 @@ import com.three_stack.maximum_alpha.backend.game.player.StructureDeck;
 import com.three_stack.maximum_alpha.backend.game.phases.Phase;
 import com.three_stack.maximum_alpha.backend.game.phases.StartPhase;
 import com.three_stack.maximum_alpha.backend.game.player.Player.Status;
-import com.three_stack.maximum_alpha.backend.game.prompts.Prompt;
+import com.three_stack.maximum_alpha.backend.game.effects.prompts.Prompt;
 import com.three_stack.maximum_alpha.backend.game.utilities.DatabaseClientFactory;
 import com.three_stack.maximum_alpha.backend.game.utilities.Serializer;
 import com.three_stack.maximum_alpha.backend.game.victories.VictoryHandler;

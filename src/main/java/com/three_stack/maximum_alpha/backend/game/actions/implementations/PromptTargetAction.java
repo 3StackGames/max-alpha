@@ -2,7 +2,7 @@ package com.three_stack.maximum_alpha.backend.game.actions.implementations;
 
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.ExistingCardAction;
-import com.three_stack.maximum_alpha.backend.game.prompts.Prompt;
+import com.three_stack.maximum_alpha.backend.game.effects.prompts.Prompt;
 
 public class PromptTargetAction extends ExistingCardAction {
     @Override

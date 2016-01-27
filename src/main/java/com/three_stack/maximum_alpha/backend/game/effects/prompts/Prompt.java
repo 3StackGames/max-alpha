@@ -1,4 +1,4 @@
-package com.three_stack.maximum_alpha.backend.game.prompts;
+package com.three_stack.maximum_alpha.backend.game.effects.prompts;
 
 import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import io.gsonfire.annotations.ExposeMethodResult;
@@ -10,7 +10,7 @@ import java.util.UUID;
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
-import com.three_stack.maximum_alpha.backend.game.prompts.steps.Step;
+import com.three_stack.maximum_alpha.backend.game.effects.prompts.steps.Step;
 
 public class Prompt {
     protected transient Card source;
@@ -18,30 +18,28 @@ public class Prompt {
     protected int currentStep;
     protected transient Player player;
     protected boolean isMandatory;
-    protected transient InputChecker inputChecker;
-    protected transient Resolver resolver;
+    protected transient PromptResolver promptResolver;
     /**
      * event is the event that caused the prompt. For example, an event triggered by ON_PLAY.
      */
     protected Event event;
 
-    public Prompt(Card source, Player player, Event event, List<Step> steps, InputChecker inputChecker, Resolver resolver) {
-        setup(source, player, event, steps, inputChecker, resolver);
+    public Prompt(Card source, Player player, Event event, List<Step> steps, PromptResolver promptResolver) {
+        setup(source, player, event, steps, promptResolver);
     }
 
-    public Prompt(Card source, Player player, Event event, List<Step> steps, InputChecker inputChecker, Resolver resolver, boolean isMandatory) {
-        setup(source, player, event, steps, inputChecker, resolver);
+    public Prompt(Card source, Player player, Event event, List<Step> steps, PromptResolver promptResolver, boolean isMandatory) {
+        setup(source, player, event, steps, promptResolver);
         this.isMandatory = isMandatory;
     }
 
-    protected void setup(Card source, Player player, Event event, List<Step> steps, InputChecker inputChecker, Resolver resolver) {
+    protected void setup(Card source, Player player, Event event, List<Step> steps, PromptResolver promptResolver) {
         this.source = source;
         this.steps = new ArrayList<>();
         this.player = player;
         this.event = event;
         this.steps = steps;
-        this.inputChecker = inputChecker;
-        this.resolver = resolver;
+        this.promptResolver = promptResolver;
 
         this.currentStep = 0;
         this.isMandatory = false;
@@ -49,16 +47,16 @@ public class Prompt {
     }
 
     public void completeCurrentStep(Card input) {
-        getCurrentStep().complete(input);
+        getCurrentStep().complete(input, this);
         currentStep++;
     }
 
     public boolean isValidInput(Card input) {
-        return inputChecker.run(input, this);
+        return getCurrentStep().isValidInput(input, this);
     }
 
     public void resolve(State state) {
-        resolver.run(event, state, this);
+        promptResolver.run(event, state, this);
     }
 
     public boolean isDone() {
