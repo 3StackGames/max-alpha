@@ -10,10 +10,7 @@ public class EndTurnWithoutCombatAction extends Action {
     @Override
     public void run(State state) {
         state.setCombatEnded(true);
-
-        PlayerEvent endTurnEvent = new PlayerEvent(state.getTime(), "end turn without combat", player);
-        state.addEvent(endTurnEvent, null);
-
+        state.createSinglePlayerEvent(player, "end turn without combat", state.getTime(), null);
         state.getCurrentPhase().end(state);
     }
 

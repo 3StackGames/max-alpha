@@ -4,7 +4,10 @@ import com.three_stack.maximum_alpha.backend.game.Parameters;
 import com.three_stack.maximum_alpha.backend.game.ResourceList;
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.Time;
-import com.three_stack.maximum_alpha.backend.game.cards.*;
+import com.three_stack.maximum_alpha.backend.game.cards.Card;
+import com.three_stack.maximum_alpha.backend.game.cards.Castle;
+import com.three_stack.maximum_alpha.backend.game.cards.Structure;
+import com.three_stack.maximum_alpha.backend.game.cards.Worker;
 import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
 import com.three_stack.maximum_alpha.backend.server.Connection;
 

@@ -9,9 +9,7 @@ import com.three_stack.maximum_alpha.backend.game.effects.events.PlayerEvent;
 public class FinishPhaseAction extends Action {
     @Override
     public void run(State state) {
-        PlayerEvent endTurnEvent = new PlayerEvent(state.getTime(), "end turn", player);
-        state.addEvent(endTurnEvent, null);
-
+        state.createSinglePlayerEvent(player, "end turn", state.getTime(), null);
         state.getCurrentPhase().end(state);
     }
     

@@ -47,31 +47,30 @@ public class Creature extends NonSpellCard implements Worker {
      * @param state
      * @return
      */
-    public void attack(Time time, State state) {
+    public void attack(Time battleTime, Time exhaustTime, State state) {
         if(isBlocked()) {
             throw new IllegalStateException("must not be blocked");
         } else if(!isAttacking()) {
             throw new IllegalStateException("must be attacking");
         }
-        dealDamage(attackTarget, this.getCurrentAttack(), time, state);
-        exhaust(state.getTime(), state);
+        dealDamage(attackTarget, this.getCurrentAttack(), battleTime, state);
+        exhaust(exhaustTime, state);
         clearAttackTarget();
     }
 
-    public void block(Time time, State state) {
+    public void block(Time battleTime, Time exhaustTime, State state) {
         if(isBlocking()) {
             throw new IllegalStateException("blockTarget must be set");
         }
 
-        Event a = this.takeDamage(blockTarget.getCurrentAttack(), blockTarget, time);
-        Event b = blockTarget.takeDamage(this.getCurrentAttack(), this, time);
+        Event a = this.takeDamage(blockTarget.getCurrentAttack(), blockTarget, battleTime);
+        Event b = blockTarget.takeDamage(this.getCurrentAttack(), this, battleTime);
         state.addEvent(a, Trigger.ON_DAMAGE);
         state.addEvent(b, Trigger.ON_DAMAGE);
 
         blockTarget.clearAttackTarget();
         clearBlockTarget();
-        blockTarget.exhaust(state.getTime(), state);
-        exhaust();
+        blockTarget.exhaust(exhaustTime, state);
     }
 
     public int getDefaultAttack() {

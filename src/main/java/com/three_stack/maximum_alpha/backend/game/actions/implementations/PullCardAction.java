@@ -10,13 +10,10 @@ import com.three_stack.maximum_alpha.backend.game.player.Player;
 public class PullCardAction extends ExistingCardAction {
     @Override
     public void run(State state) {
-        Player player = state.getTurnPlayer();
-        Creature pullCreature = player.getTown().findCard(cardId);
+        Creature pullCreature = player.getTown().takeCard(cardId, state.getTime(), state);
         state.createSingleCardEvent(pullCreature, "pull", state.getTime(), Trigger.ON_PULL);
-
-        player.getTown().remove(pullCreature, state.getTime(), state);
-
         player.getHand().add(pullCreature, state.getTime(), state);
+
         player.setHasAssignedOrPulled(true);
     }
 

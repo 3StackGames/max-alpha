@@ -28,22 +28,20 @@ public class DamagePhase extends Phase {
                 .filter(Creature::isAttacking)
                 .collect(Collectors.toList());
         Time battleTime = state.getTime();
+        Time exhaustTime = state.getTime();
         for(Creature attacker : attackers) {
             if(!attacker.isBlocked()) {
             	if(!attacker.getAttackTarget().isDead()) {
-	                attacker.attack(battleTime, state);
+	                attacker.attack(battleTime, exhaustTime, state);
             	}
             } else {
                 attacker.getBlockers().stream().forEach(blocker -> {
                 	if(!attacker.isDead() && !blocker.isDead()) {
-                        blocker.block(battleTime, state);
+                        blocker.block(battleTime, exhaustTime, state);
                     }
-	                blocker.clearBlockTarget();
                 });
                 attacker.resetBlockers();
             }
-            attacker.clearAttackTarget();
-            attacker.exhaust();
         }
 
         state.resolveDeaths();

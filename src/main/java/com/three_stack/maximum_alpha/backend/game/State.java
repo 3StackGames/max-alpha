@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 import com.three_stack.maximum_alpha.backend.game.effects.*;
 import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
+import com.three_stack.maximum_alpha.backend.game.effects.events.PlayerEvent;
 import com.three_stack.maximum_alpha.backend.game.effects.events.SingleCardEvent;
 import com.three_stack.maximum_alpha.backend.game.player.*;
 import org.bson.types.ObjectId;
@@ -219,12 +220,12 @@ public class State {
         return playingPlayers.get(turn);
     }
 
-    public void refreshTurnPlayerCards() {
+    public void refreshTurnPlayerCards(Time time, State state) {
         Player player = getTurnPlayer();
         //look through field
-        player.getField().getCards().forEach(Creature::attemptRefresh);
+        player.getField().getCards().forEach(creature -> creature.attemptRefresh(time, state));
         //look through structures
-        player.getCourtyard().getCards().forEach(Structure::attemptRefresh);
+        player.getCourtyard().getCards().forEach(creature -> creature.attemptRefresh(time, state));
     }
 
     //For serialization
@@ -391,6 +392,12 @@ public class State {
 
     public Event createSingleCardEvent(Card card, String type, Time time, Trigger trigger) {
         Event event = new SingleCardEvent(time, type, card);
+        addEvent(event, trigger);
+        return event;
+    }
+
+    public Event createSinglePlayerEvent(Player player, String type, Time time, Trigger trigger) {
+        Event event = new PlayerEvent(time, type, player);
         addEvent(event, trigger);
         return event;
     }

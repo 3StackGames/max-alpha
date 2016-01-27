@@ -9,12 +9,11 @@ public class AssignCardAction extends ExistingCardAction {
 
     @Override
     public void run(State state) {
+        Creature assignCreature = (Creature) player.getHand().takeCard(cardId, state.getTime(), state);
+        state.createSingleCardEvent(assignCreature, "assign", state.getTime(), Trigger.ON_ASSIGN);
+        player.getTown().add(assignCreature, state.getTime(), state);
 
-        Creature assignCard = (Creature) player.getHand().takeCard(cardId, state.getTime(), state);
         player.setHasAssignedOrPulled(true);
-        player.getTown().add(assignCard, state.getTime(), state);
-
-        state.createSingleCardEvent(assignCard, "assign", state.getTime(), Trigger.ON_ASSIGN);
     }
 
     @Override
