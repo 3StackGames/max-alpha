@@ -19,6 +19,11 @@ public class TargetStep extends Step {
         this.targetables = targetables;
     }
 
+    public TargetStep(String instruction, Object value, List<NonSpellCard> targetables) {
+        super(instruction, value);
+        this.targetables = targetables;
+    }
+
     @Override
     public void complete(Card target) {
         setTarget((NonSpellCard) target);

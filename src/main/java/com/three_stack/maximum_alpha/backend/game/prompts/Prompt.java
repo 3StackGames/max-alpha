@@ -1,5 +1,6 @@
 package com.three_stack.maximum_alpha.backend.game.prompts;
 
+import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import io.gsonfire.annotations.ExposeMethodResult;
 
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ import com.three_stack.maximum_alpha.backend.game.prompts.steps.Step;
 /**
  * @Todo: Make prompt methods that need to be overriden lambdas instead
  */
-public abstract class Prompt {
+public class Prompt {
     protected transient Card source;
     protected List<Step> steps;
     protected int currentStep;
@@ -22,20 +23,22 @@ public abstract class Prompt {
     protected boolean isMandatory;
     protected InputChecker inputChecker;
     protected Resolver resolver;
+    protected Event event;
 
-    protected Prompt(Card source, Player player, List<Step> steps, InputChecker inputChecker, Resolver resolver) {
-        setup(source, player, steps, inputChecker, resolver);
+    public Prompt(Card source, Player player, Event event, List<Step> steps, InputChecker inputChecker, Resolver resolver) {
+        setup(source, player, event, steps, inputChecker, resolver);
     }
 
-    protected Prompt(Card source, Player player, List<Step> steps, InputChecker inputChecker, Resolver resolver, boolean isMandatory) {
-        setup(source, player, steps, inputChecker, resolver);
+    public Prompt(Card source, Player player, Event event, List<Step> steps, InputChecker inputChecker, Resolver resolver, boolean isMandatory) {
+        setup(source, player, event, steps, inputChecker, resolver);
         this.isMandatory = isMandatory;
     }
 
-    protected void setup(Card source, Player player, List<Step> steps, InputChecker inputChecker, Resolver resolver) {
+    protected void setup(Card source, Player player, Event event, List<Step> steps, InputChecker inputChecker, Resolver resolver) {
         this.source = source;
         this.steps = new ArrayList<>();
         this.player = player;
+        this.event = event;
         this.steps = steps;
         this.inputChecker = inputChecker;
         this.resolver = resolver;
@@ -92,6 +95,14 @@ public abstract class Prompt {
 
     public void setCurrentStep(int currentStep) {
         this.currentStep = currentStep;
+    }
+
+    public Event getEvent() {
+        return event;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
     }
 
     public boolean canUndo() {

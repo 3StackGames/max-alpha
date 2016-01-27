@@ -16,6 +16,11 @@ public class ChooseStep extends Step {
         this.choices = choices;
     }
 
+    public ChooseStep(String instruction, Object value, List<Card> choices) {
+        super(instruction, value);
+        this.choices = choices;
+    }
+
     @Override
     public void complete(Card input) {
         setChoice(input);

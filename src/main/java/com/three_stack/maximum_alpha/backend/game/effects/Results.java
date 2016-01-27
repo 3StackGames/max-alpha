@@ -1,5 +1,6 @@
 package com.three_stack.maximum_alpha.backend.game.effects;
 
+import com.sun.corba.se.spi.orbutil.fsm.Input;
 import com.three_stack.maximum_alpha.backend.game.ResourceList;
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
@@ -8,7 +9,9 @@ import com.three_stack.maximum_alpha.backend.game.cards.NonSpellCard;
 import com.three_stack.maximum_alpha.backend.game.cards.Spell;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.player.Zone;
+import com.three_stack.maximum_alpha.backend.game.prompts.InputChecker;
 import com.three_stack.maximum_alpha.backend.game.prompts.Prompt;
+import com.three_stack.maximum_alpha.backend.game.prompts.Resolver;
 import com.three_stack.maximum_alpha.backend.game.prompts.steps.ChooseStep;
 import com.three_stack.maximum_alpha.backend.game.prompts.steps.Step;
 import com.three_stack.maximum_alpha.backend.game.prompts.steps.TargetStep;
@@ -95,6 +98,20 @@ public class Results {
         source.dealDamage(source.getController().getCastle(), damage, state.getTime(), state);
     };
 
+    protected static final InputChecker inCurrentTargetables = (input, prompt) -> {
+        if(input == null) return false;
+        TargetStep targetStep = (TargetStep) prompt.getCurrentStep();
+        return targetStep.getTargetables().contains(input);
+    };
+
+
+
+    protected static final Resolver dealTargetDamage = (state, prompt) -> {
+        TargetStep step = (TargetStep) prompt.getSteps().get(0);
+        int damage = (int) step.getValue();
+        prompt.getSource().dealDamage(step.getTarget(), damage, state.getTime(), state);
+    };
+
     public static Result DEAL_DAMAGE_TARGET_CREATURE = (state, source, event, value) -> {
         int damage = (int) value;
         List<NonSpellCard> potentialTargets = state.getAllPlayers().stream()
@@ -104,27 +121,23 @@ public class Results {
                 .collect(Collectors.toList());
         if(potentialTargets.size() > 0) {
             List<Step> steps = new ArrayList<>();
-            TargetStep step = new TargetStep("Select a creature to deal " + damage + " damage to", potentialTargets);
+            TargetStep step = new TargetStep("Select a creature to deal " + damage + " damage to", damage, potentialTargets);
             steps.add(step);
-//            Prompt prompt = new Prompt(source, source.getController(), steps, true) {
-//                @Override
-//                public boolean isValidInput(Card input) {
-//                    return input != null && potentialTargets.contains(input);
-//                }
-//                @Override
-//                public void resolve(State state) {
-//                    source.dealDamage(step.getTarget(), damage, state.getTime(), state);
-//                }
-//            };
-            Prompt prompt = new Prompt(source, source.getController(), steps, true,
-                    (input, prompt1) -> {
-                        input != null && potentialTargets.contains(input);
-                    },
-                    state -> {
-                        source.dealDamage(step.getTarget(), damage, state.getTime(), state);
-                    });
+            Prompt prompt = new Prompt(source, source.getController(), event, steps, inCurrentTargetables, dealTargetDamage, true);
             state.addPrompt(prompt);
         }
+    };
+
+    protected static final InputChecker inCurrentChoices = (input, prompt) -> {
+        if(input == null) return false;
+        ChooseStep chooseStep = (ChooseStep) prompt.getCurrentStep();
+        return chooseStep.getChoices().contains(input);
+    };
+
+    protected static final Resolver activateChosenEffect = (state, prompt) -> {
+        ChooseStep step = (ChooseStep) prompt.getSteps().get(0);
+        Spell chosenSpell = (Spell) step.getChoice();
+        chosenSpell.getResult().run(state, prompt.getSource(), prompt.getEvent(), step.getValue());
     };
 
     public static Result CHOICE_DEAL_DAMAGE_ENEMY_CASTLES_OR_ALL_CREATURES = (state, source, event, value) -> {
@@ -136,23 +149,8 @@ public class Results {
         choices.add(damageAllCreatures);
         List<Step> steps = new ArrayList<>();
         ChooseStep chooseStep = new ChooseStep("Choose a result", choices);
-        Prompt prompt = new Prompt(source, source.getController(), steps) {
-            @Override
-            public boolean isValidInput(Card input) {
-                return input != null && choices.contains(input);
-            }
-
-            @Override
-            public void resolve(State state) {
-                if(chooseStep.getChoice().equals(damageEnemyCastles)) {
-                    damageEnemyCastles.getResult().run(state, source, event, value);
-                } else if(chooseStep.getChoice().equals(damageAllCreatures)) {
-                    damageAllCreatures.getResult().run(state, source, event, value);
-                } else {
-                    throw new IllegalStateException("User Chose an invalid option");
-                }
-            }
-        };
+        steps.add(chooseStep);
+        Prompt prompt = new Prompt(source, source.getController(), event, steps, inCurrentChoices, activateChosenEffect);
         state.addPrompt(prompt);
     };
 }
