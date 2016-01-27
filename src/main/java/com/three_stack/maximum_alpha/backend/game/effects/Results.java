@@ -113,7 +113,7 @@ public class Results {
         List<Card> options = new ArrayList<>();
         options.add(new Creature("Deal Damage Castles", new ResourceList(0, 0, 0, 0, 0, 0, 0), "Deal " + damage + " damage to all castles", "", 0, 0, null));
         options.add(new Creature("Deal Damage Creatures", new ResourceList(0, 0, 0, 0, 0, 0, 0), "Deal " + damage + " damage to all creatures", "", 0, 0, null));
-        ChoosePrompt prompt = new ChooseDamagePrompt(source, source.getController(), options, damage);
+        Prompt prompt = new ChooseDamagePrompt(source, source.getController(), options, damage);
         state.addPrompt(prompt);
     };
 }

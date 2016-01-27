@@ -4,7 +4,7 @@ import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.ExistingCardAction;
 import com.three_stack.maximum_alpha.backend.game.prompts.Prompt;
 
-public class SingleTargetPromptAction extends ExistingCardAction {
+public class PromptTargetAction extends ExistingCardAction {
     @Override
     public void run(State state) {
         Prompt prompt = state.getCurrentPrompt();
