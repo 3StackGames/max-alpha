@@ -98,7 +98,9 @@ public class Results {
                 .map(Zone::getCards)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
-        SingleTargetDamagePrompt prompt = new SingleTargetDamagePrompt(source, source.getController(), true, damage, potentialTargets);
-        state.addPrompt(prompt);
+        if(potentialTargets.size() > 0) {
+            SingleTargetDamagePrompt prompt = new SingleTargetDamagePrompt(source, source.getController(), true, damage, potentialTargets);
+            state.addPrompt(prompt);
+        }
     };
 }
