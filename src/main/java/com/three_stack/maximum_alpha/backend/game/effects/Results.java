@@ -148,7 +148,7 @@ public class Results {
         Spell damageAllCreatures = new Spell("Deal Damage to All Creatures", new ResourceList(), "Deal " + damage + " damage to all creatures", "", Results.DEAL_DAMAGE_ALL_CREATURES);
         choices.add(damageAllCreatures);
         List<Step> steps = new ArrayList<>();
-        ChooseStep chooseStep = new ChooseStep("Choose a result", choices);
+        ChooseStep chooseStep = new ChooseStep("Choose a result", value, choices);
         steps.add(chooseStep);
         Prompt prompt = new Prompt(source, source.getController(), event, steps, inCurrentChoices, activateChosenEffect);
         state.addPrompt(prompt);

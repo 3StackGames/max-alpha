@@ -38,6 +38,7 @@ public class ChooseStep extends Step {
 
     @ExposeMethodResult("choiceId")
     public UUID getChoiceId() {
+        if(choice == null) return null;
         return choice.getId();
     }
 
