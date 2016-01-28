@@ -16,7 +16,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Results {
     static Logger log = Logger.getLogger(Results.class.getName());
@@ -42,33 +41,20 @@ public class Results {
 
     public static Result DEAL_DAMAGE_ALL_STRUCTURES_AND_CASTLES = (state, source, event, value) -> {
         int damage = (int) value;
-
-        Stream<NonSpellCard> castleStream = state.getPlayingPlayers().stream()
-                .map(Player::getCastle);
-
-        Stream<NonSpellCard> structureStream = state.getPlayingPlayers().stream()
-                .map(player -> player.getCourtyard().getCards())
-                .flatMap(Collection::stream);
-
-        List<NonSpellCard> victims = Stream.concat(castleStream, structureStream).collect(Collectors.toList());
+        List<NonSpellCard> victims = Selectors.structuresAndCastles(state);
         source.dealDamage(victims, damage, state.getTime(), state);
     };
 
     public static Result DEAL_DAMAGE_ALL_CREATURES = (state, source, event, value) -> {
         int damage = (int) value;
-        List<NonSpellCard> victims = state.getPlayingPlayers().stream()
-                .map(player -> player.getField().getCards())
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+        List<NonSpellCard> victims = Selectors.creatures(state);
         source.dealDamage(victims, damage, state.getTime(), state);
     };
 
     public static Result DEAL_DAMAGE_ENEMY_CASTLES = (state, source, event, value) -> {
         Player controller = source.getController();
         int damage = (int) value;
-        List<NonSpellCard> castles = state.getPlayersExcept(controller).stream()
-                .map(Player::getCastle)
-                .collect(Collectors.toList());
+        List<NonSpellCard> castles = Selectors.enemyCastles(controller, state);
         source.dealDamage(castles, damage, state.getTime(), state);
     };
 
@@ -77,10 +63,7 @@ public class Results {
         int damage = (int) value;
         Random random = new Random();
 
-        List<Creature> enemyCreatures = state.getPlayersExcept(controller).stream()
-                .map(player -> player.getField().getCards())
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+        List<Creature> enemyCreatures = Selectors.enemyCreatures(controller, state);
 
         if (enemyCreatures.isEmpty()) {
             return;
@@ -101,11 +84,7 @@ public class Results {
 
     public static Result TARGET_CREATURE_DEAL_DAMAGE = (state, source, event, value) -> {
         int damage = (int) value;
-        List<NonSpellCard> potentialTargets = state.getAllPlayers().stream()
-                .map(Player::getField)
-                .map(Zone::getCards)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+        List<NonSpellCard> potentialTargets = Selectors.creatures(state);
         if(potentialTargets.size() > 0) {
             List<Step> steps = new ArrayList<>();
             String instructions = "Select a creature to deal " + damage + " damage to";
@@ -119,11 +98,7 @@ public class Results {
     @SuppressWarnings("unchecked")
     public static Result TARGET_2_CREATURES_DEAL_DAMAGE = (state, source, event, value) -> {
         List<Integer> damages = (List<Integer>) value;
-        List<NonSpellCard> potentialTargets = state.getAllPlayers().stream()
-                .map(Player::getField)
-                .map(Zone::getCards)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+        List<NonSpellCard> potentialTargets = Selectors.creatures(state);
         if(potentialTargets.size() > 1) {
             List<Step> steps = new ArrayList<>();
             for (Integer damage : damages) {
