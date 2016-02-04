@@ -348,6 +348,15 @@ public class State {
             effects.put(trigger, newEffects);
         }
     }
+    
+    public void removeEffect(Trigger trigger, Effect effect) {
+        if (effects.containsKey(trigger)) {
+            effects.get(trigger).remove(effect);
+            if(effects.get(trigger).size() == 0) {
+            	effects.remove(trigger);
+            }
+        }
+    }
 
     public boolean hasEffects(Trigger trigger) {
         return effects.containsKey(trigger);
@@ -450,7 +459,7 @@ public class State {
             List<Creature> deadCreatures = field.getCards().stream()
                     .filter(Creature::isDead).collect(Collectors.toList());
             deadCreatures.forEach(deadCreature -> {
-            	deadCreature.reset();
+            	deadCreature.reset(this);
                 field.remove(deadCreature, getTime(), this);
                 deadCreature.die(deathTime, this);
                 grave.add(deadCreature, getTime(), this);

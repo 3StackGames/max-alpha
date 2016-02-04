@@ -3,20 +3,18 @@ package com.three_stack.maximum_alpha.backend.game.cards;
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.Time;
 import com.three_stack.maximum_alpha.backend.game.effects.*;
-import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.backend.game.effects.events.SingleCardEvent;
 import com.three_stack.maximum_alpha.backend.game.effects.events.SourceDamageTargetEvent;
+
 import io.gsonfire.annotations.ExposeMethodResult;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.three_stack.maximum_alpha.backend.game.ResourceList;
 
-/**
- * Damageable, Buffable, Refreshable / Exhaustable
- */
 public abstract class NonSpellCard extends Card {
     protected final int health;
     protected int damageTaken;
@@ -26,6 +24,7 @@ public abstract class NonSpellCard extends Card {
     protected boolean refreshable;
 
     protected List<Buff> buffs;
+    private transient int buffHealth;
 
     protected NonSpellCard(String name, ResourceList cost, String text, String flavorText, int health) {
         super(name, cost, text, flavorText);
@@ -35,6 +34,7 @@ public abstract class NonSpellCard extends Card {
         this.refreshable = true;
         this.dead = false;
         buffs = new ArrayList<>();
+        buffHealth = 0;
     }
 
     public NonSpellCard(NonSpellCard other) {
@@ -60,12 +60,12 @@ public abstract class NonSpellCard extends Card {
 
     @ExposeMethodResult("currentHealth")
     public int getCurrentHealth() {
-        return health - damageTaken; //@Todo: account for buffs later
+        return getMaxHealth() - damageTaken;
     }
 
     @ExposeMethodResult("maxHealth")
     public int getMaxHealth() {
-        return health; //@Todo: account for buffs
+        return health + buffHealth;
     }
     
     public void checkDeath() {
@@ -120,21 +120,47 @@ public abstract class NonSpellCard extends Card {
     public List<Buff> getBuffs() {
         return buffs;
     }
+    
+    public List<Buff> getNonAuraBuffs() {
+    	return buffs.stream().filter(buff -> !buff.isAura()).collect(Collectors.toList());
+    }
 
-    public void addBuff(Buff buff) {
+    public void addBuff(Buff buff, State state) {
+    	buff.onAdd(this, state);
         buffs.add(buff);
+        buffHealth += buff.getHealthModifier();
         checkDeath();
     }
     
-    public void removeBuff(Buff buff) {
-    	buffs.remove(buff);
+    public void removeBuff(Buff buff, State state) {
+    	int idx = buffs.indexOf(buff);
+    	for(int i = buffs.size()-1; i >= idx; i--) {
+    		Buff curr = buffs.get(i);
+        	curr.onRemove(this, state);
+    	}
+		for(int i = idx+1; i < buffs.size(); i++) {
+    		Buff curr = buffs.get(i);
+        	curr.onAdd(this, state);
+		}
+		buffs.remove(buff);
+        buffHealth -= buff.getHealthModifier();
+        
     	checkDeath();
     }
     
-    public void reset() {
+    public void reset(State state) {
+    	buffReset(state); //do first
         this.refreshable = true;
         this.damageTaken = 0;
         this.exhausted = false;
-        buffs.clear();
+    }
+    
+    public void buffReset(State state) {
+    	for(int i = buffs.size()-1; i >= 0; i--) {
+    		Buff buff = buffs.get(i);
+    		buff.onRemove(this, state);
+    	}
+    	buffs.clear();
+    	buffHealth = 0;
     }
 }

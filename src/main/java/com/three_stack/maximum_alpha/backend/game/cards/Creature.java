@@ -24,6 +24,7 @@ public class Creature extends NonSpellCard implements Worker {
     protected transient boolean canBlock;
     protected boolean hasSummoningSickness;
     protected List<Creature> blockers;
+    private transient int buffAttack;
 
     public Creature(String name, ResourceList cost, String text, String flavorText, int attack, int health) {
         super(name, cost, text, flavorText, health);
@@ -33,6 +34,7 @@ public class Creature extends NonSpellCard implements Worker {
         blockTarget = null;
         canBlock = true;
         hasSummoningSickness = true;
+        buffAttack = 0;
         resetBlockers();
     }
 
@@ -78,8 +80,7 @@ public class Creature extends NonSpellCard implements Worker {
     }
 
     public int getCurrentAttack() {
-        //@Todo: reflect buffs
-        return getDefaultAttack();
+        return getDefaultAttack() + buffAttack;
     }
 
     public boolean hasSummoningSickness() {
@@ -171,12 +172,30 @@ public class Creature extends NonSpellCard implements Worker {
 	}
 
 	@Override
-	public void reset() {
-		super.reset();
+	public void reset(State state) {
+		super.reset(state);
 		attackTarget = null;
-		blockTarget =null;
+		blockTarget = null;
 		canAttack = true;
 		canBlock = true;
         hasSummoningSickness = true;
+	}
+	
+	@Override
+	public void addBuff(Buff buff, State state) {
+		super.addBuff(buff, state);
+		buffAttack += buff.getAttackModifier();
+	}
+	
+	@Override
+	public void removeBuff(Buff buff, State state) {
+		super.removeBuff(buff, state);
+		buffAttack -= buff.getAttackModifier();
+	}
+	
+	@Override
+	public void buffReset(State state) {
+		super.buffReset(state);
+		buffAttack = 0;
 	}
 }
