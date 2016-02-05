@@ -2,7 +2,6 @@ package com.three_stack.maximum_alpha.backend.game.effects.prompts;
 
 import io.gsonfire.annotations.ExposeMethodResult;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 import java.util.UUID;

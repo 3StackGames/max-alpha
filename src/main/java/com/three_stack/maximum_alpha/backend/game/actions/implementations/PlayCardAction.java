@@ -6,7 +6,6 @@ import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.cards.Spell;
 import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
-import com.three_stack.maximum_alpha.backend.game.effects.TriggeredEffect;
 import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.backend.game.phases.MainPhase;
 import com.three_stack.maximum_alpha.backend.game.player.Player;

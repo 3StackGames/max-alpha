@@ -8,14 +8,11 @@ import com.three_stack.maximum_alpha.backend.game.effects.prompts.PromptResolver
 import com.three_stack.maximum_alpha.backend.game.effects.prompts.PromptSpellFactory;
 import com.three_stack.maximum_alpha.backend.game.effects.prompts.steps.*;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
-import com.three_stack.maximum_alpha.backend.game.player.Zone;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 public class Results {
     static Logger log = Logger.getLogger(Results.class.getName());

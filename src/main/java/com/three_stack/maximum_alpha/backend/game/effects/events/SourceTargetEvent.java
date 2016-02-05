@@ -3,11 +3,7 @@ package com.three_stack.maximum_alpha.backend.game.effects.events;
 import com.three_stack.maximum_alpha.backend.game.Time;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import io.gsonfire.annotations.ExposeMethodResult;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class SourceTargetEvent extends Event {
     protected transient Card source;

@@ -2,13 +2,11 @@ package com.three_stack.maximum_alpha.backend.game.actions.implementations;
 
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.ExistingPairAction;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
-import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
 import com.three_stack.maximum_alpha.backend.game.phases.AttackPhase;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
-import com.three_stack.maximum_alpha.backend.game.Time;
 
 import java.util.List;
 import java.util.stream.Collectors;
