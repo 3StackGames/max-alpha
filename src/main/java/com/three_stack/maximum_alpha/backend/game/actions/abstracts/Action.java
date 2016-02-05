@@ -15,11 +15,12 @@ public abstract class Action {
 
     public abstract void run(State state);
 
-    //@Todo: instead create a custom serializer that converts ids to player
+    //@Todo: instead create a custom serializer that converts ids to player?
     public void setup(State state) {
         player = state.findPlayer(playerId);
     }
 
+    //@Todo: throw Exception with error message if invalid?
     public abstract boolean isValid(State state);
 
     public UUID getPlayerId() {

@@ -1,11 +1,6 @@
 package com.three_stack.maximum_alpha.backend.game.cards;
 
 import com.three_stack.maximum_alpha.backend.game.ResourceList;
-import com.three_stack.maximum_alpha.backend.game.effects.Effect;
-import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
-
-import java.util.List;
-import java.util.Map;
 
 public class Structure extends NonSpellCard {
     protected boolean underConstruction;
