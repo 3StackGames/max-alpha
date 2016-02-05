@@ -1,21 +1,22 @@
 package com.three_stack.maximum_alpha.backend.game.effects.prompts;
 
-import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import io.gsonfire.annotations.ExposeMethodResult;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 import java.util.UUID;
 
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
-import com.three_stack.maximum_alpha.backend.game.player.Player;
+import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.backend.game.effects.prompts.steps.Step;
+import com.three_stack.maximum_alpha.backend.game.player.Player;
 
 public class Prompt {
     protected transient Card source;
-    protected List<Step> steps;
-    protected int currentStep;
+    protected Stack<Step> steps;
+    protected Step currentStep;
     protected transient Player player;
     protected boolean isMandatory;
     protected transient PromptResolver promptResolver;
@@ -24,31 +25,35 @@ public class Prompt {
      */
     protected Event event;
 
-    public Prompt(Card source, Player player, Event event, List<Step> steps, PromptResolver promptResolver) {
-        setup(source, player, event, steps, promptResolver);
+    public Prompt(Card source, Player player, Event event, Step step, PromptResolver promptResolver, boolean isMandatory) {
+        setup(source, player, event, step, promptResolver, isMandatory);
     }
-
+    
     public Prompt(Card source, Player player, Event event, List<Step> steps, PromptResolver promptResolver, boolean isMandatory) {
-        setup(source, player, event, steps, promptResolver);
-        this.isMandatory = isMandatory;
+    	Step step = null;
+    	if(!steps.isEmpty()) {
+    		step = steps.get(0);
+	    	for(int i = 0; i < steps.size()-1; i++) {
+	    		steps.get(i).setNextStep(steps.get(i+1));
+	    	}
+    	}
+        setup(source, player, event, step, promptResolver, isMandatory);
     }
 
-    protected void setup(Card source, Player player, Event event, List<Step> steps, PromptResolver promptResolver) {
+    protected void setup(Card source, Player player, Event event, Step step, PromptResolver promptResolver, boolean isMandatory) {
         this.source = source;
-        this.steps = new ArrayList<>();
-        this.player = player;
         this.event = event;
-        this.steps = steps;
+        this.player = player;
+        this.currentStep = step;
         this.promptResolver = promptResolver;
-
-        this.currentStep = 0;
-        this.isMandatory = false;
-
+        this.isMandatory = isMandatory;
+        
+        this.steps = new Stack<>();
     }
 
     public void completeCurrentStep(Card input) {
-        getCurrentStep().complete(input, this);
-        currentStep++;
+    	steps.push(currentStep);
+        currentStep = getCurrentStep().complete(input, this);
     }
 
     public boolean isValidInput(Card input) {
@@ -60,7 +65,7 @@ public class Prompt {
     }
 
     public boolean isDone() {
-        return currentStep >= steps.size();
+        return currentStep == null;
     }
 
     public Card getSource() {
@@ -68,7 +73,7 @@ public class Prompt {
     }
 
     public Step getCurrentStep() {
-        return steps.get(currentStep);
+        return currentStep;
     }
 
     public Player getPlayer() {
@@ -86,12 +91,8 @@ public class Prompt {
     public List<Step> getSteps() {
         return steps;
     }
-
-    public void setSteps(List<Step> steps) {
-        this.steps = steps;
-    }
-
-    public void setCurrentStep(int currentStep) {
+    
+    public void setCurrentStep(Step currentStep) {
         this.currentStep = currentStep;
     }
 
@@ -104,7 +105,7 @@ public class Prompt {
     }
 
     public boolean canUndo() {
-        if (isMandatory() && currentStep == 0)
+        if (isMandatory() && steps.size() == 0)
             return false;
         return true;
     }
@@ -115,8 +116,8 @@ public class Prompt {
      * @return True if the prompt should be removed from the queue, false otherwise.
      */
     public boolean undo() {
-        if (currentStep > 0) {
-            currentStep--;
+        if (steps.size() > 0) {
+        	currentStep = steps.pop();
             getCurrentStep().reset();
             return false;
         } else {

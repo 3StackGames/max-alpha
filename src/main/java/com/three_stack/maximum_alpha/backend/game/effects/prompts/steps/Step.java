@@ -11,18 +11,22 @@ public abstract class Step {
     protected final String instruction;
     protected StepCompleter stepCompleter;
     protected StepInputChecker stepInputChecker;
+    protected Step nextStep;
 
-    public Step(String instruction, Object value, StepInputChecker stepInputChecker, StepCompleter stepCompleter) {
+    public Step(String instruction, Object value, StepInputChecker stepInputChecker, StepCompleter stepCompleter, Step nextStep) {
         this.instruction = instruction;
         this.value = value;
         this.stepInputChecker = stepInputChecker;
         this.stepCompleter = stepCompleter;
+        this.nextStep = nextStep;
     }
 
-    public void complete(Card input, Prompt prompt) {
+    public Step complete(Card input, Prompt prompt) {
         if(stepCompleter != null) {
             stepCompleter.run(this, input, prompt);
         }
+        
+        return nextStep;
     }
 
     public boolean isValidInput(Card input, Prompt prompt) {
@@ -38,5 +42,9 @@ public abstract class Step {
 
     public void setValue(Object value) {
         this.value = value;
+    }
+    
+    public void setNextStep(Step nextStep) {
+    	this.nextStep = nextStep;
     }
 }

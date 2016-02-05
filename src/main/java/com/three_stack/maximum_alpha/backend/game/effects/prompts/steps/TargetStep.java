@@ -14,29 +14,35 @@ public class TargetStep extends Step implements OptionContainer {
     protected transient NonSpellCard target;
 
     public TargetStep(String instruction, Object value, List<NonSpellCard> targetables) {
-        super(instruction, value, null, null);
+        super(instruction, value, null, null, null);
         this.targetables = targetables;
     }
 
     public TargetStep(String instruction, Object value, StepInputChecker stepInputChecker, List<NonSpellCard> targetables) {
-        super(instruction, value, stepInputChecker, null);
+        super(instruction, value, stepInputChecker, null, null);
         this.targetables = targetables;
     }
 
     public TargetStep(String instruction, Object value, StepCompleter stepCompleter, List<NonSpellCard> targetables) {
-        super(instruction, value, null, stepCompleter);
+        super(instruction, value, null, stepCompleter, null);
         this.targetables = targetables;
     }
 
     public TargetStep(String instruction, Object value, StepInputChecker stepInputChecker, StepCompleter stepCompleter, List<NonSpellCard> targetables) {
-        super(instruction, value, stepInputChecker, stepCompleter);
+        super(instruction, value, stepInputChecker, stepCompleter, null);
         this.targetables = targetables;
+    }
+    
+    public TargetStep(String instruction, Object value, StepInputChecker stepInputChecker, StepCompleter stepCompleter, List<NonSpellCard> targetables, Step nextStep) {
+        super(instruction, value, stepInputChecker, stepCompleter, nextStep);
+        this.targetables = targetables;
+        this.nextStep = nextStep;
     }
 
     @Override
-    public void complete(Card input, Prompt prompt) {
+    public Step complete(Card input, Prompt prompt) {
         setTarget((NonSpellCard) input);
-        if(stepCompleter != null) stepCompleter.run(this, input, prompt);
+        return super.complete(input, prompt);
     }
 
     public List<NonSpellCard> getTargetables() {

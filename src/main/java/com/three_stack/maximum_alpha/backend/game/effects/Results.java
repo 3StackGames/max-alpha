@@ -86,11 +86,9 @@ public class Results {
         int damage = (int) value;
         List<NonSpellCard> potentialTargets = Selectors.creatures(state);
         if(potentialTargets.size() > 0) {
-            List<Step> steps = new ArrayList<>();
             String instructions = "Select a creature to deal " + damage + " damage to";
             TargetStep step = new TargetStep(instructions, damage, StepInputCheckers.STEP_INPUT_CHECKER, potentialTargets);
-            steps.add(step);
-            Prompt prompt = new Prompt(source, source.getController(), event, steps, PromptResolvers.DEAL_DAMAGE_ALL_TARGET_STEPS, true);
+            Prompt prompt = new Prompt(source, source.getController(), event, step, PromptResolvers.DEAL_DAMAGE_ALL_TARGET_STEPS, true);
             state.addPrompt(prompt);
         }
     };
@@ -121,10 +119,8 @@ public class Results {
         List<Card> choices = new ArrayList<>();
         choices.add(PromptSpellFactory.createDamageAllEnemyCastles(source, damage));
         choices.add(PromptSpellFactory.createDamageAllCreatures(source, damage));
-        List<Step> steps = new ArrayList<>();
         ChooseStep chooseStep = new ChooseStep("Choose a result", value, StepInputCheckers.STEP_INPUT_CHECKER, choices);
-        steps.add(chooseStep);
-        Prompt prompt = new Prompt(source, source.getController(), event, steps, PromptResolvers.PLAY_CHOSEN_SPELL, true);
+        Prompt prompt = new Prompt(source, source.getController(), event, chooseStep, PromptResolvers.PLAY_CHOSEN_SPELL, true);
         state.addPrompt(prompt);
     };
 }
