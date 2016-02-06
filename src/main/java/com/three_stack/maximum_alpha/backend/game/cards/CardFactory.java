@@ -3,7 +3,9 @@ package com.three_stack.maximum_alpha.backend.game.cards;
 import com.three_stack.maximum_alpha.backend.game.ResourceList;
 import com.three_stack.maximum_alpha.backend.game.effects.Effect;
 import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
+import com.three_stack.maximum_alpha.database_client.pojos.DBAbility;
 import com.three_stack.maximum_alpha.database_client.pojos.DBCard;
+import com.three_stack.maximum_alpha.database_client.pojos.DBEffect;
 
 import java.util.List;
 import java.util.Map;
@@ -22,19 +24,19 @@ public class CardFactory {
             case("creature"):
                 int creatureAttack = dbCard.getAttack();
                 int creatureHealth = dbCard.getHealth();
-                card = new Creature(name, cost, text, flavorText, creatureAttack, creatureHealth);
+                Creature creature = new Creature(name, cost, text, flavorText, creatureAttack, creatureHealth);
+                setAbilities(creature, dbCard.getAbilities());
+                card = creature;
                 break;
             case("structure"):
                 int structureHealth = dbCard.getHealth();
-                card = new Structure(name, cost, text, flavorText, structureHealth);
+                Structure structure = new Structure(name, cost, text, flavorText, structureHealth);
+                setAbilities(structure, dbCard.getAbilities());
+                card = structure;
                 break;
             case("spell"):
                 Spell spell = new Spell(name, cost, text, flavorText);
-                final Card finalCard = spell;
-                List<Effect> effects = dbCard.getEffects().stream()
-                        .map(dbEffect -> new Effect(finalCard, dbEffect))
-                        .collect(Collectors.toList());
-                spell.setEffects(effects);
+                setEffects(spell, dbCard.getEffects());
                 card = spell;
                 break;
             default:
@@ -51,5 +53,23 @@ public class CardFactory {
                 ));
         card.setTriggerEffects(triggerEffects);
         return card;
+    }
+
+    private static void setAbilities(NonSpellCard card, List<DBAbility> dbAbilities) {
+        if(dbAbilities == null) {
+            return;
+        }
+        List<Ability> abilities =  dbAbilities.stream()
+                .map(dbAbility -> new Ability(card, dbAbility))
+                .collect(Collectors.toList());
+
+        card.setAbilities(abilities);
+    }
+
+    private static void setEffects(Spell spell, List<DBEffect> dbEffects) {
+        List<Effect> effects = dbEffects.stream()
+                .map(dbEffect -> new Effect(spell, dbEffect))
+                .collect(Collectors.toList());
+        spell.setEffects(effects);
     }
 }

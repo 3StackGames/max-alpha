@@ -10,6 +10,7 @@ import io.gsonfire.annotations.ExposeMethodResult;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.three_stack.maximum_alpha.backend.game.ResourceList;
@@ -24,6 +25,7 @@ public abstract class NonSpellCard extends Card {
 
     protected List<Buff> buffs;
     private transient int buffHealth;
+    protected List<Ability> abilities;
 
     protected NonSpellCard(String name, ResourceList cost, String text, String flavorText, int health) {
         super(name, cost, text, flavorText);
@@ -119,7 +121,28 @@ public abstract class NonSpellCard extends Card {
     public List<Buff> getBuffs() {
         return buffs;
     }
-    
+
+    public List<Ability> getAbilities() {
+        return abilities;
+    }
+
+    public void setAbilities(List<Ability> abilities) {
+        this.abilities = abilities;
+    }
+
+    public Ability getAbility(UUID abilityId) {
+        List<Ability> matches =  abilities.stream()
+                .filter(ability -> ability.getId().equals(abilityId))
+                .collect(Collectors.toList());
+        if(matches.size() == 1) {
+            return matches.get(0);
+        } else if(matches.size() < 1) {
+            throw new IllegalArgumentException("No matching abilityId");
+        } else {
+            throw new IllegalStateException("Multiple abilities share the same id");
+        }
+    }
+
     public List<Buff> getNonAuraBuffs() {
     	return buffs.stream().filter(buff -> !buff.isAura()).collect(Collectors.toList());
     }
