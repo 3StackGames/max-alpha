@@ -8,6 +8,7 @@ import com.three_stack.maximum_alpha.backend.game.cards.Spell;
 import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
 import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.backend.game.phases.MainPhase;
+import com.three_stack.maximum_alpha.backend.game.phases.PreparationPhase;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 
 public class PlayCardAction extends ExistingCardWithCostAction {
@@ -23,9 +24,14 @@ public class PlayCardAction extends ExistingCardWithCostAction {
 
         if(card instanceof Creature) {
             player.getField().add((Creature) card, state.getTime(), state);
-        } else if(card instanceof Spell){
+        } else if(card instanceof Spell) {
             Spell spell = (Spell) card;
-            spell.cast(playEvent, state);
+
+            if(isPhase(state, MainPhase.class)) {
+                spell.cast(playEvent, state);
+            } else if(isPhase(state, PreparationPhase.class)) {
+                spell.prepare(playEvent, state);
+            }
         }
     }
 
@@ -35,7 +41,7 @@ public class PlayCardAction extends ExistingCardWithCostAction {
             return false;
         }
 		boolean notInPrompt = notInPrompt(state);
-		boolean correctPhase = isPhase(state, MainPhase.class); //TODO: FubarPhase (instant phase)
+		boolean correctPhase = isPhase(state, MainPhase.class) || isPhase(state, PreparationPhase.class);
 		boolean playerTurn = isPlayerTurn(state);
 		//boolean isPlayable = a.isPlayable(); //TODO: uncomment once implemented
         boolean inputCostSufficient = cost.hasResources(card.getCurrentCost());

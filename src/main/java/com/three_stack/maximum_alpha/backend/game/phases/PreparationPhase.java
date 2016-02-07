@@ -1,12 +1,15 @@
 package com.three_stack.maximum_alpha.backend.game.phases;
 
 import com.three_stack.maximum_alpha.backend.game.State;
+import com.three_stack.maximum_alpha.backend.game.player.Player;
 
 public class PreparationPhase extends Phase {
     protected static PreparationPhase instance;
+    protected static int playerDoneCount;
 
     protected PreparationPhase() {
         super();
+        playerDoneCount = 0;
     }
 
     public static PreparationPhase getInstance() {
@@ -22,7 +25,16 @@ public class PreparationPhase extends Phase {
 
 
     public void end(State state) {
-        DamagePhase.getInstance().start(state);
+        if(playerDoneCount < state.getPlayingPlayers().size()) {
+            playerDoneCount++;
+        } else {
+            Player currentPlayer = state.getTurnPlayer();
+            currentPlayer.castPreparedSpells(state);
+            state.getPlayersExcept(currentPlayer).stream()
+                    .forEach(player -> player.castPreparedSpells(state));
+
+            DamagePhase.getInstance().start(state);
+        }
     }
 
     @Override
