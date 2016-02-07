@@ -103,6 +103,7 @@ public class Prompt {
         this.event = event;
     }
 
+    @ExposeMethodResult("canUndo")
     public boolean canUndo() {
         if (isMandatory() && steps.size() == 0)
             return false;
