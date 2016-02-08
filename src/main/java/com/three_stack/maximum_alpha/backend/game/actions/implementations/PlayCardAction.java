@@ -42,10 +42,11 @@ public class PlayCardAction extends ExistingCardWithCostAction {
         }
 		boolean notInPrompt = notInPrompt(state);
 		boolean correctPhase = state.isPhase(MainPhase.class) || state.isPhase(PreparationPhase.class);
+        boolean correctType = !state.isPhase(PreparationPhase.class) || card instanceof Spell;
 		boolean playerTurn = isPlayerTurn(state);
 		//boolean isPlayable = a.isPlayable(); //TODO: uncomment once implemented
         boolean inputCostSufficient = cost.hasResources(card.getCurrentCost());
 
-		return notInPrompt && correctPhase && playerTurn && inputCostSufficient;
+		return notInPrompt && correctPhase && playerTurn && inputCostSufficient && correctType;
 	}
 }
