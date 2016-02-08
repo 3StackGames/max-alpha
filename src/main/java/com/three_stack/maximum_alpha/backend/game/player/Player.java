@@ -40,6 +40,7 @@ public class Player {
     private Status status;
 
     private Deque<TriggeredEffect> preparationPhaseTriggeredEffects;
+    private boolean preparationDone;
 
 	public enum Status {
     	WIN, LOSE, TIE, PLAYING
@@ -63,6 +64,7 @@ public class Player {
         
         status = Status.PLAYING;
         preparationPhaseTriggeredEffects = new ArrayDeque<>();
+        preparationDone = false;
     }
     
     public Collection<Card> getAllCards() {
@@ -143,6 +145,14 @@ public class Player {
         preparationPhaseTriggeredEffects.stream()
                 .forEachOrdered(state::addTriggeredEffect);
         preparationPhaseTriggeredEffects.clear();
+    }
+
+    public boolean isPreparationDone() {
+        return preparationDone;
+    }
+
+    public void setPreparationDone(boolean preparationDone) {
+        this.preparationDone = preparationDone;
     }
 
     /**

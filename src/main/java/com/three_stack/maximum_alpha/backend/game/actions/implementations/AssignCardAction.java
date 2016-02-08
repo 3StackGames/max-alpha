@@ -20,7 +20,7 @@ public class AssignCardAction extends ExistingCardAction {
     @Override
     public boolean isValid(State state) {
         boolean notInPrompt = notInPrompt(state);
-        boolean correctPhase = isPhase(state, MainPhase.class);
+        boolean correctPhase = state.isPhase(MainPhase.class);
         boolean playerTurn = isPlayerTurn(state);
         boolean playerCanAssign = player.canAssignOrPull();
         Creature creature = (Creature) player.getHand().findCard(cardId);

@@ -23,7 +23,7 @@ public class DeclareAttackerAction extends ExistingPairAction {
 	@Override
 	public boolean isValid(State state) {
 		boolean notInPrompt = notInPrompt(state);
-		boolean correctPhase = isPhase(state, AttackPhase.class);
+		boolean correctPhase = state.isPhase(AttackPhase.class);
 		boolean playerTurn = isPlayerTurn(state);
 		boolean isCreature = card instanceof Creature;
         if(!isCreature) {

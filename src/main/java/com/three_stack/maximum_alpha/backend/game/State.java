@@ -149,6 +149,16 @@ public class State {
         }
     }
 
+    public boolean playersDonePreparing() {
+        return getPlayingPlayers().stream()
+                .allMatch(Player::isPreparationDone);
+    }
+
+    public void resetPlayersDonePreparing() {
+        getPlayingPlayers().stream()
+                .forEach(player -> player.setPreparationDone(false));
+    }
+
     //Phase utilities
 
     public void completeStructures() {
@@ -259,6 +269,9 @@ public class State {
         return visibleCardMap;
     }
 
+    public boolean isPhase(Class phaseClass) {
+        return getCurrentPhase().getClass().equals(phaseClass);
+    }
 
     public String toString() {
         generateCardList();

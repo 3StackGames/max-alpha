@@ -27,9 +27,9 @@ public class PlayCardAction extends ExistingCardWithCostAction {
         } else if(card instanceof Spell) {
             Spell spell = (Spell) card;
 
-            if(isPhase(state, MainPhase.class)) {
+            if(state.isPhase(MainPhase.class)) {
                 spell.cast(playEvent, state);
-            } else if(isPhase(state, PreparationPhase.class)) {
+            } else if(state.isPhase(PreparationPhase.class)) {
                 spell.prepare(playEvent, state);
             }
         }
@@ -41,7 +41,7 @@ public class PlayCardAction extends ExistingCardWithCostAction {
             return false;
         }
 		boolean notInPrompt = notInPrompt(state);
-		boolean correctPhase = isPhase(state, MainPhase.class) || isPhase(state, PreparationPhase.class);
+		boolean correctPhase = state.isPhase(MainPhase.class) || state.isPhase(PreparationPhase.class);
 		boolean playerTurn = isPlayerTurn(state);
 		//boolean isPlayable = a.isPlayable(); //TODO: uncomment once implemented
         boolean inputCostSufficient = cost.hasResources(card.getCurrentCost());
