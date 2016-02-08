@@ -29,6 +29,15 @@ public class Spell extends Card {
                     state.addTriggeredEffect(triggeredEffect);
                 });
     }
+
+    public void prepare(Event event, State state) {
+        getEffects().stream()
+                .filter(effect -> effect.getChecks().stream().allMatch(check -> check.run(state, effect, event)))
+                .forEach(effect -> {
+                    TriggeredEffect triggeredEffect = new TriggeredEffect(effect, event);
+                    controller.pushPreparationPhaseTriggeredEffect(triggeredEffect);
+                });
+    }
     /**
      * AUTO-GENERATED GETTERS AND SETTERS
      *

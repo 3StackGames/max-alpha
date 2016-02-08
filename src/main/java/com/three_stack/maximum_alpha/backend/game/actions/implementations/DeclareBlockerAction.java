@@ -22,7 +22,7 @@ public class DeclareBlockerAction extends ExistingPairAction {
 	@Override
 	public boolean isValid(State state) {
 		boolean notInPrompt = notInPrompt(state);
-		boolean correctPhase = isPhase(state, BlockPhase.class);
+		boolean correctPhase = state.isPhase(BlockPhase.class);
 		boolean playerTurn = !isPlayerTurn(state);
 		boolean isCreature = card instanceof Creature;
         if(!isCreature) {

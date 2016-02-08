@@ -9,11 +9,10 @@ import com.three_stack.maximum_alpha.backend.game.cards.Castle;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
 import com.three_stack.maximum_alpha.backend.game.cards.Worker;
 import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
+import com.three_stack.maximum_alpha.backend.game.effects.TriggeredEffect;
 import com.three_stack.maximum_alpha.backend.server.Connection;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Player {
@@ -40,6 +39,9 @@ public class Player {
     private boolean hasAssignedOrPulled;
     private Status status;
 
+    private Deque<TriggeredEffect> preparationPhaseTriggeredEffects;
+    private boolean preparationDone;
+
 	public enum Status {
     	WIN, LOSE, TIE, PLAYING
     }
@@ -61,6 +63,8 @@ public class Player {
         castle = new Castle(baseMaxLife);
         
         status = Status.PLAYING;
+        preparationPhaseTriggeredEffects = new ArrayDeque<>();
+        preparationDone = false;
     }
     
     public Collection<Card> getAllCards() {
@@ -131,6 +135,24 @@ public class Player {
     
     public boolean hasResources(ResourceList other) {
         return resources.hasResources(other);
+    }
+
+    public void pushPreparationPhaseTriggeredEffect(TriggeredEffect triggeredEffect) {
+        preparationPhaseTriggeredEffects.push(triggeredEffect);
+    }
+
+    public void castPreparedSpells(State state) {
+        preparationPhaseTriggeredEffects.stream()
+                .forEachOrdered(state::addTriggeredEffect);
+        preparationPhaseTriggeredEffects.clear();
+    }
+
+    public boolean isPreparationDone() {
+        return preparationDone;
+    }
+
+    public void setPreparationDone(boolean preparationDone) {
+        this.preparationDone = preparationDone;
     }
 
     /**

@@ -38,7 +38,7 @@ public class ActivateAbilityAction extends ExistingCardWithCostAction {
             return false;
         }
         boolean notInPrompt = notInPrompt(state);
-        boolean correctPhase = isPhase(state, MainPhase.class);
+        boolean correctPhase = state.isPhase(MainPhase.class);
         boolean playerTurn = isPlayerTurn(state);
         boolean playerOwnsCard = card.getController().equals(player);
         if(!(card instanceof NonSpellCard)) return false;
