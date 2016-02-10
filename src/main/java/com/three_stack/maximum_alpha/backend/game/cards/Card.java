@@ -84,6 +84,10 @@ public abstract class Card {
         }
         return dominant;
     }
+    
+    public int getConvertedManaCost() {
+    	return defaultCost.getTotal();
+    }
 
     public UUID getId() {
         return id;
