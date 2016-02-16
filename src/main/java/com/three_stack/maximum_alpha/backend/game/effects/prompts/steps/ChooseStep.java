@@ -12,28 +12,28 @@ public class ChooseStep extends Step implements OptionContainer {
     protected transient Card choice;
 
     public ChooseStep(String instruction, Object value, List<Card> choices) {
-        super(instruction, value, null, null, null);
+        super(instruction, value, null, null, null, true);
         this.choices = choices;
     }
 
     public ChooseStep(String instruction, Object value, StepInputChecker stepInputChecker, List<Card> choices) {
-        super(instruction, value, stepInputChecker, null, null);
+        super(instruction, value, stepInputChecker, null, null, true);
         this.choices = choices;
     }
 
     public ChooseStep(String instruction, Object value, StepCompleter stepCompleter, List<Card> choices) {
-        super(instruction, value, null, stepCompleter, null);
+        super(instruction, value, null, stepCompleter, null, true);
         this.choices = choices;
     }
 
     public ChooseStep(String instruction, Object value, StepInputChecker stepInputChecker, StepCompleter stepCompleter, List<Card> choices) {
-        super(instruction, value, stepInputChecker, stepCompleter, null);
+        super(instruction, value, stepInputChecker, stepCompleter, null, true);
         this.choices = choices;
     }
 
 
-    public ChooseStep(String instruction, Object value, StepInputChecker stepInputChecker, StepCompleter stepCompleter, List<Card> choices, Step nextStep) {
-        super(instruction, value, stepInputChecker, stepCompleter, nextStep);
+    public ChooseStep(String instruction, Object value, StepInputChecker stepInputChecker, StepCompleter stepCompleter, List<Card> choices, Step nextStep, boolean isMandatory) {
+        super(instruction, value, stepInputChecker, stepCompleter, nextStep, isMandatory);
         this.choices = choices;
     }
 

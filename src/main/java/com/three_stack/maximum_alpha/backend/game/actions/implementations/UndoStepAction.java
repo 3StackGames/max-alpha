@@ -4,12 +4,12 @@ import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.Action;
 import com.three_stack.maximum_alpha.backend.game.effects.prompts.Prompt;
 
-public class UndoAction extends Action {
+public class UndoStepAction extends Action {
 
 	@Override
 	public void run(State state) {
         Prompt prompt = state.getCurrentPrompt();
-        if(prompt.undo()) {
+        if(prompt.undoStep()) {
         	state.removePrompt();
         }
 	}

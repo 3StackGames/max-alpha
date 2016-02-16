@@ -165,4 +165,12 @@ public class ResourceList {
 	    
 	    return true;
 	}
+	
+	public int getTotal() {
+		int sum = 0;
+		for (int mana : colors.values()) {
+        	sum += mana;
+        }
+		return sum;
+	}
 }

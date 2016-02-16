@@ -14,27 +14,27 @@ public class TargetStep extends Step implements OptionContainer {
     protected transient NonSpellCard target;
 
     public TargetStep(String instruction, Object value, List<NonSpellCard> targetables) {
-        super(instruction, value, null, null, null);
+        super(instruction, value, null, null, null, true);
         this.targetables = targetables;
     }
 
     public TargetStep(String instruction, Object value, StepInputChecker stepInputChecker, List<NonSpellCard> targetables) {
-        super(instruction, value, stepInputChecker, null, null);
+        super(instruction, value, stepInputChecker, null, null, true);
         this.targetables = targetables;
     }
 
     public TargetStep(String instruction, Object value, StepCompleter stepCompleter, List<NonSpellCard> targetables) {
-        super(instruction, value, null, stepCompleter, null);
+        super(instruction, value, null, stepCompleter, null, true);
         this.targetables = targetables;
     }
 
     public TargetStep(String instruction, Object value, StepInputChecker stepInputChecker, StepCompleter stepCompleter, List<NonSpellCard> targetables) {
-        super(instruction, value, stepInputChecker, stepCompleter, null);
+        super(instruction, value, stepInputChecker, stepCompleter, null, true);
         this.targetables = targetables;
     }
     
-    public TargetStep(String instruction, Object value, StepInputChecker stepInputChecker, StepCompleter stepCompleter, List<NonSpellCard> targetables, Step nextStep) {
-        super(instruction, value, stepInputChecker, stepCompleter, nextStep);
+    public TargetStep(String instruction, Object value, StepInputChecker stepInputChecker, StepCompleter stepCompleter, List<NonSpellCard> targetables, Step nextStep, boolean isMandatory) {
+        super(instruction, value, stepInputChecker, stepCompleter, nextStep, isMandatory);
         this.targetables = targetables;
         this.nextStep = nextStep;
     }

@@ -12,13 +12,15 @@ public abstract class Step {
     protected StepCompleter stepCompleter;
     protected StepInputChecker stepInputChecker;
     protected Step nextStep;
+    protected boolean isMandatory;
 
-    public Step(String instruction, Object value, StepInputChecker stepInputChecker, StepCompleter stepCompleter, Step nextStep) {
+    public Step(String instruction, Object value, StepInputChecker stepInputChecker, StepCompleter stepCompleter, Step nextStep, boolean isMandatory) {
         this.instruction = instruction;
         this.value = value;
         this.stepInputChecker = stepInputChecker;
         this.stepCompleter = stepCompleter;
         this.nextStep = nextStep;
+        this.isMandatory = isMandatory;
     }
 
     public Step complete(Card input, Prompt prompt) {
@@ -44,7 +46,15 @@ public abstract class Step {
         this.value = value;
     }
     
+    public Step getNextStep() {
+    	return nextStep;
+    }
+    
     public void setNextStep(Step nextStep) {
     	this.nextStep = nextStep;
+    }
+    
+    public boolean isMandatory() {
+    	return isMandatory;
     }
 }

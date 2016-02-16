@@ -115,7 +115,7 @@ public class Prompt {
      *
      * @return True if the prompt should be removed from the queue, false otherwise.
      */
-    public boolean undo() {
+    public boolean undoStep() {
         if (steps.size() > 0) {
         	currentStep = steps.pop();
             getCurrentStep().reset();
@@ -123,6 +123,16 @@ public class Prompt {
         } else {
             return true;
         }
+    }
+
+    @ExposeMethodResult("canSkip")
+    public boolean canSkip() {
+    	return !currentStep.isMandatory();
+    }
+    
+    public void skipStep() {
+        steps.push(currentStep);
+        currentStep = getCurrentStep().getNextStep();
     }
 
     @ExposeMethodResult("playerId")
