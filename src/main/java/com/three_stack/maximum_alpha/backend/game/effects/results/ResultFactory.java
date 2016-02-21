@@ -7,13 +7,13 @@ import java.lang.reflect.Constructor;
 
 public class ResultFactory {
     public static Result create(DBResult dbResult) {
-        String className = StringUtils.capitalize(dbResult.getType().replace("_", ""))+"Result";
+        String className = getResultClassName(dbResult.getType());
         try {
             Class<?> resultClass = Class.forName(className);
             if(!Result.class.isAssignableFrom(resultClass)) {
                 throw new IllegalArgumentException("Class found isn't a result");
             }
-            Constructor<?> constructor = resultClass.getConstructor(String.class);
+            Constructor<?> constructor = resultClass.getConstructor(DBResult.class);
             Result result = (Result) constructor.newInstance(dbResult);
 
             return result;
@@ -22,5 +22,15 @@ public class ResultFactory {
         }
         //fallback in case of failure
         return new EmptyResult(dbResult);
+    }
+
+    public static String getResultClassName(String type) {
+        String[] splitTypeWords = type.split("_");
+        StringBuilder stringBuilder = new StringBuilder("com.three_stack.maximum_alpha.backend.game.effects.results.");
+        for(String splitTypeWord : splitTypeWords) {
+            stringBuilder.append(StringUtils.capitalize(splitTypeWord.toLowerCase()));
+        }
+        stringBuilder.append("Result");
+        return stringBuilder.toString();
     }
 }
