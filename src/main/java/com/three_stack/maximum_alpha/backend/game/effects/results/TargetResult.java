@@ -48,7 +48,6 @@ public abstract class TargetResult extends Result{
         @Override
         @SuppressWarnings("unchecked")
         public boolean run(State state, Card source, Event event, Map<String, Object> value) {
-            //@Todo: make this actually target properly
             List<NonSpellCard> potentialTargets = getIncludedTargets(state, source.getController());
 
             if(prompt) {

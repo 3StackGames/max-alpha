@@ -57,4 +57,9 @@ public class TargetPrompt extends Prompt {
                 .map(NonSpellCard::getId)
                 .collect(Collectors.toList());
     }
+
+    @ExposeMethodResult("type")
+    public String getType() {
+        return "TARGET";
+    }
 }
