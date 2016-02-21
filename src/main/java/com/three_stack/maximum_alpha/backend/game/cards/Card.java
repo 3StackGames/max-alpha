@@ -10,7 +10,7 @@ import java.util.*;
 
 public abstract class Card {
 	protected final UUID id;
-    protected Player controller;
+    protected transient Player controller;
     protected final String name;
     protected final ResourceList defaultCost;
     protected ResourceList currentCost;

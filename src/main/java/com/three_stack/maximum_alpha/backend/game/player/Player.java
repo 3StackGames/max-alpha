@@ -60,7 +60,7 @@ public class Player {
         courtyard = new Courtyard(this);
 
         resources = new ResourceList(Parameters.INITIAL_COLORLESS_MANA);
-        castle = new Castle(baseMaxLife);
+        castle = new Castle(baseMaxLife, this);
         
         status = Status.PLAYING;
         preparationPhaseQueuedEffects = new ArrayDeque<>();
