@@ -21,13 +21,11 @@ public abstract class ChooseResult extends Result {
         //use DBCard so we can easily initialize new cards
         protected List<DBCard> optionTemplates;
 
+        @SuppressWarnings("unchecked")
         public ChooseStep(Map<String, Object> map) {
             List<ObjectId> optionIds = (List<ObjectId>) map.get("options");
-            DatabaseClient databaseClient = DatabaseClientFactory.create();
             this.optionTemplates = optionIds.stream()
-                    .map(optionId ->
-                        databaseClient.getCard(optionId)
-                    )
+                    .map(DatabaseClientFactory::getCard)
                     .collect(Collectors.toList());
         }
 
@@ -47,6 +45,8 @@ public abstract class ChooseResult extends Result {
             return true;
         }
     }
+
+    @SuppressWarnings("unchecked")
     public ChooseResult(DBResult dbResult) {
         super(dbResult);
         if(!dbResult.getValue().containsKey("card")) {
