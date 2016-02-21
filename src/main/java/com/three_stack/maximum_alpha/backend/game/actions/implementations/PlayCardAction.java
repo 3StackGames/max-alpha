@@ -26,12 +26,7 @@ public class PlayCardAction extends ExistingCardWithCostAction {
             player.getField().add((Creature) card, state.getTime(), state);
         } else if(card instanceof Spell) {
             Spell spell = (Spell) card;
-
-            if(state.isPhase(MainPhase.class)) {
-                spell.cast(playEvent, state);
-            } else if(state.isPhase(PreparationPhase.class)) {
-                spell.prepare(playEvent, state);
-            }
+            spell.cast(playEvent, state);
         }
     }
 

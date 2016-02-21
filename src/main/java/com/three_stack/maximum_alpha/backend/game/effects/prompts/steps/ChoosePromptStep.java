@@ -7,38 +7,38 @@ import io.gsonfire.annotations.ExposeMethodResult;
 import java.util.List;
 import java.util.UUID;
 
-public class ChooseStep extends Step implements OptionContainer {
+public class ChoosePromptStep extends PromptStep implements OptionContainer {
     protected List<Card> choices;
     protected transient Card choice;
 
-    public ChooseStep(String instruction, Object value, List<Card> choices) {
+    public ChoosePromptStep(String instruction, Object value, List<Card> choices) {
         super(instruction, value, null, null, null);
         this.choices = choices;
     }
 
-    public ChooseStep(String instruction, Object value, StepInputChecker stepInputChecker, List<Card> choices) {
+    public ChoosePromptStep(String instruction, Object value, StepInputChecker stepInputChecker, List<Card> choices) {
         super(instruction, value, stepInputChecker, null, null);
         this.choices = choices;
     }
 
-    public ChooseStep(String instruction, Object value, StepCompleter stepCompleter, List<Card> choices) {
+    public ChoosePromptStep(String instruction, Object value, StepCompleter stepCompleter, List<Card> choices) {
         super(instruction, value, null, stepCompleter, null);
         this.choices = choices;
     }
 
-    public ChooseStep(String instruction, Object value, StepInputChecker stepInputChecker, StepCompleter stepCompleter, List<Card> choices) {
+    public ChoosePromptStep(String instruction, Object value, StepInputChecker stepInputChecker, StepCompleter stepCompleter, List<Card> choices) {
         super(instruction, value, stepInputChecker, stepCompleter, null);
         this.choices = choices;
     }
 
 
-    public ChooseStep(String instruction, Object value, StepInputChecker stepInputChecker, StepCompleter stepCompleter, List<Card> choices, Step nextStep) {
-        super(instruction, value, stepInputChecker, stepCompleter, nextStep);
+    public ChoosePromptStep(String instruction, Object value, StepInputChecker stepInputChecker, StepCompleter stepCompleter, List<Card> choices, PromptStep nextPromptStep) {
+        super(instruction, value, stepInputChecker, stepCompleter, nextPromptStep);
         this.choices = choices;
     }
 
     @Override
-    public Step complete(Card input, Prompt prompt) {
+    public PromptStep complete(Card input, Prompt prompt) {
         setChoice(input);
         return super.complete(input, prompt);
     }

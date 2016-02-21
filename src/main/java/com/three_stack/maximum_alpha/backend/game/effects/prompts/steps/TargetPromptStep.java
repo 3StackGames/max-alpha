@@ -9,38 +9,38 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class TargetStep extends Step implements OptionContainer {
+public class TargetPromptStep extends PromptStep implements OptionContainer {
     protected transient List<NonSpellCard> targetables;
     protected transient NonSpellCard target;
 
-    public TargetStep(String instruction, Object value, List<NonSpellCard> targetables) {
+    public TargetPromptStep(String instruction, Object value, List<NonSpellCard> targetables) {
         super(instruction, value, null, null, null);
         this.targetables = targetables;
     }
 
-    public TargetStep(String instruction, Object value, StepInputChecker stepInputChecker, List<NonSpellCard> targetables) {
+    public TargetPromptStep(String instruction, Object value, StepInputChecker stepInputChecker, List<NonSpellCard> targetables) {
         super(instruction, value, stepInputChecker, null, null);
         this.targetables = targetables;
     }
 
-    public TargetStep(String instruction, Object value, StepCompleter stepCompleter, List<NonSpellCard> targetables) {
+    public TargetPromptStep(String instruction, Object value, StepCompleter stepCompleter, List<NonSpellCard> targetables) {
         super(instruction, value, null, stepCompleter, null);
         this.targetables = targetables;
     }
 
-    public TargetStep(String instruction, Object value, StepInputChecker stepInputChecker, StepCompleter stepCompleter, List<NonSpellCard> targetables) {
+    public TargetPromptStep(String instruction, Object value, StepInputChecker stepInputChecker, StepCompleter stepCompleter, List<NonSpellCard> targetables) {
         super(instruction, value, stepInputChecker, stepCompleter, null);
         this.targetables = targetables;
     }
     
-    public TargetStep(String instruction, Object value, StepInputChecker stepInputChecker, StepCompleter stepCompleter, List<NonSpellCard> targetables, Step nextStep) {
-        super(instruction, value, stepInputChecker, stepCompleter, nextStep);
+    public TargetPromptStep(String instruction, Object value, StepInputChecker stepInputChecker, StepCompleter stepCompleter, List<NonSpellCard> targetables, PromptStep nextPromptStep) {
+        super(instruction, value, stepInputChecker, stepCompleter, nextPromptStep);
         this.targetables = targetables;
-        this.nextStep = nextStep;
+        this.nextPromptStep = nextPromptStep;
     }
 
     @Override
-    public Step complete(Card input, Prompt prompt) {
+    public PromptStep complete(Card input, Prompt prompt) {
         setTarget((NonSpellCard) input);
         return super.complete(input, prompt);
     }

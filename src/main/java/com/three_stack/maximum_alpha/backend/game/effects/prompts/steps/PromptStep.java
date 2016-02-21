@@ -3,30 +3,30 @@ package com.three_stack.maximum_alpha.backend.game.effects.prompts.steps;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.effects.prompts.Prompt;
 
-public abstract class Step {
+public abstract class PromptStep {
     /**
-     * Used to pass a value through to the result lambda
+     * Used to pass a valueTemplate through to the result lambda
      */
     protected Object value;
     protected final String instruction;
     protected StepCompleter stepCompleter;
     protected StepInputChecker stepInputChecker;
-    protected Step nextStep;
+    protected PromptStep nextPromptStep;
 
-    public Step(String instruction, Object value, StepInputChecker stepInputChecker, StepCompleter stepCompleter, Step nextStep) {
+    public PromptStep(String instruction, Object value, StepInputChecker stepInputChecker, StepCompleter stepCompleter, PromptStep nextPromptStep) {
         this.instruction = instruction;
         this.value = value;
         this.stepInputChecker = stepInputChecker;
         this.stepCompleter = stepCompleter;
-        this.nextStep = nextStep;
+        this.nextPromptStep = nextPromptStep;
     }
 
-    public Step complete(Card input, Prompt prompt) {
+    public PromptStep complete(Card input, Prompt prompt) {
         if(stepCompleter != null) {
             stepCompleter.run(this, input, prompt);
         }
         
-        return nextStep;
+        return nextPromptStep;
     }
 
     public boolean isValidInput(Card input, Prompt prompt) {
@@ -44,7 +44,7 @@ public abstract class Step {
         this.value = value;
     }
     
-    public void setNextStep(Step nextStep) {
-    	this.nextStep = nextStep;
+    public void setNextPromptStep(PromptStep nextPromptStep) {
+    	this.nextPromptStep = nextPromptStep;
     }
 }
