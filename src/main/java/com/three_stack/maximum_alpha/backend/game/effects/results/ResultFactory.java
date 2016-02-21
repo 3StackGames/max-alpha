@@ -14,9 +14,8 @@ public class ResultFactory {
                 throw new IllegalArgumentException("Class found isn't a result");
             }
             Constructor<?> constructor = resultClass.getConstructor(DBResult.class);
-            Result result = (Result) constructor.newInstance(dbResult);
 
-            return result;
+            return (Result) constructor.newInstance(dbResult);
         } catch (Exception e) {
             e.printStackTrace();
         }

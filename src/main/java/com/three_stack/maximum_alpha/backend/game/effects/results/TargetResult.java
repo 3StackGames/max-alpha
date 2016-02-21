@@ -11,13 +11,14 @@ import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.database_client.pojos.DBResult;
 import org.bson.types.ObjectId;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public abstract class TargetResult extends Result{
+    protected static final List<String> filterBases = Arrays.asList("CREATURE", "STRUCTURE", "CASTLE");
     public class TargetStep extends Step {
+
         //number of targets the prompt should find
         protected int targetCount;
         protected List<List<String>> includes;
@@ -28,9 +29,23 @@ public abstract class TargetResult extends Result{
         public TargetStep(Map<String, Object> map) {
             this.prompt = (boolean) map.get("prompt");
             this.includes = (List<List<String>>) map.get("includes");
+            checkIncludes();
             this.excludes = (List<List<String>>) map.get("excludes");
             if(this.prompt) {
                 this.targetCount = (int) map.get("targetCount");
+            }
+        }
+
+        private void checkIncludes() {
+            if(includes == null || includes.size() < 1 || includes.get(0).size() < 1) {
+                throw new IllegalArgumentException("includes must not be empty");
+            }
+            boolean validBase = includes.stream()
+                    .allMatch(andTerm ->
+                            filterBases.contains(andTerm.get(0))
+                    );
+            if(!validBase) {
+                throw new IllegalArgumentException("the first include must be a legal base. for example: CREATURE or STRUCTURE");
             }
         }
 
@@ -38,9 +53,8 @@ public abstract class TargetResult extends Result{
         @SuppressWarnings("unchecked")
         public boolean run(State state, Card source, Event event, Map<String, Object> value) {
             //@Todo: make this actually target properly
-            List<NonSpellCard> potentialTargets = state.getPlayingPlayers().stream()
-                    .map(Player::getCastle)
-                    .collect(Collectors.toList());
+            List<NonSpellCard> potentialTargets = getIncludedTargets(state, source.getController());
+
             if(prompt) {
                 //@Todo: make this based on the database description
                 String description = "Select a target";
@@ -52,6 +66,47 @@ public abstract class TargetResult extends Result{
                 targets.addAll(potentialTargets);
                 return false;
             }
+        }
+
+        private List<NonSpellCard> getIncludedTargets(State state, Player controllingPlayer) {
+            List<NonSpellCard> allIncludedTargets = new ArrayList<>();
+            List<Player> playingPlayers = state.getPlayingPlayers();
+            includes.stream()
+                    .forEach( andTerm -> {
+                        String base = andTerm.get(0);
+                        Stream<NonSpellCard> includedTargetsStream;
+                        //get base
+                        switch (base) {
+                            case "CREATURE":
+                                includedTargetsStream = playingPlayers.stream()
+                                        .map(player -> player.getField().getCards())
+                                        .flatMap(Collection::stream);
+                                break;
+                            case "STRUCTURE":
+                                includedTargetsStream = playingPlayers.stream()
+                                        .map(player -> player.getCourtyard().getCards())
+                                        .flatMap(Collection::stream);
+                                break;
+                            case "CASTLE":
+                                includedTargetsStream = playingPlayers.stream()
+                                        .map(Player::getCastle);
+                                break;
+                            default:
+                                throw new IllegalStateException("Base isn't recognized");
+                        }
+                        //handle additional conditions
+                        if(andTerm.contains("ENEMY")) {
+                            includedTargetsStream = includedTargetsStream
+                                    .filter(includedTarget -> !includedTarget.getController().equals(controllingPlayer));
+                        } else if(andTerm.contains("FRIENDLY")) {
+                            includedTargetsStream = includedTargetsStream
+                                    .filter(includedTarget -> includedTarget.getController().equals(controllingPlayer));
+                        }
+
+                        allIncludedTargets.addAll(includedTargetsStream.collect(Collectors.toList()));
+                    });
+
+            return allIncludedTargets;
         }
     }
 
