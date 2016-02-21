@@ -20,7 +20,6 @@ public abstract class TargetResult extends Result{
     public class TargetStep extends Step {
 
         //number of targets the prompt should find
-        protected int targetCount;
         protected List<List<String>> includes;
         protected List<List<String>> excludes;
         protected boolean prompt;
@@ -31,9 +30,6 @@ public abstract class TargetResult extends Result{
             this.includes = (List<List<String>>) map.get("includes");
             checkIncludes();
             this.excludes = (List<List<String>>) map.get("excludes");
-            if(this.prompt) {
-                this.targetCount = (int) map.get("targetCount");
-            }
         }
 
         private void checkIncludes() {

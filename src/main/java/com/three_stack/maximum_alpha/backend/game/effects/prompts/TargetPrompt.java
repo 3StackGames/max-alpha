@@ -34,13 +34,13 @@ public class TargetPrompt extends Prompt {
 
     @Override
     public boolean isValidInput(Object input)  {
-        if(!(input instanceof List)) {
+        if(!(input instanceof NonSpellCard)) {
             return false;
         }
-        List<NonSpellCard> inputTargets = (List<NonSpellCard>) input;
-
-        return inputTargets.stream()
-                .allMatch(inputTarget -> potentialTargets.contains(inputTarget));
+        if(!potentialTargets.contains(input)) {
+            return false;
+        }
+        return true;
     }
 
     public NonSpellCard getTarget() {
@@ -51,7 +51,7 @@ public class TargetPrompt extends Prompt {
         this.target = target;
     }
 
-    @ExposeMethodResult("parentalTargetIds")
+    @ExposeMethodResult("targetableIds")
     public List<UUID> getPotentialTargetIds() {
         return potentialTargets.stream()
                 .map(NonSpellCard::getId)
