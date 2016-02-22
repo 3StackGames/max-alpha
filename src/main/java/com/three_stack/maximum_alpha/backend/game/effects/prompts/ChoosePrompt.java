@@ -44,4 +44,20 @@ public class ChoosePrompt extends Prompt {
     public String getType() {
         return "CHOOSE";
     }
+
+    public Card getChoice() {
+        return choice;
+    }
+
+    public void setChoice(Card choice) {
+        this.choice = choice;
+    }
+
+    public List<Card> getOptions() {
+        return options;
+    }
+
+    public void setOptions(List<Card> options) {
+        this.options = options;
+    }
 }

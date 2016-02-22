@@ -2,6 +2,7 @@ package com.three_stack.maximum_alpha.backend.game.actions.implementations;
 
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.CardAction;
+import com.three_stack.maximum_alpha.backend.game.effects.prompts.ChoosePrompt;
 import com.three_stack.maximum_alpha.backend.game.effects.prompts.Prompt;
 import com.three_stack.maximum_alpha.backend.game.effects.prompts.steps.ChoosePromptStep;
 
@@ -10,27 +11,18 @@ public class ChoosePromptTargetAction extends CardAction {
     @Override
     public void setup(State state) {
         super.setup(state);
-        //@todo: Fix
-        /*
-        ChoosePromptStep step = (ChoosePromptStep) state.getCurrentPrompt().getCurrentPromptStep();
-        card = step.getChoices().stream()
-                .filter(card -> card.getId().equals(cardId))
+        ChoosePrompt choosePrompt = (ChoosePrompt) state.getCurrentPrompt();
+        card = choosePrompt.getOptions().stream()
+                .filter(option -> option.getId().equals(cardId))
                 .findFirst()
                 .orElse(null);
-                */
     }
 
     @Override
     public void run(State state) {
-        //@todo: Fix
-        /*
-        Prompt prompt = state.getCurrentPrompt();
-        prompt.completeCurrentStep(card);
-        if(prompt.isDone()) {
-            prompt.resolve(state);
-            state.removePrompt();
-        }
-        */
+        ChoosePrompt choosePrompt = (ChoosePrompt) state.getCurrentPrompt();
+        choosePrompt.setChoice(card);
+        choosePrompt.resolve(state);
         state.removePrompt();
     }
 
