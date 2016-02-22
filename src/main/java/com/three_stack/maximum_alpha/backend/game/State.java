@@ -113,7 +113,7 @@ public class State {
         runQueuedEffects();
     }
 
-    public void trackCardEffectsAndMarkController(List<Card> mainCards, List<Structure> structureCards, Player controller) {
+    private void trackCardEffectsAndMarkController(List<Card> mainCards, List<Structure> structureCards, Player controller) {
         trackCardEffectsAndMarkController(mainCards, controller);
         List<Card> structuresAsCards = structureCards.stream().collect(Collectors.toList());
         trackCardEffectsAndMarkController(structuresAsCards, controller);
@@ -121,9 +121,13 @@ public class State {
 
     public void trackCardEffectsAndMarkController(List<Card> cards, Player controller) {
         for (Card card : cards) {
-            card.setController(controller);
-            trackCardEffects(card);
+            trackCardEffectsAndMarkController(card, controller);
         }
+    }
+
+    public void trackCardEffectsAndMarkController(Card card, Player controller) {
+        card.setController(controller);
+        trackCardEffects(card);
     }
 
     //@Todo: @Jason consider refactoring to streams - Jason
