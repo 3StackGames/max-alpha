@@ -1,78 +1,41 @@
 package com.three_stack.maximum_alpha.backend.game.effects.prompts;
 
+import com.three_stack.maximum_alpha.backend.game.State;
+import com.three_stack.maximum_alpha.backend.game.cards.Card;
+import com.three_stack.maximum_alpha.backend.game.cards.NonSpellCard;
+import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
+import com.three_stack.maximum_alpha.backend.game.effects.results.Result;
+import com.three_stack.maximum_alpha.backend.game.player.Player;
 import io.gsonfire.annotations.ExposeMethodResult;
 
 import java.util.List;
-import java.util.Stack;
+import java.util.Map;
 import java.util.UUID;
 
-import com.three_stack.maximum_alpha.backend.game.State;
-import com.three_stack.maximum_alpha.backend.game.cards.Card;
-import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
-import com.three_stack.maximum_alpha.backend.game.effects.prompts.steps.Step;
-import com.three_stack.maximum_alpha.backend.game.player.Player;
-
-public class Prompt {
+public abstract class Prompt {
+    protected String description;
     protected transient Card source;
-    protected Stack<Step> steps;
-    protected Step currentStep;
     protected transient Player player;
     protected boolean isMandatory;
-    protected transient PromptResolver promptResolver;
+    protected transient Map<String, Object> value;
     /**
      * event is the event that caused the prompt. For example, an event triggered by ON_PLAY.
      */
     protected Event event;
 
-    public Prompt(Card source, Player player, Event event, Step step, PromptResolver promptResolver, boolean isMandatory) {
-        setup(source, player, event, step, promptResolver, isMandatory);
-    }
-    
-    public Prompt(Card source, Player player, Event event, List<Step> steps, PromptResolver promptResolver, boolean isMandatory) {
-    	Step step = null;
-    	if(!steps.isEmpty()) {
-    		step = steps.get(0);
-	    	for(int i = 0; i < steps.size()-1; i++) {
-	    		steps.get(i).setNextStep(steps.get(i+1));
-	    	}
-    	}
-        setup(source, player, event, step, promptResolver, isMandatory);
-    }
-
-    protected void setup(Card source, Player player, Event event, Step step, PromptResolver promptResolver, boolean isMandatory) {
+    public Prompt(String description, Card source, Player player, Event event, boolean isMandatory, Map<String, Object> value) {
+        this.description = description;
         this.source = source;
         this.event = event;
         this.player = player;
-        this.currentStep = step;
-        this.promptResolver = promptResolver;
         this.isMandatory = isMandatory;
-        
-        this.steps = new Stack<>();
+        this.value = value;
     }
 
-    public void completeCurrentStep(Card input) {
-    	steps.push(currentStep);
-        currentStep = getCurrentStep().complete(input, this);
-    }
-
-    public boolean isValidInput(Card input) {
-        return getCurrentStep().isValidInput(input, this);
-    }
-
-    public void resolve(State state) {
-        promptResolver.run(event, state, this);
-    }
-
-    public boolean isDone() {
-        return currentStep == null;
-    }
+    public abstract void resolve(State state);
 
     public Card getSource() {
         return source;
-    }
-
-    public Step getCurrentStep() {
-        return currentStep;
     }
 
     public Player getPlayer() {
@@ -87,14 +50,6 @@ public class Prompt {
         this.isMandatory = isMandatory;
     }
 
-    public List<Step> getSteps() {
-        return steps;
-    }
-    
-    public void setCurrentStep(Step currentStep) {
-        this.currentStep = currentStep;
-    }
-
     public Event getEvent() {
         return event;
     }
@@ -103,36 +58,33 @@ public class Prompt {
         this.event = event;
     }
 
+    public abstract boolean isValidInput(Object input);
+
+    /**
+     * @TODO: Richard, I broke this and I'm not sure what's necessary to fix this - Sincerely, J
+     */
     @ExposeMethodResult("canUndo")
     public boolean canUndo() {
-        if (isMandatory() && steps.size() == 0)
-            return false;
-        return true;
+//        return !isMandatory() || !promptSteps.isEmpty();
+        return false;
     }
 
     /**
      * Undoes the current step.
-     *
+     * @Todo: Richard, same deal as above
      * @return True if the prompt should be removed from the queue, false otherwise.
      */
-    public boolean undoStep() {
-        if (steps.size() > 0) {
-        	currentStep = steps.pop();
-            getCurrentStep().reset();
+    public boolean undo() {
+        /*
+        if (promptSteps.size() > 0) {
+        	currentPromptStep = promptSteps.pop();
+            getCurrentPromptStep().reset();
             return false;
         } else {
             return true;
         }
-    }
-
-    @ExposeMethodResult("canSkip")
-    public boolean canSkip() {
-    	return !currentStep.isMandatory();
-    }
-    
-    public void skipStep() {
-        steps.push(currentStep);
-        currentStep = getCurrentStep().getNextStep();
+        */
+        return false;
     }
 
     @ExposeMethodResult("playerId")

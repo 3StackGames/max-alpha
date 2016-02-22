@@ -15,7 +15,7 @@ public class EndTurnWithoutCombatAction extends Action {
     @Override
     public boolean isValid(State state) {
         boolean notInPrompt = notInPrompt(state);
-        boolean correctPhase = isPhase(state, MainPhase.class);
+        boolean correctPhase = state.isPhase(MainPhase.class);
         boolean playerTurn = isPlayerTurn(state);
         boolean combatNotStarted = !state.isCombatEnded();
 

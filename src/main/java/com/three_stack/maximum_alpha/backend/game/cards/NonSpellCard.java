@@ -42,9 +42,15 @@ public abstract class NonSpellCard extends Card {
         super(other);
         this.health = other.health;
         this.damageTaken = other.damageTaken;
+        this.dead = other.dead;
+
         this.exhausted = other.exhausted;
         this.refreshable = other.refreshable;
+
         this.buffs = other.buffs;
+        this.abilities = other.getAbilities().stream()
+                .map(Ability::new)
+                .collect(Collectors.toList());
     }
 
     public SourceDamageTargetEvent takeDamage(int damage, Card source, Time time) {

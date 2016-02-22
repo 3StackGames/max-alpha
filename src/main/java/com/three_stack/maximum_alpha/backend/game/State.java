@@ -60,7 +60,7 @@ public class State {
      * begins at 1, because initialization happens "at time 0"
      */
     private transient int timer = 1;
-    private transient PriorityQueue<TriggeredEffect> triggeredEffects;
+    private transient PriorityQueue<QueuedEffect> queuedEffects;
     private List<Player> winningPlayers;
     private List<Player> losingPlayers;
     private List<Player> tiedPlayers;
@@ -77,9 +77,9 @@ public class State {
         this.winningPlayers = new ArrayList<>();
         this.losingPlayers = new ArrayList<>();
         this.tiedPlayers = new ArrayList<>();
-        this.triggeredEffects = new PriorityQueue<>((Comparator<TriggeredEffect>) (a, b) -> {
-            if (!a.getTrigerringEvent().getTime().equals(b.getTrigerringEvent().getTime())) {
-                return a.getTrigerringEvent().getTime().getValue() - b.getTrigerringEvent().getTime().getValue();
+        this.queuedEffects = new PriorityQueue<>((Comparator<QueuedEffect>) (a, b) -> {
+            if (!a.getTriggeringEvent().getTime().equals(b.getTriggeringEvent().getTime())) {
+                return a.getTriggeringEvent().getTime().getValue() - b.getTriggeringEvent().getTime().getValue();
             } else {
                 return a.getEffect().getSource().getTimeEnteredZone().getValue() - b.getEffect().getSource().getTimeEnteredZone().getValue();
             }
@@ -110,19 +110,24 @@ public class State {
         initialDraw();
         StartPhase.getInstance().start(this);
         //do other things here
-        resolveTriggeredEffects();
+        runQueuedEffects();
     }
 
     private void trackCardEffectsAndMarkController(List<Card> mainCards, List<Structure> structureCards, Player controller) {
-        for (Card card : mainCards) {
-            card.setController(controller);
-            trackCardEffects(card);
-        }
+        trackCardEffectsAndMarkController(mainCards, controller);
+        List<Card> structuresAsCards = structureCards.stream().collect(Collectors.toList());
+        trackCardEffectsAndMarkController(structuresAsCards, controller);
+    }
 
-        for (Structure structure : structureCards) {
-            structure.setController(controller);
-            trackCardEffects(structure);
+    public void trackCardEffectsAndMarkController(List<Card> cards, Player controller) {
+        for (Card card : cards) {
+            trackCardEffectsAndMarkController(card, controller);
         }
+    }
+
+    public void trackCardEffectsAndMarkController(Card card, Player controller) {
+        card.setController(controller);
+        trackCardEffects(card);
     }
 
     //@Todo: @Jason consider refactoring to streams - Jason
@@ -147,6 +152,16 @@ public class State {
                 player.draw(getTime(), this);
             }
         }
+    }
+
+    public boolean playersDonePreparing() {
+        return getPlayingPlayers().stream()
+                .allMatch(Player::isPreparationDone);
+    }
+
+    public void resetPlayersDonePreparing() {
+        getPlayingPlayers().stream()
+                .forEach(player -> player.setPreparationDone(false));
     }
 
     //Phase utilities
@@ -201,7 +216,7 @@ public class State {
         if (isLegalAction(action)) {
             eventHistory.clear();
             action.run(this);
-            resolveTriggeredEffects();
+            runQueuedEffects();
             resolveDeaths();
             return true;
         } else {
@@ -259,6 +274,9 @@ public class State {
         return visibleCardMap;
     }
 
+    public boolean isPhase(Class phaseClass) {
+        return getCurrentPhase().getClass().equals(phaseClass);
+    }
 
     public String toString() {
         generateCardList();
@@ -362,16 +380,16 @@ public class State {
         return effects.containsKey(trigger);
     }
 
-    public void addTriggeredEffect(TriggeredEffect triggeredEffect) {
-        triggeredEffects.add(triggeredEffect);
+    public void addQueuedEffect(QueuedEffect queuedEffect) {
+        queuedEffects.add(queuedEffect);
     }
 
-    public TriggeredEffect getTriggeredEffect() {
-        return triggeredEffects.remove();
+    public PriorityQueue<QueuedEffect> getQueuedEffects() {
+        return queuedEffects;
     }
 
-    public boolean hasTriggeredEffect() {
-        return !triggeredEffects.isEmpty();
+    public boolean hasQueuedEffects() {
+        return !queuedEffects.isEmpty();
     }
 
     public Time getTime() {
@@ -396,8 +414,7 @@ public class State {
         //add triggered triggerEffects to the queue of triggered triggerEffects
         effects.stream()
                 .filter(effect -> effect.getChecks().parallelStream().allMatch(check -> check.run(this, effect, event)))
-                .map(effect -> new TriggeredEffect(effect, event))
-                .forEach(this::addTriggeredEffect);
+                .forEach(effect -> effect.trigger(event, this));
     }
 
     public Event createSingleCardEvent(Card card, String type, Time time, Trigger trigger) {
@@ -415,15 +432,19 @@ public class State {
     /**
      * Traverses the "Effect Tree" and resolves them in BFS / Level-Order manner.
      */
-    private void resolveTriggeredEffects() {
-        while (hasTriggeredEffect()) {
-            TriggeredEffect triggeredEffect = getTriggeredEffect();
-            Effect currentEffect = triggeredEffect.getEffect();
-            Event triggeringEvent = triggeredEffect.getTrigerringEvent();
-            //index tracks which result / value pair we're on so we can pass the proper value to the run() method
-            int[] index = {0};
-            currentEffect.getResults().stream()
-                    .forEachOrdered(result -> result.run(this, currentEffect.getSource(), triggeringEvent, currentEffect.getValues().get(index[0]++)));
+    private void runQueuedEffects() {
+        while (hasQueuedEffects()) {
+            QueuedEffect queuedEffect = getQueuedEffects().peek();
+            Event triggeringEvent = queuedEffect.getTriggeringEvent();
+            boolean promptAdded = queuedEffect.run(this, queuedEffect.getEffect().getSource(), triggeringEvent);
+            if(promptAdded) {
+                //have to stop traversing the tree when a prompt is created so we can get the result
+                return;
+            }
+            if(queuedEffect.isDone()) {
+                getQueuedEffects().remove();
+            }
+            //@Todo: check if the change of going from entire effect to single runnables affects the death resolver
             resolveDeaths();
         }
     }

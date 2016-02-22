@@ -13,13 +13,15 @@ public class BuildStructureAction extends ExistingCardAction {
         Player player = getPlayer(state);
         Card card = state.findCard(cardId);
         player.pay(card.getCurrentCost());
-        player.getCourtyard().add(new Structure((Structure) card), state.getTime(), state);
+        Structure structure = new Structure((Structure) card);
+        state.trackCardEffectsAndMarkController(structure, player);
+        player.getCourtyard().add(structure, state.getTime(), state);
     }
 
     @Override
     public boolean isValid(State state) {
         boolean notInPrompt = notInPrompt(state);
-        boolean correctPhase = isPhase(state, MainPhase.class);
+        boolean correctPhase = state.isPhase(MainPhase.class);
         boolean playerTurn = isPlayerTurn(state);
         Card structure = state.findCard(cardId);
         boolean isStructure = (structure != null && structure instanceof Structure);

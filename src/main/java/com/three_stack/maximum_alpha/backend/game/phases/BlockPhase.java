@@ -21,9 +21,7 @@ public class BlockPhase extends Phase {
     }
 
     public void end(State state) {
-        DamagePhase.getInstance().start(state);
-        //@Todo: Implement Preparation Phase
-//        PreparationPhase.getInstance().start(state);
+        PreparationPhase.getInstance().start(state);
     }
 
     @Override

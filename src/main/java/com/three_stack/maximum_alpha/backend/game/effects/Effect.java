@@ -1,8 +1,14 @@
 package com.three_stack.maximum_alpha.backend.game.effects;
 
+import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
+import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
+import com.three_stack.maximum_alpha.backend.game.effects.results.Result;
+import com.three_stack.maximum_alpha.backend.game.effects.results.ResultFactory;
+import com.three_stack.maximum_alpha.backend.game.phases.PreparationPhase;
 import com.three_stack.maximum_alpha.database_client.pojos.DBEffect;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,7 +17,6 @@ public class Effect {
     protected Card source;
     protected List<Check> checks;
     protected List<Result> results;
-    protected List<Object> values;
 
     public Effect(Card source, DBEffect dbEffect) {
         this.source = source;
@@ -19,23 +24,35 @@ public class Effect {
                 .map(Checks::getCheck)
                 .collect(Collectors.toList());
         this.results = dbEffect.getResults().stream()
-                .map(Results::getResult)
+                .map(ResultFactory::create)
                 .collect(Collectors.toList());
-        this.values = dbEffect.getValues();
     }
 
-    public Effect(Card source, List<Check> checks, List<Result> results, List<Object> values) {
+    public Effect(Card source, List<Check> checks, List<Result> results) {
         this.source = source;
         this.checks = checks;
         this.results = results;
-        this.values = values;
     }
 
     public Effect(Card source) {
         this.source = source;
         this.checks = new ArrayList<>();
         this.results = new ArrayList<>();
-        this.values = new ArrayList<>();
+    }
+
+    public Effect(Effect other) {
+        this.source = other.source;
+        this.checks = other.checks.stream().collect(Collectors.toList());
+        this.results = other.results.stream()
+                .map(result -> {
+                    try {
+                        return result.getClass().getConstructor(Result.class).newInstance(result);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                })
+                .collect(Collectors.toList());
     }
 
     public void addCheck(Check check) {
@@ -46,13 +63,15 @@ public class Effect {
         getResults().add(result);
     }
 
-    public void addValue(Object value) {
-        getValues().add(value);
-    }
-
-    public void addResult(Result result, Object value) {
-        addResult(result);
-        addValue(value);
+    public void trigger(Event event, State state) {
+        QueuedEffect queuedEffect;
+        if(state.isPhase(PreparationPhase.class)) {
+            queuedEffect = new QueuedEffect(event, this, QueuedEffect.Type.PREPARE_ONLY);
+            source.getController().pushPreparationPhaseQueuedRunnable(new QueuedEffect(event, this, QueuedEffect.Type.RESOLVE_ONLY));
+        } else {
+            queuedEffect = new QueuedEffect(event, this);
+        }
+        state.addQueuedEffect(queuedEffect);
     }
 
     /**
@@ -82,13 +101,5 @@ public class Effect {
 
     public void setResults(List<Result> results) {
         this.results = results;
-    }
-
-    public List<Object> getValues() {
-        return values;
-    }
-
-    public void setValues(List<Object> values) {
-        this.values = values;
     }
 }

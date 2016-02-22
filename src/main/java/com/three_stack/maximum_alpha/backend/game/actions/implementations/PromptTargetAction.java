@@ -2,17 +2,17 @@ package com.three_stack.maximum_alpha.backend.game.actions.implementations;
 
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.ExistingCardAction;
+import com.three_stack.maximum_alpha.backend.game.cards.NonSpellCard;
 import com.three_stack.maximum_alpha.backend.game.effects.prompts.Prompt;
+import com.three_stack.maximum_alpha.backend.game.effects.prompts.TargetPrompt;
 
 public class PromptTargetAction extends ExistingCardAction {
     @Override
     public void run(State state) {
-        Prompt prompt = state.getCurrentPrompt();
-        prompt.completeCurrentStep(card);
-        if(prompt.isDone()) {
-            prompt.resolve(state);
-            state.removePrompt();
-        }
+        TargetPrompt prompt = (TargetPrompt) state.getCurrentPrompt();
+        prompt.setTarget((NonSpellCard) card);
+        prompt.resolve(state);
+        state.removePrompt();
     }
 
 	@Override

@@ -5,6 +5,8 @@ import com.three_stack.maximum_alpha.backend.game.effects.events.SingleCardEvent
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 import org.apache.log4j.Logger;
 
+import java.util.Map;
+
 /**
  * Terminology:
  *  T = Triggerer = a that triggered the result
@@ -21,7 +23,9 @@ import org.apache.log4j.Logger;
 public class Checks {
     static Logger log = Logger.getLogger(Checks.class.getName());
 
-    public static Check getCheck(String checkName) {
+    //@Todo: handle checks w/ params
+    public static Check getCheck(Map<String, Object> checkMap) {
+        String checkName = (String) checkMap.get("name");
         try {
             return (Check) Checks.class.getField(checkName).get(Checks.class.newInstance());
         } catch (Exception e) {

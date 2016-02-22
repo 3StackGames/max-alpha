@@ -4,13 +4,11 @@ import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.ExistingCardWithCostAction;
 import com.three_stack.maximum_alpha.backend.game.cards.Ability;
 import com.three_stack.maximum_alpha.backend.game.cards.NonSpellCard;
-import com.three_stack.maximum_alpha.backend.game.effects.TriggeredEffect;
+import com.three_stack.maximum_alpha.backend.game.effects.QueuedEffect;
 import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.backend.game.phases.MainPhase;
 
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class ActivateAbilityAction extends ExistingCardWithCostAction {
     protected UUID abilityId;
@@ -28,8 +26,8 @@ public class ActivateAbilityAction extends ExistingCardWithCostAction {
         Event activateAbilityEvent = state.createSingleCardEvent(card, "activate ability", state.getTime(), null);
 
         ability.getEffects().stream()
-                .map(effect -> new TriggeredEffect(effect, activateAbilityEvent))
-                .forEach(state::addTriggeredEffect);
+                .map(effect -> new QueuedEffect(activateAbilityEvent, effect))
+                .forEach(state::addQueuedEffect);
     }
 
     @Override
@@ -38,7 +36,7 @@ public class ActivateAbilityAction extends ExistingCardWithCostAction {
             return false;
         }
         boolean notInPrompt = notInPrompt(state);
-        boolean correctPhase = isPhase(state, MainPhase.class);
+        boolean correctPhase = state.isPhase(MainPhase.class);
         boolean playerTurn = isPlayerTurn(state);
         boolean playerOwnsCard = card.getController().equals(player);
         if(!(card instanceof NonSpellCard)) return false;

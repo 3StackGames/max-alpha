@@ -9,11 +9,10 @@ import com.three_stack.maximum_alpha.backend.game.cards.Castle;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
 import com.three_stack.maximum_alpha.backend.game.cards.Worker;
 import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
+import com.three_stack.maximum_alpha.backend.game.effects.QueuedEffect;
 import com.three_stack.maximum_alpha.backend.server.Connection;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Player {
@@ -40,6 +39,9 @@ public class Player {
     private boolean hasAssignedOrPulled;
     private Status status;
 
+    private Deque<QueuedEffect> preparationPhaseQueuedEffects;
+    private boolean preparationDone;
+
 	public enum Status {
     	WIN, LOSE, TIE, PLAYING
     }
@@ -58,9 +60,11 @@ public class Player {
         courtyard = new Courtyard(this);
 
         resources = new ResourceList(Parameters.INITIAL_COLORLESS_MANA);
-        castle = new Castle(baseMaxLife);
+        castle = new Castle(baseMaxLife, this);
         
         status = Status.PLAYING;
+        preparationPhaseQueuedEffects = new ArrayDeque<>();
+        preparationDone = false;
     }
     
     public Collection<Card> getAllCards() {
@@ -131,6 +135,24 @@ public class Player {
     
     public boolean hasResources(ResourceList other) {
         return resources.hasResources(other);
+    }
+
+    public void pushPreparationPhaseQueuedRunnable(QueuedEffect queuedEffect) {
+        preparationPhaseQueuedEffects.push(queuedEffect);
+    }
+
+    public void castPreparedSpells(State state) {
+        preparationPhaseQueuedEffects.stream()
+                .forEachOrdered(state::addQueuedEffect);
+        preparationPhaseQueuedEffects.clear();
+    }
+
+    public boolean isPreparationDone() {
+        return preparationDone;
+    }
+
+    public void setPreparationDone(boolean preparationDone) {
+        this.preparationDone = preparationDone;
     }
 
     /**
