@@ -2,13 +2,10 @@ package com.three_stack.maximum_alpha.backend.game.effects.prompts;
 
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
-import com.three_stack.maximum_alpha.backend.game.cards.NonSpellCard;
 import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
-import com.three_stack.maximum_alpha.backend.game.effects.results.Result;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 import io.gsonfire.annotations.ExposeMethodResult;
 
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
