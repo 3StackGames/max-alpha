@@ -28,6 +28,15 @@ public abstract class ChooseResult extends Result {
                     .map(DatabaseClientFactory::getCard)
                     .collect(Collectors.toList());
         }
+        protected ChooseStep() {
+            //used for deep copying only
+        }
+
+        public ChooseStep(Step other) {
+            super(other);
+            ChooseStep otherChooseStep = (ChooseStep) other;
+            this.optionTemplates = otherChooseStep.optionTemplates.stream().collect(Collectors.toList());
+        }
 
         @Override
         public boolean run(State state, Card source, Event event, Map<String, Object> value) {
@@ -54,6 +63,10 @@ public abstract class ChooseResult extends Result {
         }
         ChooseStep chooseStep = new ChooseStep((Map<String, Object>) dbResult.getValue().get("card"));
         getPreparationSteps().add(chooseStep);
+    }
+
+    public ChooseResult(Result other) {
+        super(other);
     }
 
     @Override

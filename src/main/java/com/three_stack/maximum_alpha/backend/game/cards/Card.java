@@ -7,6 +7,7 @@ import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class Card {
 	protected final UUID id;
@@ -50,6 +51,12 @@ public abstract class Card {
         this.text = other.text;
         this.flavorText = other.flavorText;
         this.counters = other.counters;
+        this.triggerEffects = other.triggerEffects.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue().stream()
+                            .map(Effect::new).collect(Collectors.toList())
+                ));
     }
 
     protected void setup() {

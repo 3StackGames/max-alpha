@@ -113,15 +113,16 @@ public class State {
         runQueuedEffects();
     }
 
-    private void trackCardEffectsAndMarkController(List<Card> mainCards, List<Structure> structureCards, Player controller) {
-        for (Card card : mainCards) {
+    public void trackCardEffectsAndMarkController(List<Card> mainCards, List<Structure> structureCards, Player controller) {
+        trackCardEffectsAndMarkController(mainCards, controller);
+        List<Card> structuresAsCards = structureCards.stream().collect(Collectors.toList());
+        trackCardEffectsAndMarkController(structuresAsCards, controller);
+    }
+
+    public void trackCardEffectsAndMarkController(List<Card> cards, Player controller) {
+        for (Card card : cards) {
             card.setController(controller);
             trackCardEffects(card);
-        }
-
-        for (Structure structure : structureCards) {
-            structure.setController(controller);
-            trackCardEffects(structure);
         }
     }
 

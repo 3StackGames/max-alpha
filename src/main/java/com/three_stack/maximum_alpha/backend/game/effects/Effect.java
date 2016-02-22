@@ -8,6 +8,7 @@ import com.three_stack.maximum_alpha.backend.game.effects.results.ResultFactory;
 import com.three_stack.maximum_alpha.backend.game.phases.PreparationPhase;
 import com.three_stack.maximum_alpha.database_client.pojos.DBEffect;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,6 +38,21 @@ public class Effect {
         this.source = source;
         this.checks = new ArrayList<>();
         this.results = new ArrayList<>();
+    }
+
+    public Effect(Effect other) {
+        this.source = other.source;
+        this.checks = other.checks.stream().collect(Collectors.toList());
+        this.results = other.results.stream()
+                .map(result -> {
+                    try {
+                        return result.getClass().getConstructor(Result.class).newInstance(result);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                })
+                .collect(Collectors.toList());
     }
 
     public void addCheck(Check check) {

@@ -25,7 +25,7 @@ public class ResultFactory {
 
     public static String getResultClassName(String type) {
         String[] splitTypeWords = type.split("_");
-        StringBuilder stringBuilder = new StringBuilder("com.three_stack.maximum_alpha.backend.game.effects.results.");
+        StringBuilder stringBuilder = new StringBuilder("com.three_stack.maximum_alpha.backend.game.effects.results.implementations.");
         for(String splitTypeWord : splitTypeWords) {
             stringBuilder.append(StringUtils.capitalize(splitTypeWord.toLowerCase()));
         }

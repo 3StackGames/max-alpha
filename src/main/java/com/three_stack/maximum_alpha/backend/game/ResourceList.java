@@ -2,6 +2,7 @@ package com.three_stack.maximum_alpha.backend.game;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ResourceList {
 
@@ -52,6 +53,19 @@ public class ResourceList {
     public ResourceList(int colorlessAmount) {
         setup();
         setColor(Color.COLORLESS, colorlessAmount);
+    }
+
+    public ResourceList(ResourceList other) {
+        colors = other.colors.entrySet().stream()
+                .collect(Collectors.toMap(
+                        entry -> entry.getKey(),
+                        entry -> entry.getValue())
+                );
+        custom = other.custom.entrySet().stream()
+                .collect(Collectors.toMap(
+                        entry -> new String(entry.getKey()),
+                        entry -> entry.getValue()
+                ));
     }
 
     private void setup() {

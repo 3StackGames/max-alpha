@@ -4,7 +4,6 @@ import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.CardAction;
 import com.three_stack.maximum_alpha.backend.game.effects.prompts.ChoosePrompt;
 import com.three_stack.maximum_alpha.backend.game.effects.prompts.Prompt;
-import com.three_stack.maximum_alpha.backend.game.effects.prompts.steps.ChoosePromptStep;
 
 public class ChoosePromptTargetAction extends CardAction {
 

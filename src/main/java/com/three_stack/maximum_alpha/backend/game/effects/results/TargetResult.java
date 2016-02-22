@@ -32,6 +32,18 @@ public abstract class TargetResult extends Result{
             this.excludes = (List<List<String>>) map.get("excludes");
         }
 
+        public TargetStep(Step other) {
+            super(other);
+            TargetStep otherTargetStep = (TargetStep) other;
+            this.prompt = otherTargetStep.prompt;
+            this.includes = otherTargetStep.includes.stream()
+                    .map(include -> include.stream().collect(Collectors.toList()))
+                    .collect(Collectors.toList());
+            this.excludes = otherTargetStep.excludes.stream()
+                    .map(include -> include.stream().collect(Collectors.toList()))
+                    .collect(Collectors.toList());
+        }
+
         private void checkIncludes() {
             if(includes == null || includes.size() < 1 || includes.get(0).size() < 1) {
                 throw new IllegalArgumentException("includes must not be empty");
@@ -114,6 +126,10 @@ public abstract class TargetResult extends Result{
                 .map(TargetStep::new)
                 .collect(Collectors.toList());
         preparationSteps.addAll(targetSteps);
+    }
+
+    public TargetResult(Result other) {
+        super(other);
     }
 
     @Override

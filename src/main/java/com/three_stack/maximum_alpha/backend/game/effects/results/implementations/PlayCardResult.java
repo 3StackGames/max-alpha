@@ -1,10 +1,12 @@
-package com.three_stack.maximum_alpha.backend.game.effects.results;
+package com.three_stack.maximum_alpha.backend.game.effects.results.implementations;
 
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.cards.Spell;
 import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
+import com.three_stack.maximum_alpha.backend.game.effects.results.ChooseResult;
+import com.three_stack.maximum_alpha.backend.game.effects.results.Result;
 import com.three_stack.maximum_alpha.database_client.pojos.DBResult;
 
 import java.util.Map;
@@ -13,6 +15,10 @@ public class PlayCardResult extends ChooseResult {
 
     public PlayCardResult(DBResult dbResult) {
         super(dbResult);
+    }
+
+    public PlayCardResult(Result other) {
+        super(other);
     }
 
     @Override

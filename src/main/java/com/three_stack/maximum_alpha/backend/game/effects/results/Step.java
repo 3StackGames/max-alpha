@@ -28,6 +28,12 @@ public abstract class Step implements Comparable<Step> {
         this.mandatory = mandatory;
     }
 
+    public Step(Step other) {
+        this.order = other.order;
+        this.mandatory = other.mandatory;
+    }
+
+
     /**
      *
      * @param state

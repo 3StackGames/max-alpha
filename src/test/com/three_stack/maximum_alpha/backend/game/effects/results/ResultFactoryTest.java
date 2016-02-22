@@ -7,6 +7,6 @@ public class ResultFactoryTest {
     @Test
     public void test_getResultClassName_shouldReturnClassName() throws Exception {
         String result = ResultFactory.getResultClassName("DEAL_DAMAGE");
-        Assert.assertEquals(result, "com.three_stack.maximum_alpha.backend.game.effects.results.DealDamageResult");
+        Assert.assertEquals(result, "com.three_stack.maximum_alpha.backend.game.effects.results.implementations.DealDamageResult");
     }
 }
