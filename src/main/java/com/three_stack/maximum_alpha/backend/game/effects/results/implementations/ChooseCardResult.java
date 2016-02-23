@@ -11,13 +11,13 @@ import com.three_stack.maximum_alpha.database_client.pojos.DBResult;
 
 import java.util.Map;
 
-public class PlayCardResult extends ChooseResult {
+public class ChooseCardResult extends ChooseResult {
 
-    public PlayCardResult(DBResult dbResult) {
+    public ChooseCardResult(DBResult dbResult) {
         super(dbResult);
     }
 
-    public PlayCardResult(Result other) {
+    public ChooseCardResult(Result other) {
         super(other);
     }
 

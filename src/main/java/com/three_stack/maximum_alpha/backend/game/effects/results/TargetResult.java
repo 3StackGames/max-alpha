@@ -16,7 +16,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public abstract class TargetResult extends Result{
+    //@Todo: don't require a base
     protected static final List<String> filterBases = Arrays.asList("CREATURE", "STRUCTURE", "CASTLE");
+    //@Todo: Consider moving to its own file
     public class TargetStep extends Step {
 
         //number of targets the prompt should find

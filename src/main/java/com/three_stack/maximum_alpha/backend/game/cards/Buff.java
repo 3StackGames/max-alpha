@@ -7,7 +7,7 @@ import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.effects.Effect;
 import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
 
-public abstract class Buff {
+public class Buff {
 	final int attackModifier;
 	final int healthModifier;
 	final Map<Trigger, List<Effect>> effects;

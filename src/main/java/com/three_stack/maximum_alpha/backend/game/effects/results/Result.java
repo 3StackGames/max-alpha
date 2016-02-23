@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+//@Todo: make this and all children immutable to avoid having to copy
 public abstract class Result {
     protected List<Step> preparationSteps;
 

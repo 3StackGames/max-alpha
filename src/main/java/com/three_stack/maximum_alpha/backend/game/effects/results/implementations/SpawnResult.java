@@ -20,6 +20,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class SpawnResult extends Result{
+    //@Todo: specify owner
+    //@Todo: Add deck
+    //@Todo: @Jason move values to value object for consistency
     enum SpawnZone {
         FIELD, COURTYARD, HAND
     }

@@ -15,7 +15,7 @@ import java.util.List;
 public class Creature extends NonSpellCard implements Worker {
     //@Todo: Add Classes / Roles
     //@Todo: Add Tags
-    protected final int attack;
+    protected transient final int attack;
     protected Structure attackTarget;
     protected transient boolean canAttack;
     protected Creature blockTarget;
@@ -77,6 +77,8 @@ public class Creature extends NonSpellCard implements Worker {
         return attack;
     }
 
+    //@Todo: work with arjun to make sure both this (currentAttack) and attack show up
+    @ExposeMethodResult("attack")
     public int getCurrentAttack() {
         return getDefaultAttack() + buffAttack;
     }

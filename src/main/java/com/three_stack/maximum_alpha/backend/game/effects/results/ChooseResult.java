@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 public abstract class ChooseResult extends Result {
     public class ChooseStep extends Step {
         //use DBCard so we can easily initialize new cards
+        //@Todo: consider just instantiating instead of keeping a template
         protected List<DBCard> optionTemplates;
 
         @SuppressWarnings("unchecked")
