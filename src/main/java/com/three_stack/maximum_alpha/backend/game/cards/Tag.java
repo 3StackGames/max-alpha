@@ -1,4 +1,4 @@
-package com.three_stack.maximum_alpha.backend.game.cards.tags;
+package com.three_stack.maximum_alpha.backend.game.cards;
 
 import com.three_stack.maximum_alpha.database_client.pojos.DBTag;
 

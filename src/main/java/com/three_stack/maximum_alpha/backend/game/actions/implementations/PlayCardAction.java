@@ -45,9 +45,9 @@ public class PlayCardAction extends ExistingCardWithCostAction {
             return false;
         }
         boolean notInPrompt = notInPrompt(state);
-		//boolean isPlayable = a.isPlayable(); //TODO: uncomment once implemented
+		boolean isPlayable = card.isPlayable();
         boolean inputCostSufficient = cost.hasResources(card.getCurrentCost());
 
-		return notInPrompt && inputCostSufficient;
+		return notInPrompt && inputCostSufficient && isPlayable;
 	}
 }

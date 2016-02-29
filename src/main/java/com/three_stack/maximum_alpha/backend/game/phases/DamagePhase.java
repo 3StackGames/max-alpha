@@ -3,7 +3,7 @@ package com.three_stack.maximum_alpha.backend.game.phases;
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.Time;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
-import com.three_stack.maximum_alpha.backend.game.cards.tags.Tag;
+import com.three_stack.maximum_alpha.backend.game.cards.Tag;
 
 import java.util.List;
 import java.util.stream.Collectors;

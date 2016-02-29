@@ -2,7 +2,6 @@ package com.three_stack.maximum_alpha.backend.game.cards;
 
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.Time;
-import com.three_stack.maximum_alpha.backend.game.cards.tags.Tag;
 import com.three_stack.maximum_alpha.backend.game.effects.*;
 import com.three_stack.maximum_alpha.backend.game.effects.events.SingleCardEvent;
 import com.three_stack.maximum_alpha.backend.game.effects.events.SourceDamageTargetEvent;
@@ -30,18 +29,20 @@ public abstract class NonSpellCard extends Card {
     protected List<Ability> abilities;
     protected List<Tag> tags;
     protected List<CardClass> classes;
+    protected boolean legendaryLock;
 
     protected NonSpellCard(String name, ResourceList cost, String text, String flavorText, int health) {
         super(name, cost, text, flavorText);
         this.health = health;
-        this.damageTaken = 0;
-        this.exhausted = false;
-        this.refreshable = true;
-        this.dead = false;
-        this.tags = new ArrayList<>();
-        this.classes = new ArrayList<>();
+        damageTaken = 0;
+        exhausted = false;
+        refreshable = true;
+        dead = false;
+        tags = new ArrayList<>();
+        classes = new ArrayList<>();
         buffs = new ArrayList<>();
         buffHealth = 0;
+        legendaryLock = false;
     }
 
     public NonSpellCard(NonSpellCard other) {
@@ -94,6 +95,19 @@ public abstract class NonSpellCard extends Card {
 
     public boolean isDead() {
         return dead;
+    }
+
+    @Override
+    public boolean isPlayable() {
+        if(!super.isPlayable()) {
+            return false;
+        }
+
+        if(hasTag(Tag.TagType.LEGENDARY) && isLegendaryLock()) {
+            return false;
+        }
+
+        return true;
     }
 
     public void exhaust(Time time, State state) {
@@ -232,5 +246,13 @@ public abstract class NonSpellCard extends Card {
     public boolean hasTag(Tag.TagType type) {
         return tags.stream()
                 .anyMatch(tag -> tag.getType().equals(type));
+    }
+
+    public boolean isLegendaryLock() {
+        return legendaryLock;
+    }
+
+    public void setLegendaryLock(boolean legendaryLock) {
+        this.legendaryLock = legendaryLock;
     }
 }

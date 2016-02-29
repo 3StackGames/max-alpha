@@ -5,6 +5,7 @@ import com.three_stack.maximum_alpha.backend.game.effects.Effect;
 import com.three_stack.maximum_alpha.backend.game.Time;
 import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
+import io.gsonfire.annotations.ExposeMethodResult;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,12 +24,6 @@ public abstract class Card {
      */
     protected transient Time timeEnteredZone;
 
-    /**
-     * ONLY FOR GSON. DON'T TOUCH.
-     */
-    private boolean playable;
-    private ResourceList.Color dominantColor;
-
     protected transient Map<Trigger, List<Effect>> triggerEffects;
 
     protected Card(String name, ResourceList defaultCost, String text, String flavorText) {
@@ -39,7 +34,6 @@ public abstract class Card {
         this.currentCost = defaultCost;
         this.text = text;
         this.flavorText = flavorText;
-        this.dominantColor = calculateDominantColor();
 	}
 
     protected Card(Card other) {
@@ -79,6 +73,12 @@ public abstract class Card {
             .forEach( damageEvent -> state.addEvent(damageEvent, Trigger.ON_DAMAGE));
     }
 
+    @ExposeMethodResult("playable")
+    public boolean isPlayable() {
+        return true;
+    }
+
+    @ExposeMethodResult("dominantColor")
     public ResourceList.Color calculateDominantColor() {
         int max = 0;
         ResourceList.Color dominant = ResourceList.Color.COLORLESS;
@@ -122,18 +122,6 @@ public abstract class Card {
 
     public String getFlavorText() {
         return flavorText;
-    }
-
-    public boolean isPlayable() {
-        return playable;
-    }
-
-    public void setPlayable(boolean playable) {
-        this.playable = playable;
-    }
-
-    public ResourceList.Color getDominantColor() {
-        return dominantColor;
     }
 
     public Player getController() {
