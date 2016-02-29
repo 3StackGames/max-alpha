@@ -228,4 +228,9 @@ public abstract class NonSpellCard extends Card {
     public void setClasses(List<CardClass> classes) {
         this.classes = classes;
     }
+
+    public boolean hasTag(Tag.TagType type) {
+        return tags.stream()
+                .anyMatch(tag -> tag.getType().equals(type));
+    }
 }

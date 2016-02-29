@@ -3,6 +3,7 @@ package com.three_stack.maximum_alpha.backend.game.phases;
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.Time;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
+import com.three_stack.maximum_alpha.backend.game.cards.tags.Tag;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,18 +31,20 @@ public class DamagePhase extends Phase {
         Time battleTime = state.getTime();
         Time exhaustTime = state.getTime();
         for(Creature attacker : attackers) {
-            if(!attacker.isBlocked()) {
-            	if(!attacker.getAttackTarget().isDead()) {
-	                attacker.attack(battleTime, exhaustTime, state);
-            	}
-            } else {
+            if(attacker.isBlocked()) {
                 attacker.getBlockers().stream().forEach(blocker -> {
-                	if(!attacker.isDead() && !blocker.isDead()) {
+                    if(!attacker.isDead() && !blocker.isDead()) {
                         blocker.block(battleTime, exhaustTime, state);
                     }
                 });
-                attacker.resetBlockers();
             }
+            boolean aliveWithPierce = !attacker.isDead() && attacker.hasTag(Tag.TagType.PIERCE);
+            if(!attacker.isBlocked() || aliveWithPierce) {
+                if(!attacker.getAttackTarget().isDead()) {
+                    attacker.attack(battleTime, exhaustTime, state);
+                }
+            }
+            attacker.resetBlockers();
         }
 
         state.resolveDeaths();
