@@ -2,10 +2,12 @@ package com.three_stack.maximum_alpha.backend.game.cards;
 
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.Time;
+import com.three_stack.maximum_alpha.backend.game.cards.tags.Tag;
 import com.three_stack.maximum_alpha.backend.game.effects.*;
 import com.three_stack.maximum_alpha.backend.game.effects.events.SingleCardEvent;
 import com.three_stack.maximum_alpha.backend.game.effects.events.SourceDamageTargetEvent;
 
+import com.three_stack.maximum_alpha.backend.game.utilities.Utility;
 import io.gsonfire.annotations.ExposeMethodResult;
 
 import java.util.ArrayList;
@@ -26,6 +28,8 @@ public abstract class NonSpellCard extends Card {
     protected List<Buff> buffs;
     private transient int buffHealth;
     protected List<Ability> abilities;
+    protected List<Tag> tags;
+    protected List<CardClass> classes;
 
     protected NonSpellCard(String name, ResourceList cost, String text, String flavorText, int health) {
         super(name, cost, text, flavorText);
@@ -34,6 +38,8 @@ public abstract class NonSpellCard extends Card {
         this.exhausted = false;
         this.refreshable = true;
         this.dead = false;
+        this.tags = new ArrayList<>();
+        this.classes = new ArrayList<>();
         buffs = new ArrayList<>();
         buffHealth = 0;
     }
@@ -51,6 +57,8 @@ public abstract class NonSpellCard extends Card {
         this.abilities = other.getAbilities().stream()
                 .map(Ability::new)
                 .collect(Collectors.toList());
+        this.classes = Utility.copy(other.classes);
+        this.tags = Utility.copy(other.tags);
     }
 
     public SourceDamageTargetEvent takeDamage(int damage, Card source, Time time) {
@@ -190,5 +198,34 @@ public abstract class NonSpellCard extends Card {
     	}
     	buffs.clear();
     	buffHealth = 0;
+    }
+
+    public List<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<Tag> tags) {
+        this.tags.stream()
+                .forEach(this::processTagRemoval);
+        this.tags = tags;
+        tags.stream()
+                .forEach(this::processTag);
+    }
+
+    public void addTag(Tag tag) {
+        tags.add(tag);
+        processTag(tag);
+    }
+
+    public abstract void processTag(Tag tag);
+
+    public abstract void processTagRemoval(Tag tag);
+
+    public List<CardClass> getClasses() {
+        return classes;
+    }
+
+    public void setClasses(List<CardClass> classes) {
+        this.classes = classes;
     }
 }

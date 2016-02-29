@@ -1,6 +1,7 @@
 package com.three_stack.maximum_alpha.backend.game.cards;
 
 import com.three_stack.maximum_alpha.backend.game.Time;
+import com.three_stack.maximum_alpha.backend.game.cards.tags.Tag;
 import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
 import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.backend.game.effects.events.SourceTargetEvent;
@@ -13,14 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Creature extends NonSpellCard implements Worker {
-    //@Todo: Add Classes / Roles
-    //@Todo: Add Tags
     protected transient final int attack;
     protected Structure attackTarget;
     protected transient boolean canAttack;
     protected Creature blockTarget;
     protected transient boolean canBlock;
-    protected boolean hasSummoningSickness;
+    protected boolean summoningSickness;
+    protected boolean summonedThisTurn;
     protected List<Creature> blockers;
     private transient int buffAttack;
 
@@ -31,9 +31,24 @@ public class Creature extends NonSpellCard implements Worker {
         canAttack = true;
         blockTarget = null;
         canBlock = true;
-        hasSummoningSickness = true;
+        summoningSickness = true;
         buffAttack = 0;
+        summonedThisTurn = true;
         resetBlockers();
+    }
+
+    public Creature(NonSpellCard other) {
+        super(other);
+        Creature otherCreature = (Creature) other;
+        this.attack = otherCreature.attack;
+        this.attackTarget = otherCreature.attackTarget;
+        this.canAttack = otherCreature.canAttack;
+        this.blockTarget = otherCreature.blockTarget;
+        this.canBlock = otherCreature.canBlock;
+        this.summoningSickness = otherCreature.summoningSickness;
+        this.summonedThisTurn = otherCreature.summonedThisTurn;
+        this.blockers = otherCreature.blockers;
+        this.buffAttack = otherCreature.buffAttack;
     }
 
     @Override
@@ -84,11 +99,11 @@ public class Creature extends NonSpellCard implements Worker {
     }
 
     public boolean hasSummoningSickness() {
-        return hasSummoningSickness;
+        return summoningSickness;
     }
 
-    public void setHasSummoningSickness(boolean hasSummoningSickness) {
-        this.hasSummoningSickness = hasSummoningSickness;
+    public void setSummoningSickness(boolean summoningSickness) {
+        this.summoningSickness = summoningSickness;
     }
 
     public Structure getAttackTarget() {
@@ -114,7 +129,7 @@ public class Creature extends NonSpellCard implements Worker {
 
     @ExposeMethodResult("canAttack")
     public boolean canAttack() {
-        return canAttack && !(exhausted || hasSummoningSickness) && !isAttacking();
+        return canAttack && !(exhausted || summoningSickness) && !isAttacking();
     }
 
     public void setCanAttack(boolean canAttack) {
@@ -178,7 +193,7 @@ public class Creature extends NonSpellCard implements Worker {
 		blockTarget = null;
 		canAttack = true;
 		canBlock = true;
-        hasSummoningSickness = true;
+        summoningSickness = true;
 	}
 	
 	@Override
@@ -198,4 +213,36 @@ public class Creature extends NonSpellCard implements Worker {
 		super.buffReset(state);
 		buffAttack = 0;
 	}
+
+    @Override
+    public void processTag(Tag tag) {
+        switch (tag.getType()) {
+            case QUICK:
+                setSummoningSickness(false);
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void processTagRemoval(Tag tag) {
+        switch (tag.getType()) {
+            case QUICK:
+                if(isSummonedThisTurn()) {
+                    setSummoningSickness(true);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    public boolean isSummonedThisTurn() {
+        return summonedThisTurn;
+    }
+
+    public void setSummonedThisTurn(boolean summonedThisTurn) {
+        this.summonedThisTurn = summonedThisTurn;
+    }
 }
