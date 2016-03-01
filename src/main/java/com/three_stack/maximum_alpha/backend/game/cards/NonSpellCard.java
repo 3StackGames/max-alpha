@@ -6,10 +6,12 @@ import com.three_stack.maximum_alpha.backend.game.effects.*;
 import com.three_stack.maximum_alpha.backend.game.effects.events.SingleCardEvent;
 import com.three_stack.maximum_alpha.backend.game.effects.events.SourceDamageTargetEvent;
 
+import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.utilities.Utility;
 import io.gsonfire.annotations.ExposeMethodResult;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -108,6 +110,17 @@ public abstract class NonSpellCard extends Card {
         }
 
         return true;
+    }
+
+    public void propogateLegendaryLock(boolean locked, State state) {
+        state.getPlayingPlayers().stream()
+                .map(Player::getAllCards)
+                .flatMap(Collection::stream)
+                .filter(playerCard -> playerCard instanceof NonSpellCard)
+                .map(playerCard -> (NonSpellCard) playerCard)
+                .filter(playerCard -> playerCard.hasTag(Tag.TagType.LEGENDARY))
+                .filter(playerCard -> playerCard.getName().equals(getName()))
+                .forEach(playerCard -> playerCard.setLegendaryLock(locked));
     }
 
     public void exhaust(Time time, State state) {
