@@ -324,7 +324,8 @@ public class Server extends WebSocketServer {
     	Prompt prompt = game.getCurrentPrompt();
     	Message promptMessage = new Message("Player Prompt");
     	promptMessage.add("gameCode", gameCode);
-    	promptMessage.add("promptStep", new JSONObject(Serializer.toJson(prompt.getCurrentStep())));
+        //@Todo: consider renaming to just prompt. unless steps come back
+    	promptMessage.add("prompt", new JSONObject(Serializer.toJson(prompt)));
     	prompt.getPlayer().getConnection().socket.send(promptMessage.toString());
     }
 }

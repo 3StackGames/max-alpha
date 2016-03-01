@@ -3,7 +3,7 @@ package com.three_stack.maximum_alpha.backend.game.player;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
 
-public  class Field extends Zone<Creature> {
+public  class Field extends NonSpellCardZone<Creature> {
     public Field(Player owner) {
         super(owner);
     }

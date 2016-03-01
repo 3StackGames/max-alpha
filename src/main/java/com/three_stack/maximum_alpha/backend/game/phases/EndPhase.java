@@ -1,6 +1,7 @@
 package com.three_stack.maximum_alpha.backend.game.phases;
 
 import com.three_stack.maximum_alpha.backend.game.State;
+import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 
 public class EndPhase extends Phase {
     protected static EndPhase instance;
@@ -18,7 +19,15 @@ public class EndPhase extends Phase {
 
     public void start(State state) {
         state.setCurrentPhase(instance);
-        state.getTurnPlayer().getField().getCards().forEach(creature -> creature.setHasSummoningSickness(false));
+        state.getPlayingPlayers().stream()
+                .forEach(player -> {
+                    player.getField().getCards().stream()
+                            .filter(Creature::isSummonedThisTurn)
+                            .forEach(creature -> {
+                                creature.setSummonedThisTurn(false);
+                                creature.setSummoningSickness(false);
+                            });
+                });
         end(state);
     }
 

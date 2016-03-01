@@ -70,12 +70,6 @@ public abstract class Zone<T extends Card> {
         return removed;
     }
 
-    public T remove(int index, Time time, State state) {
-        T card = cards.remove(index);
-        createLeaveZoneEvent(card, time, state);
-        return card;
-    }
-
     public void removeAll(Collection<T> removeCards, Time time, State state) {
         removeCards.forEach(removeCard -> remove(removeCard, time, state));
     }

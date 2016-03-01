@@ -6,6 +6,7 @@ import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
 import com.three_stack.maximum_alpha.database_client.pojos.DBAbility;
 import com.three_stack.maximum_alpha.database_client.pojos.DBCard;
 import com.three_stack.maximum_alpha.database_client.pojos.DBEffect;
+import com.three_stack.maximum_alpha.database_client.pojos.DBTag;
 
 import java.util.List;
 import java.util.Map;
@@ -25,13 +26,13 @@ public class CardFactory {
                 int creatureAttack = dbCard.getAttack();
                 int creatureHealth = dbCard.getHealth();
                 Creature creature = new Creature(name, cost, text, flavorText, creatureAttack, creatureHealth);
-                setAbilities(creature, dbCard.getAbilities());
+                setNonSpellCardAttributes(creature, dbCard);
                 card = creature;
                 break;
             case("structure"):
                 int structureHealth = dbCard.getHealth();
                 Structure structure = new Structure(name, cost, text, flavorText, structureHealth);
-                setAbilities(structure, dbCard.getAbilities());
+                setNonSpellCardAttributes(structure, dbCard);
                 card = structure;
                 break;
             case("spell"):
@@ -55,6 +56,12 @@ public class CardFactory {
         return card;
     }
 
+    private static void setNonSpellCardAttributes(NonSpellCard card, DBCard dbCard) {
+        setAbilities(card, dbCard.getAbilities());
+        setClasses(card, dbCard.getClasses());
+        setTags(card, dbCard.getTags());
+    }
+
     private static void setAbilities(NonSpellCard card, List<DBAbility> dbAbilities) {
         if(dbAbilities == null) {
             return;
@@ -64,6 +71,20 @@ public class CardFactory {
                 .collect(Collectors.toList());
 
         card.setAbilities(abilities);
+    }
+
+    private static void setClasses(NonSpellCard card, List<String> classStrings) {
+        List<CardClass> cardClasses = classStrings.stream()
+                .map(CardClass::valueOf)
+                .collect(Collectors.toList());
+        card.setClasses(cardClasses);
+    }
+
+    private static void setTags(NonSpellCard card, List<DBTag> dbTags) {
+        List<Tag> tags = dbTags.stream()
+                .map(Tag::new)
+                .collect(Collectors.toList());
+        card.setTags(tags);
     }
 
     private static void setEffects(Spell spell, List<DBEffect> dbEffects) {

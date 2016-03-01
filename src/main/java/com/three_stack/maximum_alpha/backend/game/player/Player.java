@@ -9,7 +9,7 @@ import com.three_stack.maximum_alpha.backend.game.cards.Castle;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
 import com.three_stack.maximum_alpha.backend.game.cards.Worker;
 import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
-import com.three_stack.maximum_alpha.backend.game.effects.TriggeredEffect;
+import com.three_stack.maximum_alpha.backend.game.effects.QueuedEffect;
 import com.three_stack.maximum_alpha.backend.server.Connection;
 
 import java.util.*;
@@ -39,7 +39,7 @@ public class Player {
     private boolean hasAssignedOrPulled;
     private Status status;
 
-    private Deque<TriggeredEffect> preparationPhaseTriggeredEffects;
+    private Deque<QueuedEffect> preparationPhaseQueuedEffects;
     private boolean preparationDone;
 
 	public enum Status {
@@ -60,10 +60,10 @@ public class Player {
         courtyard = new Courtyard(this);
 
         resources = new ResourceList(Parameters.INITIAL_COLORLESS_MANA);
-        castle = new Castle(baseMaxLife);
+        castle = new Castle(baseMaxLife, this);
         
         status = Status.PLAYING;
-        preparationPhaseTriggeredEffects = new ArrayDeque<>();
+        preparationPhaseQueuedEffects = new ArrayDeque<>();
         preparationDone = false;
     }
     
@@ -137,14 +137,14 @@ public class Player {
         return resources.hasResources(other);
     }
 
-    public void pushPreparationPhaseTriggeredEffect(TriggeredEffect triggeredEffect) {
-        preparationPhaseTriggeredEffects.push(triggeredEffect);
+    public void pushPreparationPhaseQueuedRunnable(QueuedEffect queuedEffect) {
+        preparationPhaseQueuedEffects.push(queuedEffect);
     }
 
     public void castPreparedSpells(State state) {
-        preparationPhaseTriggeredEffects.stream()
-                .forEachOrdered(state::addTriggeredEffect);
-        preparationPhaseTriggeredEffects.clear();
+        preparationPhaseQueuedEffects.stream()
+                .forEachOrdered(state::addQueuedEffect);
+        preparationPhaseQueuedEffects.clear();
     }
 
     public boolean isPreparationDone() {

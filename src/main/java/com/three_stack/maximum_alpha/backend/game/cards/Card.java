@@ -1,22 +1,18 @@
 package com.three_stack.maximum_alpha.backend.game.cards;
 
-import io.gsonfire.annotations.ExposeMethodResult;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import com.three_stack.maximum_alpha.backend.game.ResourceList;
-import com.three_stack.maximum_alpha.backend.game.State;
-import com.three_stack.maximum_alpha.backend.game.Time;
+import com.three_stack.maximum_alpha.backend.game.*;
 import com.three_stack.maximum_alpha.backend.game.effects.Effect;
+import com.three_stack.maximum_alpha.backend.game.Time;
 import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
+import io.gsonfire.annotations.ExposeMethodResult;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class Card {
 	protected final UUID id;
-    protected Player controller;
+    protected transient Player controller;
     protected final String name;
     protected final ResourceList defaultCost;
     protected ResourceList currentCost;
@@ -27,7 +23,6 @@ public abstract class Card {
      * timeEnteredZone is used only when determining result order. lower values indicate earlier times.
      */
     protected transient Time timeEnteredZone;
-    private boolean playable;
 
     protected transient Map<Trigger, List<Effect>> triggerEffects;
 
@@ -50,11 +45,16 @@ public abstract class Card {
         this.text = other.text;
         this.flavorText = other.flavorText;
         this.counters = other.counters;
+        this.triggerEffects = other.triggerEffects.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue().stream()
+                            .map(Effect::new).collect(Collectors.toList())
+                ));
     }
 
     protected void setup() {
         this.timeEnteredZone = Time.getSetup();
-        playable = true;
     }
 
     public void dealDamage(NonSpellCard victim, int amount, Time time, State state) {
@@ -73,6 +73,11 @@ public abstract class Card {
             .forEach( damageEvent -> state.addEvent(damageEvent, Trigger.ON_DAMAGE));
     }
 
+    @ExposeMethodResult("playable")
+    public boolean isPlayable() {
+        return true;
+    }
+
     @ExposeMethodResult("dominantColor")
     public ResourceList.Color calculateDominantColor() {
         int max = 0;
@@ -85,10 +90,6 @@ public abstract class Card {
             }
         }
         return dominant;
-    }
-    
-    public int getConvertedManaCost() {
-    	return defaultCost.getTotal();
     }
 
     public UUID getId() {
@@ -121,14 +122,6 @@ public abstract class Card {
 
     public String getFlavorText() {
         return flavorText;
-    }
-
-    public boolean isPlayable() {
-        return playable;
-    }
-
-    public void setPlayable(boolean playable) {
-        this.playable = playable;
     }
 
     public Player getController() {

@@ -26,6 +26,16 @@ public class Ability {
                 .collect(Collectors.toList());
     }
 
+    public Ability(Ability other) {
+        this.id = UUID.randomUUID();
+        this.cost = new ResourceList(other.cost);
+        this.tap = other.tap;
+        this.text = other.text;
+        this.effects = other.effects.stream()
+                .map(Effect::new)
+                .collect(Collectors.toList());
+    }
+
     public ResourceList getCost() {
         return cost;
     }

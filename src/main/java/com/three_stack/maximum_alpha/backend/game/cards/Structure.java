@@ -32,4 +32,20 @@ public class Structure extends NonSpellCard {
     public void setAttackable(boolean attackable) {
         this.attackable = attackable;
     }
+
+    @Override
+    public void processTagRemoval(Tag tag) {
+        switch (tag.getType()) {
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void processTag(Tag tag) {
+        switch (tag.getType()) {
+            default:
+                break;
+        }
+    }
 }

@@ -13,7 +13,9 @@ public class BuildStructureAction extends ExistingCardAction {
         Player player = getPlayer(state);
         Card card = state.findCard(cardId);
         player.pay(card.getCurrentCost());
-        player.getCourtyard().add(new Structure((Structure) card), state.getTime(), state);
+        Structure structure = new Structure((Structure) card);
+        state.trackCardEffectsAndMarkController(structure, player);
+        player.getCourtyard().add(structure, state.getTime(), state);
     }
 
     @Override

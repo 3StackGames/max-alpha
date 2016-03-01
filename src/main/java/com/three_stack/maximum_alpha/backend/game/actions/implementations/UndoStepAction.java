@@ -6,12 +6,15 @@ import com.three_stack.maximum_alpha.backend.game.effects.prompts.Prompt;
 
 public class UndoStepAction extends Action {
 
-	@Override
-	public void run(State state) {
+    @Override
+    public void run(State state) {
+        //@Todo: richard we should make sure this is done properly after my refactor
+        /*
         Prompt prompt = state.getCurrentPrompt();
         if(prompt.undoStep()) {
         	state.removePrompt();
         }
+        */
 	}
 
 	@Override

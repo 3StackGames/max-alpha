@@ -6,9 +6,12 @@ import com.three_stack.maximum_alpha.backend.game.effects.*;
 import com.three_stack.maximum_alpha.backend.game.effects.events.SingleCardEvent;
 import com.three_stack.maximum_alpha.backend.game.effects.events.SourceDamageTargetEvent;
 
+import com.three_stack.maximum_alpha.backend.game.player.Player;
+import com.three_stack.maximum_alpha.backend.game.utilities.Utility;
 import io.gsonfire.annotations.ExposeMethodResult;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -26,25 +29,39 @@ public abstract class NonSpellCard extends Card {
     protected List<Buff> buffs;
     private transient int buffHealth;
     protected List<Ability> abilities;
+    protected List<Tag> tags;
+    protected List<CardClass> classes;
+    protected boolean legendaryLock;
 
     protected NonSpellCard(String name, ResourceList cost, String text, String flavorText, int health) {
         super(name, cost, text, flavorText);
         this.health = health;
-        this.damageTaken = 0;
-        this.exhausted = false;
-        this.refreshable = true;
-        this.dead = false;
+        damageTaken = 0;
+        exhausted = false;
+        refreshable = true;
+        dead = false;
+        tags = new ArrayList<>();
+        classes = new ArrayList<>();
         buffs = new ArrayList<>();
         buffHealth = 0;
+        legendaryLock = false;
     }
 
     public NonSpellCard(NonSpellCard other) {
         super(other);
         this.health = other.health;
         this.damageTaken = other.damageTaken;
+        this.dead = other.dead;
+
         this.exhausted = other.exhausted;
         this.refreshable = other.refreshable;
+
         this.buffs = other.buffs;
+        this.abilities = other.getAbilities().stream()
+                .map(Ability::new)
+                .collect(Collectors.toList());
+        this.classes = Utility.copy(other.classes);
+        this.tags = Utility.copy(other.tags);
     }
 
     public SourceDamageTargetEvent takeDamage(int damage, Card source, Time time) {
@@ -80,6 +97,30 @@ public abstract class NonSpellCard extends Card {
 
     public boolean isDead() {
         return dead;
+    }
+
+    @Override
+    public boolean isPlayable() {
+        if(!super.isPlayable()) {
+            return false;
+        }
+
+        if(hasTag(Tag.TagType.LEGENDARY) && isLegendaryLock()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public void propogateLegendaryLock(boolean locked, State state) {
+        state.getPlayingPlayers().stream()
+                .map(Player::getAllCards)
+                .flatMap(Collection::stream)
+                .filter(playerCard -> playerCard instanceof NonSpellCard)
+                .map(playerCard -> (NonSpellCard) playerCard)
+                .filter(playerCard -> playerCard.hasTag(Tag.TagType.LEGENDARY))
+                .filter(playerCard -> playerCard.getName().equals(getName()))
+                .forEach(playerCard -> playerCard.setLegendaryLock(locked));
     }
 
     public void exhaust(Time time, State state) {
@@ -184,5 +225,47 @@ public abstract class NonSpellCard extends Card {
     	}
     	buffs.clear();
     	buffHealth = 0;
+    }
+
+    public List<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<Tag> tags) {
+        this.tags.stream()
+                .forEach(this::processTagRemoval);
+        this.tags = tags;
+        tags.stream()
+                .forEach(this::processTag);
+    }
+
+    public void addTag(Tag tag) {
+        tags.add(tag);
+        processTag(tag);
+    }
+
+    public abstract void processTag(Tag tag);
+
+    public abstract void processTagRemoval(Tag tag);
+
+    public List<CardClass> getClasses() {
+        return classes;
+    }
+
+    public void setClasses(List<CardClass> classes) {
+        this.classes = classes;
+    }
+
+    public boolean hasTag(Tag.TagType type) {
+        return tags.stream()
+                .anyMatch(tag -> tag.getType().equals(type));
+    }
+
+    public boolean isLegendaryLock() {
+        return legendaryLock;
+    }
+
+    public void setLegendaryLock(boolean legendaryLock) {
+        this.legendaryLock = legendaryLock;
     }
 }
