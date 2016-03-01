@@ -148,7 +148,11 @@ public class Creature extends NonSpellCard implements Worker {
 
     @ExposeMethodResult("blockTargetId")
     public UUID getBlockTargetID() {
-        return getBlockTarget().getId();
+        if(getBlockTarget() != null) {
+            return getBlockTarget().getId();
+        } else {
+            return null;
+        }
     }
 
     public boolean isBlocking() {
