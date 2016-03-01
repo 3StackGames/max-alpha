@@ -44,7 +44,7 @@ public class DamagePhase extends Phase {
                     attacker.attack(battleTime, exhaustTime, state);
                 }
             }
-            attacker.resetBlockers();
+            attacker.resetCombat();
         }
 
         state.resolveDeaths();

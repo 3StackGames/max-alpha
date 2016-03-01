@@ -11,17 +11,24 @@ import com.three_stack.maximum_alpha.backend.game.State;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class Creature extends NonSpellCard implements Worker {
     protected transient final int attack;
     protected Structure attackTarget;
     protected transient boolean canAttack;
-    protected Creature blockTarget;
+    protected transient Creature blockTarget;
     protected transient boolean canBlock;
     protected boolean summoningSickness;
     protected boolean summonedThisTurn;
-    protected List<Creature> blockers;
+    protected transient List<Creature> blockers;
     private transient int buffAttack;
+    /**
+     * Creatures this creature can block.
+     * IMPORTANT: Only used and/or reliable during block phase.
+     */
+    protected List<Creature> blockableCreatures;
 
     public Creature(String name, ResourceList cost, String text, String flavorText, int attack, int health) {
         super(name, cost, text, flavorText, health);
@@ -33,7 +40,7 @@ public class Creature extends NonSpellCard implements Worker {
         summoningSickness = true;
         buffAttack = 0;
         summonedThisTurn = true;
-        resetBlockers();
+        resetCombat();
     }
 
     public Creature(NonSpellCard other) {
@@ -139,6 +146,11 @@ public class Creature extends NonSpellCard implements Worker {
         return blockTarget;
     }
 
+    @ExposeMethodResult("blockTargetId")
+    public UUID getBlockTargetID() {
+        return getBlockTarget().getId();
+    }
+
     public boolean isBlocking() {
         return blockTarget != null;
     }
@@ -167,8 +179,9 @@ public class Creature extends NonSpellCard implements Worker {
         return blockers;
     }
 
-    public void resetBlockers() {
+    public void resetCombat() {
         blockers = new ArrayList<>();
+        blockableCreatures = new ArrayList<>();
     }
 
     public void addBlocker(Creature blocker) {
@@ -243,5 +256,20 @@ public class Creature extends NonSpellCard implements Worker {
 
     public void setSummonedThisTurn(boolean summonedThisTurn) {
         this.summonedThisTurn = summonedThisTurn;
+    }
+
+    public List<Creature> getBlockableCreatures() {
+        return blockableCreatures;
+    }
+
+    public void setBlockableCreatures(List<Creature> blockableCreatures) {
+        this.blockableCreatures = blockableCreatures;
+    }
+
+    @ExposeMethodResult("blockableCreatureIds")
+    public List<UUID> getBlockableCreatureIds() {
+        return getBlockableCreatures().stream()
+                .map(Creature::getId)
+                .collect(Collectors.toList());
     }
 }
