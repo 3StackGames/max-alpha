@@ -35,10 +35,7 @@ public class DeclareBlockerAction extends ExistingPairAction {
         if(!isTargetCreature) {
             return false;
         }
-        List<Card> blockableTargets = state.getTurnPlayer().getField().getCards().stream()
-                .filter(creature -> creature.isAttacking())
-                .collect(Collectors.toList());
-        boolean isValidBlockTarget = blockableTargets.contains(target);
+        boolean isValidBlockTarget = ((Creature) card).getBlockableCreatures().contains(target);
 
 		return notInPrompt && correctPhase && playerTurn && isOnPlayerField && canBlock && isValidBlockTarget;
 	}

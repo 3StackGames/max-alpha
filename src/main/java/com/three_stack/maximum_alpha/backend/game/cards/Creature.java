@@ -80,7 +80,7 @@ public class Creature extends NonSpellCard implements Worker {
     }
 
     public void block(Time battleTime, Time exhaustTime, State state) {
-        if(isBlocking()) {
+        if(!isBlocking()) {
             throw new IllegalStateException("blockTarget must be set");
         }
 
@@ -90,8 +90,8 @@ public class Creature extends NonSpellCard implements Worker {
         state.addEvent(b, Trigger.ON_DAMAGE);
 
         blockTarget.clearAttackTarget();
-        clearBlockTarget();
         blockTarget.exhaust(exhaustTime, state);
+        clearBlockTarget();
     }
 
     public int getDefaultAttack() {
