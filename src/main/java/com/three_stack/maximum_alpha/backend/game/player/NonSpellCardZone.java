@@ -15,7 +15,7 @@ public abstract class NonSpellCardZone<T extends NonSpellCard> extends Zone<T> {
     public void add(T card, Time time, State state) {
         super.add(card, time, state);
         if(card.hasTag(Tag.TagType.LEGENDARY)) {
-            card.propogateLegendaryLock(true, state);
+            card.propagateLegendaryLock(true, state);
         }
     }
 
@@ -23,7 +23,7 @@ public abstract class NonSpellCardZone<T extends NonSpellCard> extends Zone<T> {
     public boolean remove(T card, Time time, State state) {
         boolean returnValue = super.remove(card, time, state);
         if(card.hasTag(Tag.TagType.LEGENDARY)) {
-            card.propogateLegendaryLock(false, state);
+            card.propagateLegendaryLock(false, state);
         }
         return returnValue;
     }

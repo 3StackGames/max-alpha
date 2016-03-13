@@ -69,8 +69,23 @@ public abstract class Card {
         }
 
         victims.stream()
-            .map(victim -> victim.takeDamage(amount, this, time))
+            .map(victim -> victim.takeDamage(amount, this, time, state))
             .forEach( damageEvent -> state.addEvent(damageEvent, Trigger.ON_DAMAGE));
+    }
+
+    public void kill(NonSpellCard victim, Time time, State state) {
+        List<NonSpellCard> victims = new ArrayList<>();
+        victims.add(victim);
+        kill(victims, time, state);
+    }
+
+    public void kill(List<NonSpellCard> victims, Time time, State state) {
+        if(victims.size() < 1) {
+            throw new IllegalArgumentException("Must have at least one victim");
+        }
+
+        victims.stream()
+                .forEach(victim -> victim.die(time, state));
     }
 
     @ExposeMethodResult("playable")

@@ -1,6 +1,7 @@
 package com.three_stack.maximum_alpha.backend.game.effects.results.implementations;
 
 import com.three_stack.maximum_alpha.backend.game.State;
+import com.three_stack.maximum_alpha.backend.game.Time;
 import com.three_stack.maximum_alpha.backend.game.cards.Buff;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.NonSpellCard;
@@ -33,8 +34,9 @@ public class BuffResult extends TargetResult{
     public void resolve(State state, Card source, Event event, Map<String, Object> value) {
         List<NonSpellCard> targets = (List<NonSpellCard>) value.get("targets");
         Buff buff = new Buff(attack, health, null, source, false);
+        Time buffTime = state.getTime();
         targets.stream()
-                .forEach(target -> target.addBuff(buff, state));
+                .forEach(target -> target.addBuff(buff, buffTime, state));
     }
 
     @Override

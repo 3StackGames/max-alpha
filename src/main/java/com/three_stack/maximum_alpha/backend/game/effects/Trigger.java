@@ -13,7 +13,6 @@ public enum Trigger {
     ON_REFRESH,
     ON_EXHAUST,
 
-
     ON_ENTER_HAND,
     ON_LEAVE_HAND,
     ON_ENTER_FIELD,

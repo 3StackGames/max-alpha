@@ -84,8 +84,8 @@ public class Creature extends NonSpellCard implements Worker {
             throw new IllegalStateException("blockTarget must be set");
         }
 
-        Event a = this.takeDamage(blockTarget.getCurrentAttack(), blockTarget, battleTime);
-        Event b = blockTarget.takeDamage(this.getCurrentAttack(), this, battleTime);
+        Event a = this.takeDamage(blockTarget.getCurrentAttack(), blockTarget, battleTime, state);
+        Event b = blockTarget.takeDamage(this.getCurrentAttack(), this, battleTime, state);
         state.addEvent(a, Trigger.ON_DAMAGE);
         state.addEvent(b, Trigger.ON_DAMAGE);
 
@@ -213,14 +213,14 @@ public class Creature extends NonSpellCard implements Worker {
 	}
 	
 	@Override
-	public void addBuff(Buff buff, State state) {
-		super.addBuff(buff, state);
+	public void addBuff(Buff buff, Time time, State state) {
+		super.addBuff(buff, time, state);
 		buffAttack += buff.getAttackModifier();
 	}
 	
 	@Override
-	public void removeBuff(Buff buff, State state) {
-		super.removeBuff(buff, state);
+	public void removeBuff(Buff buff, Time time, State state) {
+		super.removeBuff(buff, time, state);
 		buffAttack -= buff.getAttackModifier();
 	}
 	

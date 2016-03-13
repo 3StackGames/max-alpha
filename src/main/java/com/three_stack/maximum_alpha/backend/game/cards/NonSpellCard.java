@@ -64,13 +64,21 @@ public abstract class NonSpellCard extends Card {
         this.tags = Utility.copy(other.tags);
     }
 
-    public SourceDamageTargetEvent takeDamage(int damage, Card source, Time time) {
+    public SourceDamageTargetEvent takeDamage(int damage, Card source, Time time, State state) {
         damageTaken += damage;
-        checkDeath();
+        checkDeathGeneral(time, state);
+        //check if source is lethal
+        if(!isDead() && damage > 0 && source instanceof Creature) {
+            Creature creatureSource = (Creature) source;
+            if(creatureSource.hasTag(Tag.TagType.LETHAL)) {
+                die(time, state);
+            }
+        }
         return new SourceDamageTargetEvent(time, source, this, damage);
     }
 
     public SingleCardEvent die(Time time, State state) {
+        setDead(true);
         SingleCardEvent deathEvent = new SingleCardEvent(time, "death", this);
         state.addEvent(deathEvent, Trigger.ON_DEATH);
         return deathEvent;
@@ -86,9 +94,10 @@ public abstract class NonSpellCard extends Card {
         return health + buffHealth;
     }
     
-    public void checkDeath() {
-        if(getCurrentHealth() <= 0)
-        	this.dead = true;
+    public void checkDeathGeneral(Time time, State state) {
+        if(getCurrentHealth() <= 0) {
+            die(time, state);
+        }
     }
     
     public void setDead(boolean dead) {
@@ -112,7 +121,7 @@ public abstract class NonSpellCard extends Card {
         return true;
     }
 
-    public void propogateLegendaryLock(boolean locked, State state) {
+    public void propagateLegendaryLock(boolean locked, State state) {
         state.getPlayingPlayers().stream()
                 .map(Player::getAllCards)
                 .flatMap(Collection::stream)
@@ -188,14 +197,14 @@ public abstract class NonSpellCard extends Card {
     	return buffs.stream().filter(buff -> !buff.isAura()).collect(Collectors.toList());
     }
 
-    public void addBuff(Buff buff, State state) {
+    public void addBuff(Buff buff, Time time, State state) {
     	buff.onAdd(this, state);
         buffs.add(buff);
         buffHealth += buff.getHealthModifier();
-        checkDeath();
+        checkDeathGeneral(time, state);
     }
     
-    public void removeBuff(Buff buff, State state) {
+    public void removeBuff(Buff buff, Time time, State state) {
     	int idx = buffs.indexOf(buff);
     	for(int i = buffs.size()-1; i >= idx; i--) {
     		Buff curr = buffs.get(i);
@@ -208,7 +217,7 @@ public abstract class NonSpellCard extends Card {
 		buffs.remove(buff);
         buffHealth -= buff.getHealthModifier();
         
-    	checkDeath();
+    	checkDeathGeneral(time, state);
     }
     
     public void reset(State state) {
