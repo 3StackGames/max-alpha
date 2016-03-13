@@ -29,6 +29,11 @@ public class Creature extends NonSpellCard implements Worker {
      * IMPORTANT: Only used and/or reliable during block phase.
      */
     protected transient List<Creature> blockableCreatures;
+    /**
+     * Structures this creature can attack.
+     * IMPORTANT: Only used and/or reliable during attack phase.
+     */
+    protected transient List<Structure> attackableStructures;
 
     public Creature(String name, ResourceList cost, String text, String flavorText, int defaultAttack, int health) {
         super(name, cost, text, flavorText, health);
@@ -277,6 +282,21 @@ public class Creature extends NonSpellCard implements Worker {
     public List<UUID> getBlockableCreatureIds() {
         return getBlockableCreatures().stream()
                 .map(Creature::getId)
+                .collect(Collectors.toList());
+    }
+
+    public List<Structure> getAttackableStructures() {
+        return attackableStructures;
+    }
+
+    public void setAttackableStructures(List<Structure> attackableStructures) {
+        this.attackableStructures = attackableStructures;
+    }
+
+    @ExposeMethodResult("attackableCreatureIds")
+    public List<UUID> getAttackableStructureIds() {
+        return getAttackableStructures().stream()
+                .map(Structure::getId)
                 .collect(Collectors.toList());
     }
 }
