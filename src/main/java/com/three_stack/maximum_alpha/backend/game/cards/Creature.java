@@ -293,7 +293,7 @@ public class Creature extends NonSpellCard implements Worker {
         this.attackableStructures = attackableStructures;
     }
 
-    @ExposeMethodResult("attackableCreatureIds")
+    @ExposeMethodResult("attackableStructureIds")
     public List<UUID> getAttackableStructureIds() {
         return getAttackableStructures().stream()
                 .map(Structure::getId)
