@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class Creature extends NonSpellCard implements Worker {
     protected transient final int attack;
     protected Structure attackTarget;
-    protected transient boolean canAttack;
+    protected transient List<String> reasonsCanNotAttack;
     protected transient Creature blockTarget;
     protected transient boolean canBlock;
     protected boolean summoningSickness;
@@ -34,7 +34,7 @@ public class Creature extends NonSpellCard implements Worker {
         super(name, cost, text, flavorText, health);
         this.attack = attack;
         attackTarget = null;
-        canAttack = true;
+        reasonsCanNotAttack = new ArrayList<>();
         blockTarget = null;
         canBlock = true;
         summoningSickness = true;
@@ -48,7 +48,7 @@ public class Creature extends NonSpellCard implements Worker {
         Creature otherCreature = (Creature) other;
         this.attack = otherCreature.attack;
         this.attackTarget = otherCreature.attackTarget;
-        this.canAttack = otherCreature.canAttack;
+        this.reasonsCanNotAttack = otherCreature.reasonsCanNotAttack;
         this.blockTarget = otherCreature.blockTarget;
         this.canBlock = otherCreature.canBlock;
         this.summoningSickness = otherCreature.summoningSickness;
@@ -135,11 +135,7 @@ public class Creature extends NonSpellCard implements Worker {
 
     @ExposeMethodResult("canAttack")
     public boolean canAttack() {
-        return canAttack && !(exhausted || summoningSickness) && !isAttacking();
-    }
-
-    public void setCanAttack(boolean canAttack) {
-        this.canAttack = canAttack;
+        return reasonsCanNotAttack.isEmpty() && !(exhausted || summoningSickness) && !isAttacking();
     }
 
     public Creature getBlockTarget() {
@@ -207,7 +203,7 @@ public class Creature extends NonSpellCard implements Worker {
 		super.reset(state);
 		attackTarget = null;
 		blockTarget = null;
-		canAttack = true;
+		reasonsCanNotAttack = new ArrayList<>();
 		canBlock = true;
         summoningSickness = true;
 	}
@@ -237,6 +233,9 @@ public class Creature extends NonSpellCard implements Worker {
             case QUICK:
                 setSummoningSickness(false);
                 break;
+            case GUARD:
+                reasonsCanNotAttack.add("GUARD");
+                break;
             default:
                 break;
         }
@@ -251,6 +250,8 @@ public class Creature extends NonSpellCard implements Worker {
                     setSummoningSickness(true);
                 }
                 break;
+            case GUARD:
+                reasonsCanNotAttack.remove("GUARD");
             default:
                 break;
         }
