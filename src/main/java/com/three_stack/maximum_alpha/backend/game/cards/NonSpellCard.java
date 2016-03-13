@@ -245,25 +245,34 @@ public abstract class NonSpellCard extends Card {
     }
 
     public void addTag(Tag tag) {
+        Effect effect;
         switch (tag.getType()) {
             case DEGENERATE:
-                Effect effect = TagEffectFactory.createDegenerateEffect(tag.getValue(), this);
-                if(triggerEffects.containsKey(Trigger.ON_START_PHASE_START)) {
-                    triggerEffects.get(Trigger.ON_START_PHASE_START).add(effect);
-                } else {
-                    List<Effect> effects = new ArrayList<>();
-                    effects.add(effect);
-                    triggerEffects.put(Trigger.ON_START_PHASE_START, effects);
-                }
-                List<UUID> effectIds = new ArrayList<>();
-                effectIds.add(effect.getId());
-                Tag tagWithEffects = new Tag(tag.getType(), tag.getValue(), effectIds);
-                tags.add(tagWithEffects);
+                effect = TagEffectFactory.createDegenerateEffect(tag.getValue(), this);
+                addStartPhaseTagEffect(tag, effect);
+                break;
+            case GROWTH:
+                effect = TagEffectFactory.createGrowthEffect(tag.getValue(), tag.getValue(), this);
+                addStartPhaseTagEffect(tag, effect);
                 break;
             default:
                 tags.add(tag);
                 break;
         }
+    }
+
+    private void addStartPhaseTagEffect(Tag tag, Effect effect) {
+        if(triggerEffects.containsKey(Trigger.ON_START_PHASE_START)) {
+            triggerEffects.get(Trigger.ON_START_PHASE_START).add(effect);
+        } else {
+            List<Effect> effects = new ArrayList<>();
+            effects.add(effect);
+            triggerEffects.put(Trigger.ON_START_PHASE_START, effects);
+        }
+        List<UUID> effectIds = new ArrayList<>();
+        effectIds.add(effect.getId());
+        Tag tagWithEffects = new Tag(tag.getType(), tag.getValue(), effectIds);
+        tags.add(tagWithEffects);
     }
 
     public void removeTag(Tag tag) {

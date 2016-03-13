@@ -8,6 +8,7 @@ import com.three_stack.maximum_alpha.backend.game.cards.NonSpellCard;
 import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.backend.game.effects.results.Result;
 import com.three_stack.maximum_alpha.backend.game.effects.results.TargetResult;
+import com.three_stack.maximum_alpha.backend.game.effects.results.TargetStep;
 import com.three_stack.maximum_alpha.database_client.pojos.DBResult;
 
 import java.util.List;
@@ -16,6 +17,12 @@ import java.util.Map;
 public class BuffResult extends TargetResult{
     protected int attack;
     protected int health;
+
+    public BuffResult(List<TargetStep> targetSteps, int attack, int health) {
+        super(targetSteps);
+        this.attack = attack;
+        this.health = health;
+    }
 
     public BuffResult(DBResult dbResult) {
         super(dbResult);

@@ -28,7 +28,7 @@ public class Creature extends NonSpellCard implements Worker {
      * Creatures this creature can block.
      * IMPORTANT: Only used and/or reliable during block phase.
      */
-    protected List<Creature> blockableCreatures;
+    protected transient List<Creature> blockableCreatures;
 
     public Creature(String name, ResourceList cost, String text, String flavorText, int attack, int health) {
         super(name, cost, text, flavorText, health);

@@ -2,16 +2,18 @@ package com.three_stack.maximum_alpha.backend.game.cards;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.effects.Effect;
 import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
+import io.gsonfire.annotations.ExposeMethodResult;
 
 public class Buff {
 	final int attackModifier;
 	final int healthModifier;
 	final Map<Trigger, List<Effect>> effects;
-	final Card source;
+	final transient Card source;
 	final boolean isAura;
 	
 	public Buff(int attack, int health, Map<Trigger, List<Effect>> effects, Card source, boolean isAura) {
@@ -58,5 +60,10 @@ public class Buff {
 					s.removeEffect(t, e);
 				}
 			}
+	}
+
+	@ExposeMethodResult("sourceId")
+	public UUID getSourceId() {
+		return source.getId();
 	}
 }
