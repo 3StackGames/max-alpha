@@ -231,7 +231,8 @@ public class Creature extends NonSpellCard implements Worker {
 	}
 
     @Override
-    public void processTag(Tag tag) {
+    public void addTag(Tag tag) {
+        super.addTag(tag);
         switch (tag.getType()) {
             case QUICK:
                 setSummoningSickness(false);
@@ -242,7 +243,8 @@ public class Creature extends NonSpellCard implements Worker {
     }
 
     @Override
-    public void processTagRemoval(Tag tag) {
+    public void removeTag(Tag tag) {
+        super.removeTag(tag);
         switch (tag.getType()) {
             case QUICK:
                 if(isSummonedThisTurn()) {

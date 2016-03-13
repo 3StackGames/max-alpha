@@ -2,6 +2,10 @@ package com.three_stack.maximum_alpha.backend.game.cards;
 
 import com.three_stack.maximum_alpha.database_client.pojos.DBTag;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 /**
  * Immutable
  */
@@ -20,15 +24,29 @@ final public class Tag {
     }
     final private TagType type;
     final private Integer value;
+    final private List<UUID> effectIds;
 
-    public Tag(TagType name, Integer value) {
-        this.type = name;
+    /**
+     * Usually you'll want to use this one. Let the setter handle effectIds
+     * @param type
+     * @param value
+     */
+    public Tag(TagType type, Integer value) {
+        this.type = type;
         this.value = value;
+        this.effectIds = new ArrayList<>();
+    }
+
+    protected Tag(TagType type, Integer value, List<UUID> effectIds) {
+        this.type = type;
+        this.value = value;
+        this.effectIds = effectIds;
     }
 
     public Tag(DBTag dbTag) {
         this.type = TagType.valueOf(dbTag.getType());
         this.value = dbTag.getValue();
+        this.effectIds = new ArrayList<>();;
     }
 
     public TagType getType() {
@@ -37,6 +55,10 @@ final public class Tag {
 
     public Integer getValue() {
         return value;
+    }
+
+    public List<UUID> getEffectIds() {
+        return effectIds;
     }
 
     @Override

@@ -11,14 +11,17 @@ import com.three_stack.maximum_alpha.database_client.pojos.DBEffect;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class Effect {
+    protected final UUID id;
     protected Card source;
     protected List<Check> checks;
     protected List<Result> results;
 
     public Effect(Card source, DBEffect dbEffect) {
+        this.id = UUID.randomUUID();
         this.source = source;
         this.checks = dbEffect.getChecks().stream()
                 .map(Checks::getCheck)
@@ -29,18 +32,21 @@ public class Effect {
     }
 
     public Effect(Card source, List<Check> checks, List<Result> results) {
+        this.id = UUID.randomUUID();
         this.source = source;
         this.checks = checks;
         this.results = results;
     }
 
     public Effect(Card source) {
+        this.id = UUID.randomUUID();
         this.source = source;
         this.checks = new ArrayList<>();
         this.results = new ArrayList<>();
     }
 
     public Effect(Effect other) {
+        this.id = UUID.randomUUID();
         this.source = other.source;
         this.checks = other.checks.stream().collect(Collectors.toList());
         this.results = other.results.stream()
@@ -101,5 +107,9 @@ public class Effect {
 
     public void setResults(List<Result> results) {
         this.results = results;
+    }
+
+    public UUID getId() {
+        return id;
     }
 }

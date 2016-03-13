@@ -10,10 +10,7 @@ import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.utilities.Utility;
 import io.gsonfire.annotations.ExposeMethodResult;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.three_stack.maximum_alpha.backend.game.ResourceList;
@@ -242,20 +239,46 @@ public abstract class NonSpellCard extends Card {
 
     public void setTags(List<Tag> tags) {
         this.tags.stream()
-                .forEach(this::processTagRemoval);
-        this.tags = tags;
+                .forEach(this::removeTag);
         tags.stream()
-                .forEach(this::processTag);
+                .forEach(this::addTag);
     }
 
     public void addTag(Tag tag) {
-        tags.add(tag);
-        processTag(tag);
+        switch (tag.getType()) {
+            case DEGENERATE:
+                Effect effect = TagEffectFactory.createDegenerateEffect(tag.getValue(), this);
+                if(triggerEffects.containsKey(Trigger.ON_START_PHASE_START)) {
+                    triggerEffects.get(Trigger.ON_START_PHASE_START).add(effect);
+                } else {
+                    List<Effect> effects = new ArrayList<>();
+                    effects.add(effect);
+                    triggerEffects.put(Trigger.ON_START_PHASE_START, effects);
+                }
+                List<UUID> effectIds = new ArrayList<>();
+                effectIds.add(effect.getId());
+                Tag tagWithEffects = new Tag(tag.getType(), tag.getValue(), effectIds);
+                tags.add(tagWithEffects);
+                break;
+            default:
+                tags.add(tag);
+                break;
+        }
     }
 
-    public abstract void processTag(Tag tag);
-
-    public abstract void processTagRemoval(Tag tag);
+    public void removeTag(Tag tag) {
+        tags.remove(tag);
+        List<UUID> tagEffectIds = tag.getEffectIds();
+        if(!tagEffectIds.isEmpty()) {
+            tagEffectIds.stream()
+                    .forEach( tagEffectId -> {
+                        triggerEffects.entrySet().stream()
+                                .forEach( triggerEffectEntry -> {
+                                    triggerEffectEntry.getValue().removeIf( effect -> effect.getId().equals(tagEffectId));
+                                });
+                    });
+        }
+    }
 
     public List<CardClass> getClasses() {
         return classes;

@@ -34,7 +34,8 @@ public class Structure extends NonSpellCard {
     }
 
     @Override
-    public void processTagRemoval(Tag tag) {
+    public void removeTag(Tag tag) {
+        super.removeTag(tag);
         switch (tag.getType()) {
             default:
                 break;
@@ -42,7 +43,8 @@ public class Structure extends NonSpellCard {
     }
 
     @Override
-    public void processTag(Tag tag) {
+    public void addTag(Tag tag) {
+        super.addTag(tag);
         switch (tag.getType()) {
             default:
                 break;
