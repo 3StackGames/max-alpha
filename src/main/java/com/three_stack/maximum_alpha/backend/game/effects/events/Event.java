@@ -2,7 +2,7 @@ package com.three_stack.maximum_alpha.backend.game.effects.events;
 
 import com.three_stack.maximum_alpha.backend.game.Time;
 
-public abstract class Event {
+public class Event {
     protected final String type;
     protected final Time time;
 

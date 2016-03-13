@@ -3,6 +3,8 @@ package com.three_stack.maximum_alpha.backend.game.phases;
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.cards.Tag;
+import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
+import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.backend.game.utilities.Utility;
 
 import java.util.Collection;
@@ -30,6 +32,8 @@ public class BlockPhase extends Phase {
 
     public void end(State state) {
         PreparationPhase.getInstance().start(state);
+        Event startPhaseStartEvent = new Event(state.getTime(), "BLOCK PHASE END");
+        state.addEvent(startPhaseStartEvent, Trigger.ON_BLOCK_PHASE_END);
     }
 
     @Override

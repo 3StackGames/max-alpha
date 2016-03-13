@@ -2,6 +2,8 @@ package com.three_stack.maximum_alpha.backend.game.phases;
 
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
+import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
+import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 
 public class EndPhase extends Phase {
     protected static EndPhase instance;
@@ -34,6 +36,8 @@ public class EndPhase extends Phase {
     public void end(State state) {
         state.newTurn();
         StartPhase.getInstance().start(state);
+        Event startPhaseStartEvent = new Event(state.getTime(), "END PHASE END");
+        state.addEvent(startPhaseStartEvent, Trigger.ON_END_PHASE_END);
     }
 
     @Override

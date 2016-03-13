@@ -1,6 +1,7 @@
 package com.three_stack.maximum_alpha.backend.game.effects.events;
 
 import com.three_stack.maximum_alpha.backend.game.Time;
+import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 
 public class PlayerEvent extends Event {

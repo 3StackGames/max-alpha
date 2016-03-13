@@ -1,6 +1,8 @@
 package com.three_stack.maximum_alpha.backend.game.phases;
 
 import com.three_stack.maximum_alpha.backend.game.State;
+import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
+import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 
 public class AttackPhase extends Phase {
     protected static AttackPhase instance;
@@ -18,6 +20,8 @@ public class AttackPhase extends Phase {
 
     public void start(State state) {
         state.setCurrentPhase(instance);
+        Event startPhaseStartEvent = new Event(state.getTime(), "ATTACK PHASE START");
+        state.addEvent(startPhaseStartEvent, Trigger.ON_ATTACK_PHASE_START);
     }
 
     public void end(State state) {

@@ -52,7 +52,7 @@ public class CardFactory {
                                 .map(dbEffect -> new Effect(finalCard, dbEffect))
                                 .collect(Collectors.toList())
                 ));
-        card.setTriggerEffects(triggerEffects);
+        card.addTriggerEffects(triggerEffects);
         return card;
     }
 
@@ -85,6 +85,11 @@ public class CardFactory {
                 .map(Tag::new)
                 .collect(Collectors.toList());
         card.setTags(tags);
+        Map<Trigger, List<Effect>> tagEffects = TagEffectFactory.generateEffects(tags, card);
+        if(!tagEffects.isEmpty()) {
+            card.addTriggerEffects(tagEffects);
+        }
+
     }
 
     private static void setEffects(Spell spell, List<DBEffect> dbEffects) {

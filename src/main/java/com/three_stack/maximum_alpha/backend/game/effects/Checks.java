@@ -11,6 +11,7 @@ import java.util.Map;
  * Terminology:
  *  T = Triggerer = a that triggered the result
  *  S = Source = source of the result
+ *  C = Controller of Source
  *
  *  How to read checks:
  *  [Subject]_[CONTENT] becomes [Subject] is [Content]
@@ -65,5 +66,11 @@ public class Checks {
     public static Check S_ON_FIELD = (state, effect, event) -> {
         Card source = effect.getSource();
         return source.getController().getField().getCards().stream().anyMatch(creature -> creature.equals(source));
+    };
+
+    public static Check C_TURN_PLAYER = (state, effect, event) -> {
+        Card source = effect.getSource();
+        Player controller = source.getController();
+        return state.getTurnPlayer().equals(controller);
     };
 }

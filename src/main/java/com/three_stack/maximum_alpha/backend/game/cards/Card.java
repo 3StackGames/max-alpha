@@ -34,6 +34,7 @@ public abstract class Card {
         this.currentCost = defaultCost;
         this.text = text;
         this.flavorText = flavorText;
+        this.triggerEffects = new HashMap<>();
 	}
 
     protected Card(Card other) {
@@ -151,8 +152,17 @@ public abstract class Card {
         return triggerEffects;
     }
 
-    public void setTriggerEffects(Map<Trigger, List<Effect>> triggerEffects) {
-        this.triggerEffects = triggerEffects;
+    public void addTriggerEffects(Map<Trigger, List<Effect>> triggerEffects) {
+        triggerEffects.entrySet().stream()
+                .forEach( entrySet -> {
+                    Trigger key = entrySet.getKey();
+                    List<Effect> value = entrySet.getValue();
+                    if(this.triggerEffects.containsKey(key)) {
+                        this.triggerEffects.get(key).addAll(value);
+                    } else {
+                        this.triggerEffects.put(key, value);
+                    }
+                });
     }
 
     public boolean hasEffects() {

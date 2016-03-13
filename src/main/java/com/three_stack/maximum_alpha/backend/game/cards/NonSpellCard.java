@@ -68,7 +68,7 @@ public abstract class NonSpellCard extends Card {
         damageTaken += damage;
         checkDeathGeneral(time, state);
         //check if source is lethal
-        if(!isDead() && damage > 0 && source instanceof Creature) {
+        if(!isDead() && damage > 0 && source != null && source instanceof Creature) {
             Creature creatureSource = (Creature) source;
             if(creatureSource.hasTag(Tag.TagType.LETHAL)) {
                 die(time, state);

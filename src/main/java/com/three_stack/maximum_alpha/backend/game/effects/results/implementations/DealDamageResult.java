@@ -6,6 +6,7 @@ import com.three_stack.maximum_alpha.backend.game.cards.NonSpellCard;
 import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.backend.game.effects.results.Result;
 import com.three_stack.maximum_alpha.backend.game.effects.results.TargetResult;
+import com.three_stack.maximum_alpha.backend.game.effects.results.TargetStep;
 import com.three_stack.maximum_alpha.database_client.pojos.DBResult;
 
 import java.util.List;
@@ -13,6 +14,11 @@ import java.util.Map;
 
 public class DealDamageResult extends TargetResult {
     protected int damage;
+
+    public DealDamageResult(List<TargetStep> targetSteps, int damage) {
+        super(targetSteps);
+        this.damage = damage;
+    }
 
     public DealDamageResult(DBResult dbResult) {
         super(dbResult);

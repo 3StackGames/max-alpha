@@ -16,6 +16,14 @@ import java.util.stream.Collectors;
 public abstract class Result {
     protected List<Step> preparationSteps;
 
+    public Result() {
+        this.preparationSteps = new ArrayList<>();
+    }
+
+    public Result(List<Step> preparationSteps) {
+        this.preparationSteps = preparationSteps;
+    }
+
     public Result(DBResult dbResult) {
         preparationSteps = new ArrayList<>();
     }
