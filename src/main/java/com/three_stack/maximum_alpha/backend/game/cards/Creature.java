@@ -187,6 +187,7 @@ public class Creature extends NonSpellCard implements Worker {
     public void resetCombat() {
         blockers = new ArrayList<>();
         blockableCreatures = new ArrayList<>();
+        attackableStructures = new ArrayList<>();
     }
 
     public void addBlocker(Creature blocker) {
