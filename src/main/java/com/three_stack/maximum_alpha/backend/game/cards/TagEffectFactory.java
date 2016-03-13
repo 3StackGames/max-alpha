@@ -32,6 +32,7 @@ public class TagEffectFactory {
         return effect;
     }
 
+    //@Todo: consolidate buffs rather than constantly adding new ones
     public static Effect createGrowthEffect(int attackRate, int healthRate, Card source) {
         List<Check> checks = new ArrayList<>();
         checks.add(Checks.S_ON_FIELD);

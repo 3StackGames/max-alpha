@@ -15,7 +15,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class Creature extends NonSpellCard implements Worker {
-    protected transient final int attack;
+    protected transient final int defaultAttack;
     protected Structure attackTarget;
     protected transient List<String> reasonsCanNotAttack;
     protected transient Creature blockTarget;
@@ -30,9 +30,9 @@ public class Creature extends NonSpellCard implements Worker {
      */
     protected transient List<Creature> blockableCreatures;
 
-    public Creature(String name, ResourceList cost, String text, String flavorText, int attack, int health) {
+    public Creature(String name, ResourceList cost, String text, String flavorText, int defaultAttack, int health) {
         super(name, cost, text, flavorText, health);
-        this.attack = attack;
+        this.defaultAttack = defaultAttack;
         attackTarget = null;
         reasonsCanNotAttack = new ArrayList<>();
         blockTarget = null;
@@ -46,7 +46,7 @@ public class Creature extends NonSpellCard implements Worker {
     public Creature(NonSpellCard other) {
         super(other);
         Creature otherCreature = (Creature) other;
-        this.attack = otherCreature.attack;
+        this.defaultAttack = otherCreature.defaultAttack;
         this.attackTarget = otherCreature.attackTarget;
         this.reasonsCanNotAttack = otherCreature.reasonsCanNotAttack;
         this.blockTarget = otherCreature.blockTarget;
@@ -95,11 +95,11 @@ public class Creature extends NonSpellCard implements Worker {
     }
 
     public int getDefaultAttack() {
-        return attack;
+        return defaultAttack;
     }
 
     //@Todo: work with arjun to make sure both this (currentAttack) and attack show up
-    @ExposeMethodResult("attack")
+    @ExposeMethodResult("currentAttack")
     public int getCurrentAttack() {
         return getDefaultAttack() + buffAttack;
     }
