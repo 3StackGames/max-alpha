@@ -1,5 +1,6 @@
 package com.three_stack.maximum_alpha.backend.game.victories;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.three_stack.maximum_alpha.backend.game.State;
@@ -12,40 +13,35 @@ public class DefaultVictoryHandler implements VictoryHandler {
 	@Override
 	public boolean determineVictory(State state) {  	
     	List<Player> players = state.getPlayingPlayers();
+    	List<Player> losingPlayers = new ArrayList<>();
+    	List<Player> tiedPlayers = new ArrayList<>();
 
     	boolean tie = true;
     	for(Player player : players) {
 			Castle castle = player.getCastle();
 			if(castle.isDead()) {
-				state.setPlayerStatus(player, Status.LOSE);
+				losingPlayers.add(player);
 			} else {
 				tie = false;
 			}
     	}
     	
+    	for(Player loser : losingPlayers) {
+			state.setPlayerStatus(loser, Status.LOSE);
+    	}
+    	
+    	players = state.getPlayingPlayers();
     	if(tie) {
-    		players.forEach((player) -> {
-    			if(player.getStatus() == Status.PLAYING) {
-        			state.setPlayerStatus(player, Status.TIE);
-    			}
+        	tiedPlayers.addAll(players);
+    		tiedPlayers.forEach((player) -> {
+    			state.setPlayerStatus(player, Status.TIE);
     		});
     		return true;
     	}
     	else {
-	    	for(Player player : players) {
-	    		if(player.getStatus() == Status.PLAYING) {
-	    			boolean won = true;
-		    		for(Player otherPlayer : state.getPlayersExcept(player)) {
-		    			if(otherPlayer.getStatus() != Status.LOSE) {
-		    				won = false;
-		    				break;
-		    			}
-		    		}
-		    		if(won) {
-		    			state.setPlayerStatus(player, Status.WIN);
-		    			return true;
-		    		}
-	    		}
+	    	if(state.getPlayingPlayers().size() == 1) {
+	    		state.setPlayerStatus(state.getPlayingPlayers().get(0), Status.WIN);
+	    		return true;
 	    	}
     	}
     	

@@ -6,15 +6,15 @@ import com.three_stack.maximum_alpha.backend.game.victories.DefaultVictoryHandle
 import com.three_stack.maximum_alpha.backend.game.victories.VictoryHandler;
 import com.three_stack.maximum_alpha.backend.server.Connection;
 
-public class Parameters {
+public class DefaultParameters {
     final int INITIAL_DRAW_SIZE = 5;
-    final int TOTAL_HEALTH = 40;
+    final int TOTAL_HEALTH = 1;
     public final static int INITIAL_COLORLESS_MANA = 1;
     final VictoryHandler victoryHandler;
 
     public List<Connection> players;
 
-    public Parameters(List<Connection> players) {
+    public DefaultParameters(List<Connection> players) {
         this.players = players;
         this.victoryHandler = new DefaultVictoryHandler();
     }

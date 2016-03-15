@@ -1,5 +1,7 @@
 package com.three_stack.maximum_alpha.backend.game;
 
+import io.gsonfire.annotations.ExposeMethodResult;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -13,22 +15,28 @@ import java.util.Queue;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import com.three_stack.maximum_alpha.backend.game.effects.*;
-import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
-import com.three_stack.maximum_alpha.backend.game.effects.events.PlayerEvent;
-import com.three_stack.maximum_alpha.backend.game.effects.events.SingleCardEvent;
-import com.three_stack.maximum_alpha.backend.game.player.*;
 import org.bson.types.ObjectId;
 
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.Action;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
-import com.three_stack.maximum_alpha.backend.game.player.StructureDeck;
+import com.three_stack.maximum_alpha.backend.game.effects.Effect;
+import com.three_stack.maximum_alpha.backend.game.effects.QueuedEffect;
+import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
+import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
+import com.three_stack.maximum_alpha.backend.game.effects.events.PlayerEvent;
+import com.three_stack.maximum_alpha.backend.game.effects.events.SingleCardEvent;
+import com.three_stack.maximum_alpha.backend.game.effects.prompts.Prompt;
 import com.three_stack.maximum_alpha.backend.game.phases.Phase;
 import com.three_stack.maximum_alpha.backend.game.phases.StartPhase;
+import com.three_stack.maximum_alpha.backend.game.player.Courtyard;
+import com.three_stack.maximum_alpha.backend.game.player.Field;
+import com.three_stack.maximum_alpha.backend.game.player.Graveyard;
+import com.three_stack.maximum_alpha.backend.game.player.MainDeck;
+import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.player.Player.Status;
-import com.three_stack.maximum_alpha.backend.game.effects.prompts.Prompt;
+import com.three_stack.maximum_alpha.backend.game.player.StructureDeck;
 import com.three_stack.maximum_alpha.backend.game.utilities.DatabaseClientFactory;
 import com.three_stack.maximum_alpha.backend.game.utilities.Serializer;
 import com.three_stack.maximum_alpha.backend.game.victories.VictoryHandler;
@@ -37,7 +45,7 @@ import com.three_stack.maximum_alpha.database_client.DatabaseClient;
 import com.three_stack.maximum_alpha.database_client.pojos.DBDeck;
 
 public class State {
-    private final transient Parameters parameters;
+    private final transient DefaultParameters parameters;
     private List<Player> players;
     private List<Player> playingPlayers;
     private List<Event> eventHistory;
@@ -64,10 +72,9 @@ public class State {
     private List<Player> winningPlayers;
     private List<Player> losingPlayers;
     private List<Player> tiedPlayers;
-    private boolean gameOver;
     private transient VictoryHandler victoryHandler;
 
-    public State(Parameters parameters) {
+    public State(DefaultParameters parameters) {
         this.parameters = parameters;
         this.players = new ArrayList<>();
         this.playingPlayers = new ArrayList<>();
@@ -89,7 +96,6 @@ public class State {
 
     public void setupGame() {
         victoryHandler = parameters.victoryHandler;
-        gameOver = false;
 
         for (Connection connection : parameters.players) {
             //initialize player
@@ -222,10 +228,6 @@ public class State {
         } else {
             return false; //TODO: return error message from isLegalAction -> action.isValid
         }
-    }
-
-    public boolean isGameOver() {
-        return gameOver;
     }
 
     public boolean isLegalAction(Action action) {
@@ -494,12 +496,11 @@ public class State {
             });
         }
 
-        if (victoryHandler.determineVictory(this)) {
-            gameOver();
-        }
+        victoryHandler.determineVictory(this);
     }
 
-    public void gameOver() {
-        gameOver = true;
+    @ExposeMethodResult("gameOver")
+    public boolean isGameOver() {
+        return playingPlayers.size() == 0;
     }
 }

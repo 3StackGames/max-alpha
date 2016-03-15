@@ -1,6 +1,6 @@
 package com.three_stack.maximum_alpha.backend.game.player;
 
-import com.three_stack.maximum_alpha.backend.game.Parameters;
+import com.three_stack.maximum_alpha.backend.game.DefaultParameters;
 import com.three_stack.maximum_alpha.backend.game.ResourceList;
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.Time;
@@ -59,7 +59,7 @@ public class Player {
         town = new Town(this);
         courtyard = new Courtyard(this);
 
-        resources = new ResourceList(Parameters.INITIAL_COLORLESS_MANA);
+        resources = new ResourceList(DefaultParameters.INITIAL_COLORLESS_MANA);
         castle = new Castle(baseMaxLife, this);
         
         status = Status.PLAYING;

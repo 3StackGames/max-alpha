@@ -21,7 +21,7 @@ import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 import org.json.JSONObject;
 
-import com.three_stack.maximum_alpha.backend.game.Parameters;
+import com.three_stack.maximum_alpha.backend.game.DefaultParameters;
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.actions.ActionService;
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.Action;
@@ -142,7 +142,7 @@ public class Server extends WebSocketServer {
 
     public void startGame(String gameCode) {
     	List<Connection> players = unstartedGames.remove(gameCode);
-        Parameters parameters = new Parameters(players);
+        DefaultParameters parameters = new DefaultParameters(players);
         State newGame = new State(parameters);
         startedGames.put(gameCode, newGame);
 
@@ -215,8 +215,8 @@ public class Server extends WebSocketServer {
     }
 
     //TODO
-    public void close() {
-
+    public void close() throws IOException, InterruptedException {
+    	super.stop();
     }
 
     @Override
@@ -238,8 +238,6 @@ public class Server extends WebSocketServer {
     public void onFragment(WebSocket socket, Framedata fragment) {
         System.out.println("received fragment: " + fragment);
     }
-
-
 
     @Override
     public void onError(WebSocket socket, Exception e) {
