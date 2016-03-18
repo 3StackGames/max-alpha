@@ -116,10 +116,14 @@ public class TargetStep extends Step {
                             throw new IllegalStateException("Base isn't recognized");
                     }
                     //handle additional conditions
+                    //TODO: friendly should mean "allied to controlling player"
                     if(andTerm.contains("ENEMY")) {
                         includedTargetsStream = includedTargetsStream
                                 .filter(includedTarget -> !includedTarget.getController().equals(controllingPlayer));
                     } else if(andTerm.contains("FRIENDLY")) {
+                        includedTargetsStream = includedTargetsStream
+                                .filter(includedTarget -> includedTarget.getController().equals(controllingPlayer));
+                    } else if(andTerm.contains("OWN")) {
                         includedTargetsStream = includedTargetsStream
                                 .filter(includedTarget -> includedTarget.getController().equals(controllingPlayer));
                     }
