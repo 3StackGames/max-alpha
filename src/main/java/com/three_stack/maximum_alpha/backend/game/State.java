@@ -47,7 +47,6 @@ import com.three_stack.maximum_alpha.database_client.pojos.DBDeck;
 public class State {
     private final transient DefaultParameters parameters;
     private List<Player> players;
-    private List<Player> playingPlayers;
     private List<Event> eventHistory;
     private Phase currentPhase;
     /**
@@ -69,21 +68,14 @@ public class State {
      */
     private transient int timer = 1;
     private transient PriorityQueue<QueuedEffect> queuedEffects;
-    private List<Player> winningPlayers;
-    private List<Player> losingPlayers;
-    private List<Player> tiedPlayers;
     private transient VictoryHandler victoryHandler;
 
     public State(DefaultParameters parameters) {
         this.parameters = parameters;
         this.players = new ArrayList<>();
-        this.playingPlayers = new ArrayList<>();
         this.eventHistory = new ArrayList<>();
         this.promptQueue = new ArrayDeque<>();
         this.effects = new HashMap<>();
-        this.winningPlayers = new ArrayList<>();
-        this.losingPlayers = new ArrayList<>();
-        this.tiedPlayers = new ArrayList<>();
         this.queuedEffects = new PriorityQueue<>((Comparator<QueuedEffect>) (a, b) -> {
             if (!a.getTriggeringEvent().getTime().equals(b.getTriggeringEvent().getTime())) {
                 return a.getTriggeringEvent().getTime().getValue() - b.getTriggeringEvent().getTime().getValue();
@@ -112,7 +104,6 @@ public class State {
             player.setMainDeck(mainDeck);
             player.setStructureDeck(structureDeck);
         }
-        playingPlayers.addAll(players);
         initialDraw();
         StartPhase.getInstance().start(this);
         //do other things here
@@ -235,7 +226,7 @@ public class State {
     }
 
     public Player getTurnPlayer() {
-        return playingPlayers.get(turn);
+        return getPlayingPlayers().get(turn);
     }
 
     public void refreshTurnPlayerCards(Time time, State state) {
@@ -250,7 +241,7 @@ public class State {
 
     public Map<UUID, Card> generateCardList() {
         //Gets all target from each player, then collects them into the map
-        masterCardList = playingPlayers.stream().map(Player::getAllCards).flatMap(p -> p.stream()).collect(Collectors.toMap(Card::getId, c -> c));
+        masterCardList = players.stream().map(Player::getAllCards).flatMap(p -> p.stream()).collect(Collectors.toMap(Card::getId, c -> c));
 
         return masterCardList;
     }
@@ -292,7 +283,7 @@ public class State {
     }
 
     public List<Player> getPlayingPlayers() {
-        return playingPlayers;
+        return players.stream().filter(player -> player.getStatus() == Status.PLAYING).collect(Collectors.toList());
     }
 
     public List<Event> getEventHistory() {
@@ -455,18 +446,12 @@ public class State {
         switch (status) {
             case LOSE:
                 player.setStatus(Status.LOSE);
-                playingPlayers.remove(player);
-                losingPlayers.add(player);
                 break;
             case TIE:
                 player.setStatus(Status.TIE);
-                playingPlayers.remove(player);
-                tiedPlayers.add(player);
                 break;
             case WIN:
                 player.setStatus(Status.WIN);
-                playingPlayers.remove(player);
-                winningPlayers.add(player);
                 break;
             default:
                 break;
@@ -474,7 +459,7 @@ public class State {
     }
 
     public void resolveDeaths() {
-        for (Player player : playingPlayers) {
+        for (Player player : players) {
             Field field = player.getField();
             Courtyard court = player.getCourtyard();
             Graveyard grave = player.getGraveyard();
@@ -501,6 +486,6 @@ public class State {
 
     @ExposeMethodResult("gameOver")
     public boolean isGameOver() {
-        return playingPlayers.size() == 0;
+        return getPlayingPlayers().size() == 0;
     }
 }
