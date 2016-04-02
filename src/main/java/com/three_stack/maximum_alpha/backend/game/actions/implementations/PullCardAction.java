@@ -19,7 +19,7 @@ public class PullCardAction extends ExistingCardAction {
     @Override
     public boolean isValid(State state) {
         boolean notInPrompt = notInPrompt(state);
-        boolean correctPhase = state.isPhase(MainPhase.class); //TODO: FubarPhase (instant phase)
+        boolean correctPhase = state.isPhase(MainPhase.class);
         boolean playerTurn = isPlayerTurn(state);
         boolean playerCanPull = player.canAssignOrPull();
         Creature creature = player.getTown().findCard(cardId);

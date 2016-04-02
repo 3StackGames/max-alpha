@@ -1,31 +1,10 @@
 package com.three_stack.maximum_alpha.backend.game.actions;
 
-import com.three_stack.maximum_alpha.backend.game.actions.implementations.*;
-
-import java.util.HashMap;
-import java.util.Map;
-
 public class ActionService {
-    private static final Map<String, Class> actionMap;
 
-    public static Class getAction(String actionName) {
-        return actionMap.get(actionName);
-    }
-
-    static {
-        actionMap = new HashMap<>();
-        actionMap.put("Play Card", PlayCardAction.class);//done
-        actionMap.put("Assign Card", AssignCardAction.class);//done
-        actionMap.put("Pull Card", PullCardAction.class);//implemented but not tested
-        actionMap.put("Activate Ability", ActivateAbilityAction.class);//non-mvp
-        actionMap.put("Choose Prompt Target", ChoosePromptTargetAction.class);//non-mvp
-        actionMap.put("Prompt Target", PromptTargetAction.class);//non-mvp
-        actionMap.put("Declare Attacker", DeclareAttackerAction.class);
-        actionMap.put("Declare Blocker", DeclareBlockerAction.class);
-        actionMap.put("Finish Phase", FinishPhaseAction.class);//implemented but not tested
-        actionMap.put("End Turn Without Combat", EndTurnWithoutCombatAction.class);//implemented but not tested
-        actionMap.put("Build Structure", BuildStructureAction.class);//non-mvp
-        actionMap.put("Skip Step Action", SkipStepAction.class);
-        actionMap.put("Undo Step Action", UndoStepAction.class);
+    public static Class getAction(String actionName) throws ClassNotFoundException {
+        String packageName = ActionService.class.getPackage().getName();
+        String className = packageName + ".implementations." + actionName.replace(" ", "") + "Action";
+        return Class.forName(className);
     }
 }

@@ -4,11 +4,14 @@ import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.Action;
 import com.three_stack.maximum_alpha.backend.game.effects.prompts.Prompt;
 
+/**
+ * @Deprecated: Not implemented after Refactor
+ * @Todo: implement
+ */
 public class SkipStepAction extends Action {
 
     @Override
     public void run(State state) {
-        //@Todo: richard we should make sure this is done properly after my refactor
         /*
 		Prompt prompt = state.getCurrentPrompt();
 		prompt.skipStep();

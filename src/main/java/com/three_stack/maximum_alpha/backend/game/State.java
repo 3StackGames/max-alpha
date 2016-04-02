@@ -45,7 +45,7 @@ import com.three_stack.maximum_alpha.database_client.DatabaseClient;
 import com.three_stack.maximum_alpha.database_client.pojos.DBDeck;
 
 public class State {
-    private final transient DefaultParameters parameters;
+    private final transient Parameters parameters;
     private List<Player> players;
     private List<Event> eventHistory;
     private Phase currentPhase;
@@ -70,7 +70,7 @@ public class State {
     private transient PriorityQueue<QueuedEffect> queuedEffects;
     private transient VictoryHandler victoryHandler;
 
-    public State(DefaultParameters parameters) {
+    public State(Parameters parameters) {
         this.parameters = parameters;
         this.players = new ArrayList<>();
         this.eventHistory = new ArrayList<>();

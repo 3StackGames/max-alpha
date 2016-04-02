@@ -23,14 +23,6 @@ public abstract class Action {
     //@Todo: throw Exception with error message if invalid?
     public abstract boolean isValid(State state);
 
-    public UUID getPlayerId() {
-        return playerId;
-    }
-
-    public void setPlayerId(UUID playerId) {
-        this.playerId = playerId;
-    }
-
     public Player getPlayer(State state) {
         for(Player player : state.getPlayingPlayers()) {
             if(playerId.equals(player.getPlayerId())) {
@@ -39,12 +31,26 @@ public abstract class Action {
         }
         throw new IllegalArgumentException("Player Not Found");
     }
-    
+
     public boolean isPlayerTurn(State state) {
-		return (player == state.getTurnPlayer()); 	
+        return (player == state.getTurnPlayer());
+    }
+
+    public boolean notInPrompt(State state) {
+        return state.getCurrentPrompt() == null;
+    }
+
+    /**
+     * Auto-Generated Getters and Setters Below
+     */
+
+    public UUID getPlayerId() {
+        return playerId;
+    }
+
+    public void setPlayerId(UUID playerId) {
+        this.playerId = playerId;
     }
     
-    public boolean notInPrompt(State state) {
-    	return state.getCurrentPrompt() == null;
-    }
+
 }

@@ -21,7 +21,7 @@ import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 import org.json.JSONObject;
 
-import com.three_stack.maximum_alpha.backend.game.DefaultParameters;
+import com.three_stack.maximum_alpha.backend.game.Parameters;
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.actions.ActionService;
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.Action;
@@ -142,7 +142,7 @@ public class Server extends WebSocketServer {
 
     public void startGame(String gameCode) {
     	List<Connection> players = unstartedGames.remove(gameCode);
-        DefaultParameters parameters = new DefaultParameters(players);
+        Parameters parameters = new Parameters(players);
         State newGame = new State(parameters);
         startedGames.put(gameCode, newGame);
 
