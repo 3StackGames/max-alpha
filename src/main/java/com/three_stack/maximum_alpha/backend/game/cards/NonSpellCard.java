@@ -1,19 +1,23 @@
 package com.three_stack.maximum_alpha.backend.game.cards;
 
-import com.three_stack.maximum_alpha.backend.game.State;
-import com.three_stack.maximum_alpha.backend.game.Time;
-import com.three_stack.maximum_alpha.backend.game.effects.*;
-import com.three_stack.maximum_alpha.backend.game.effects.events.SingleCardEvent;
-import com.three_stack.maximum_alpha.backend.game.effects.events.SourceDamageTargetEvent;
-
-import com.three_stack.maximum_alpha.backend.game.player.Player;
-import com.three_stack.maximum_alpha.backend.game.utilities.Utility;
 import io.gsonfire.annotations.ExposeMethodResult;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.three_stack.maximum_alpha.backend.game.ResourceList;
+import com.three_stack.maximum_alpha.backend.game.State;
+import com.three_stack.maximum_alpha.backend.game.Time;
+import com.three_stack.maximum_alpha.backend.game.effects.Effect;
+import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
+import com.three_stack.maximum_alpha.backend.game.effects.events.SingleCardEvent;
+import com.three_stack.maximum_alpha.backend.game.effects.events.SourceDamageTargetEvent;
+import com.three_stack.maximum_alpha.backend.game.effects.events.SourceHealTargetEvent;
+import com.three_stack.maximum_alpha.backend.game.player.Player;
+import com.three_stack.maximum_alpha.backend.game.utilities.Utility;
 
 public abstract class NonSpellCard extends Card {
     protected final int health;
@@ -73,12 +77,15 @@ public abstract class NonSpellCard extends Card {
         }
         return new SourceDamageTargetEvent(time, source, this, damage);
     }
+    
+    public SourceHealTargetEvent receiveHeal(int heal, Card source, Time time, State state) {
+        damageTaken = Math.max(damageTaken-heal, 0);
+        return new SourceHealTargetEvent(time, source, this, heal);
+    }
 
     public SingleCardEvent die(Time time, State state) {
         setDead(true);
-        SingleCardEvent deathEvent = new SingleCardEvent(time, "death", this);
-        state.addEvent(deathEvent, Trigger.ON_DEATH);
-        return deathEvent;
+        return new SingleCardEvent(time, "death", this);
     }
 
     @ExposeMethodResult("currentHealth")
