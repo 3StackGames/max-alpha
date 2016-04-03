@@ -52,6 +52,9 @@ public class Player {
         this.connection = connection;
         playerId = UUID.randomUUID();
 
+        mainDeck = new MainDeck(this);
+        structureDeck = new StructureDeck(this);
+
         hand = new Hand(this);
         field = new Field(this);
 

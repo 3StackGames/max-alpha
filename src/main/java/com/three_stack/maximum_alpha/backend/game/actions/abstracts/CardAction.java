@@ -8,7 +8,9 @@ public abstract class CardAction extends Action {
     protected UUID cardId;
 
     protected Card card;
-
+    /**
+     * Auto-Generated Getters and Setters Below
+     */
     public UUID getCardId() {
         return cardId;
     }
@@ -16,4 +18,14 @@ public abstract class CardAction extends Action {
     public void setCardId(UUID cardId) {
         this.cardId = cardId;
     }
+
+    public Card getCard() {
+        return card;
+    }
+
+    public void setCard(Card card) {
+        this.card = card;
+    }
+
+
 }

@@ -1,5 +1,6 @@
 package com.three_stack.maximum_alpha.backend.game;
 
+import com.three_stack.maximum_alpha.backend.game.cards.CardFactory;
 import io.gsonfire.annotations.ExposeMethodResult;
 
 import java.util.ArrayDeque;
@@ -45,7 +46,7 @@ import com.three_stack.maximum_alpha.database_client.DatabaseClient;
 import com.three_stack.maximum_alpha.database_client.pojos.DBDeck;
 
 public class State {
-    private final transient Parameters parameters;
+    private transient Parameters parameters;
     private List<Player> players;
     private List<Event> eventHistory;
     private Phase currentPhase;
@@ -70,8 +71,7 @@ public class State {
     private transient PriorityQueue<QueuedEffect> queuedEffects;
     private transient VictoryHandler victoryHandler;
 
-    public State(Parameters parameters) {
-        this.parameters = parameters;
+    public State() {
         this.players = new ArrayList<>();
         this.eventHistory = new ArrayList<>();
         this.promptQueue = new ArrayDeque<>();
@@ -83,10 +83,10 @@ public class State {
                 return a.getEffect().getSource().getTimeEnteredZone().getValue() - b.getEffect().getSource().getTimeEnteredZone().getValue();
             }
         });
-        setupGame();
     }
 
-    public void setupGame() {
+    public void setupGame(Parameters parameters) {
+        this.parameters = parameters;
         victoryHandler = parameters.victoryHandler;
 
         for (Connection connection : parameters.players) {
@@ -97,8 +97,15 @@ public class State {
             DatabaseClient client = DatabaseClientFactory.create();
             ObjectId deckId = player.getConnection().deckId;
             DBDeck dbDeck = client.getDeckWithCards(deckId);
-            MainDeck mainDeck = new MainDeck(dbDeck, player);
-            StructureDeck structureDeck = new StructureDeck(dbDeck, player);
+            List<Card> mainDeckCards = dbDeck.getMainCards().stream()
+                    .map(CardFactory::create)
+                    .collect(Collectors.toList());
+            MainDeck mainDeck = new MainDeck(player, mainDeckCards);
+            List<Structure> structureCards = dbDeck.getStructureCards().stream()
+                    .map(CardFactory::create)
+                    .map(card -> (Structure) card)
+                    .collect(Collectors.toList());
+            StructureDeck structureDeck = new StructureDeck(player, structureCards);
             trackCardEffectsAndMarkController(mainDeck.getCards(), structureDeck.getCards(), player);
             mainDeck.shuffle();
             player.setMainDeck(mainDeck);
@@ -487,5 +494,13 @@ public class State {
     @ExposeMethodResult("gameOver")
     public boolean isGameOver() {
         return getPlayingPlayers().size() == 0;
+    }
+
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(List<Player> players) {
+        this.players = players;
     }
 }

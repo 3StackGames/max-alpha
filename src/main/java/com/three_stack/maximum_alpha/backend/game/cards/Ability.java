@@ -15,7 +15,6 @@ public class Ability {
     protected String text;
     protected transient List<Effect> effects;
 
-
     public Ability(Card finalCard, DBAbility dbAbility) {
         this.id = UUID.randomUUID();
         this.cost = new ResourceList(dbAbility.getCost());
@@ -24,6 +23,14 @@ public class Ability {
         this.effects = dbAbility.getEffects().stream()
                 .map(dbEffect -> new Effect(finalCard, dbEffect))
                 .collect(Collectors.toList());
+    }
+
+    public Ability(Card finalCard, ResourceList cost, boolean tap, String text, List<Effect> effects) {
+        this.id = UUID.randomUUID();
+        this.cost = cost;
+        this.tap = tap;
+        this.text = text;
+        this.effects = effects;
     }
 
     public Ability(Ability other) {

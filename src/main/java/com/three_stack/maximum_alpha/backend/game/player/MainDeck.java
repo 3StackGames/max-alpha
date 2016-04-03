@@ -3,18 +3,19 @@ package com.three_stack.maximum_alpha.backend.game.player;
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.Time;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
-import com.three_stack.maximum_alpha.backend.game.cards.CardFactory;
 import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
-import com.three_stack.maximum_alpha.database_client.pojos.DBDeck;
 
 import java.util.Collections;
-import java.util.stream.Collectors;
+import java.util.List;
 
 public class MainDeck extends Zone<Card> {
 
-    public MainDeck(DBDeck deck, Player owner) {
+    public MainDeck(Player owner) {
         super(owner);
-        cards = deck.getMainCards().stream().map(CardFactory::create).collect(Collectors.toList());
+    }
+
+    public MainDeck(Player owner, List<Card> cards) {
+        super(owner, cards);
     }
 
     @Override

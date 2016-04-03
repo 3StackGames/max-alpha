@@ -9,7 +9,18 @@ public abstract class ExistingCardWithCostAction extends ExistingCardAction {
 
     @Override
     public boolean isValid(State state) {
-        boolean playerHasInputCost = player.hasResources(cost); //technically covered by isPlayable in the future
+        boolean playerHasInputCost = getPlayer(state).hasResources(cost); //technically covered by isPlayable in the future
         return playerHasInputCost;
+    }
+
+    /**
+     * Auto-Generated Getters and Setters Below
+     */
+    public ResourceList getCost() {
+        return cost;
+    }
+
+    public void setCost(ResourceList cost) {
+        this.cost = cost;
     }
 }

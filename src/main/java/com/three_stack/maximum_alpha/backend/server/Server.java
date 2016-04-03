@@ -143,7 +143,8 @@ public class Server extends WebSocketServer {
     public void startGame(String gameCode) {
     	List<Connection> players = unstartedGames.remove(gameCode);
         Parameters parameters = new Parameters(players);
-        State newGame = new State(parameters);
+        State newGame = new State();
+        newGame.setupGame(parameters);
         startedGames.put(gameCode, newGame);
 
         sendStateUpdate(gameCode);

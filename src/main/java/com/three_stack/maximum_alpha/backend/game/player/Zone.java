@@ -22,6 +22,10 @@ public abstract class Zone<T extends Card> {
         cards = new ArrayList<>();
     }
 
+    protected Zone(Player owner, List<T> cards) {
+        this.cards = cards;
+    }
+
     protected void setup(Player owner) {
         this.owner = owner;
     }

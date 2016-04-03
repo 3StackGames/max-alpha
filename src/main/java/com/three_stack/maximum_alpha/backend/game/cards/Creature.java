@@ -109,10 +109,6 @@ public class Creature extends NonSpellCard implements Worker {
         return getDefaultAttack() + buffAttack;
     }
 
-    public boolean hasSummoningSickness() {
-        return summoningSickness;
-    }
-
     public void setSummoningSickness(boolean summoningSickness) {
         this.summoningSickness = summoningSickness;
     }
@@ -299,5 +295,9 @@ public class Creature extends NonSpellCard implements Worker {
         return getAttackableStructures().stream()
                 .map(Structure::getId)
                 .collect(Collectors.toList());
+    }
+
+    public boolean isSummoningSickness() {
+        return summoningSickness;
     }
 }

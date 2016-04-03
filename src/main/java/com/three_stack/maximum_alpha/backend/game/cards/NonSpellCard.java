@@ -40,6 +40,7 @@ public abstract class NonSpellCard extends Card {
         tags = new ArrayList<>();
         classes = new ArrayList<>();
         buffs = new ArrayList<>();
+        abilities = new ArrayList<>();
         buffHealth = 0;
         legendaryLock = false;
     }

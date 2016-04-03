@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class CardFactory {
-    //@Todo: spells
     public static Card create(DBCard dbCard) {
         String name = dbCard.getName();
         String text = dbCard.getText();

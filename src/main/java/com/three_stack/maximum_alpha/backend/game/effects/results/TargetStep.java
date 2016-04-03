@@ -24,10 +24,7 @@ public class TargetStep extends Step {
 
     @SuppressWarnings("unchecked")
     public TargetStep(Map<String, Object> map) {
-        this.self = false;
-        this.prompt = false;
-        this.includes = new ArrayList<>();
-        this.excludes = new ArrayList<>();
+        setup();
         if(map.containsKey("self")) {
             this.self = (boolean) map.get("self");
         }
@@ -37,6 +34,14 @@ public class TargetStep extends Step {
             checkIncludes();
             this.excludes = (List<List<String>>) map.get("excludes");
         }
+    }
+
+    public TargetStep(boolean self, boolean prompt, List<List<String>> includes, List<List<String>> excludes) {
+        setup();
+        this.self = self;
+        this.prompt = prompt;
+        this.includes = includes;
+        this.excludes = excludes;
     }
 
     public TargetStep(Step other) {
@@ -50,6 +55,13 @@ public class TargetStep extends Step {
         this.excludes = otherTargetStep.excludes.stream()
                 .map(include -> include.stream().collect(Collectors.toList()))
                 .collect(Collectors.toList());
+    }
+
+    private void setup() {
+        this.self = false;
+        this.prompt = false;
+        this.includes = new ArrayList<>();
+        this.excludes = new ArrayList<>();
     }
 
     private void checkIncludes() {
