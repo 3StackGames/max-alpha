@@ -48,7 +48,7 @@ public class TargetStep extends Step {
                 .map(include -> include.stream().collect(Collectors.toList()))
                 .collect(Collectors.toList());
         this.excludes = otherTargetStep.excludes.stream()
-                .map(include -> include.stream().collect(Collectors.toList()))
+                .map(exclude -> exclude.stream().collect(Collectors.toList()))
                 .collect(Collectors.toList());
     }
 
