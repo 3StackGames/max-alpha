@@ -4,21 +4,13 @@ import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 
 public class PreparationPhase extends Phase {
-    protected static PreparationPhase instance;
 
-    protected PreparationPhase() {
+    public PreparationPhase() {
         super();
     }
 
-    public static PreparationPhase getInstance() {
-        if(instance == null) {
-            instance = new PreparationPhase();
-        }
-        return instance;
-    }
 
     public void start(State state) {
-        state.setCurrentPhase(instance);
     }
 
 
@@ -30,7 +22,7 @@ public class PreparationPhase extends Phase {
             state.getPlayersExcept(currentPlayer).stream()
                     .forEach(player -> player.castPreparedSpells(state));
 
-            DamagePhase.getInstance().start(state);
+            state.setCurrentPhase(new DamagePhase());
         }
     }
 

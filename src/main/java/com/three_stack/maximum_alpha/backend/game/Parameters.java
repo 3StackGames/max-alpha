@@ -9,7 +9,7 @@ import com.three_stack.maximum_alpha.backend.server.Connection;
 public class Parameters {
     final int INITIAL_DRAW_SIZE = 5;
     final int TOTAL_HEALTH = 40;
-    public final static int INITIAL_COLORLESS_MANA = 1;
+    public final static int INITIAL_COLORLESS_RESOURCES = 1;
     final VictoryHandler victoryHandler = new DefaultVictoryHandler();
 
     public List<Connection> players;

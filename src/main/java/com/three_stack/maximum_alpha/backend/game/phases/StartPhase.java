@@ -6,17 +6,9 @@ import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 
 
 public class StartPhase extends Phase {
-    protected static StartPhase instance;
 
-    protected StartPhase() {
+    public StartPhase() {
         super();
-    }
-
-    public static StartPhase getInstance() {
-        if(instance == null) {
-            instance = new StartPhase();
-        }
-        return instance;
     }
 
     /**
@@ -29,7 +21,6 @@ public class StartPhase extends Phase {
      * @param state
      */
     public void start(State state) {
-        state.setCurrentPhase(instance);
         //@Todo: structure complete
         state.completeStructures();
         //resources generated
@@ -49,7 +40,7 @@ public class StartPhase extends Phase {
     }
 
     public void end(State state) {
-        MainPhase.getInstance().start(state);
+        state.setCurrentPhase(new MainPhase());
     }
 
     @Override

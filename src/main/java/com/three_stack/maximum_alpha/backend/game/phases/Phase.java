@@ -4,7 +4,7 @@ import com.three_stack.maximum_alpha.backend.game.State;
 import io.gsonfire.annotations.ExposeMethodResult;
 
 public abstract class Phase {
-    protected Phase(){
+    public Phase(){
     }
 
     public abstract void start(State state);

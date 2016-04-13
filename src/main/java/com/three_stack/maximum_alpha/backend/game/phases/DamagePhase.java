@@ -9,21 +9,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class DamagePhase extends Phase {
-    protected static DamagePhase instance;
 
-    protected DamagePhase () {
+    public DamagePhase () {
         super();
     }
 
-    public static DamagePhase getInstance() {
-        if(instance == null) {
-            instance = new DamagePhase();
-        }
-        return instance;
-    }
     
     public void start(State state) {
-        state.setCurrentPhase(instance);
 
         List<Creature> attackers = state.getTurnPlayer().getField().getCards().stream()
                 .filter(Creature::isAttacking)
@@ -53,7 +45,7 @@ public class DamagePhase extends Phase {
 
     public void end(State state) {
         state.setCombatEnded(true);
-        MainPhase.getInstance().start(state);
+        state.setCurrentPhase(new MainPhase());
     }
 
     @Override

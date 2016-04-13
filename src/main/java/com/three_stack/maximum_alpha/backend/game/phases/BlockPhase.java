@@ -12,26 +12,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class BlockPhase extends Phase {
-    protected static BlockPhase instance;
-
-    protected BlockPhase() {
+    public BlockPhase() {
         super();
     }
 
-    public static BlockPhase getInstance() {
-        if(instance == null) {
-            instance = new BlockPhase();
-        }
-        return instance;
-    }
 
     public void start(State state) {
-        state.setCurrentPhase(instance);
         setBlockableCreatures(state);
     }
 
     public void end(State state) {
-        PreparationPhase.getInstance().start(state);
+        state.setCurrentPhase(new PreparationPhase());
         Event startPhaseStartEvent = new Event(state.getTime(), "BLOCK PHASE END");
         state.addEvent(startPhaseStartEvent, Trigger.ON_BLOCK_PHASE_END);
     }

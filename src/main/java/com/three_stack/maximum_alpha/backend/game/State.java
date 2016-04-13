@@ -3,6 +3,7 @@ package com.three_stack.maximum_alpha.backend.game;
 import com.three_stack.maximum_alpha.backend.game.cards.CardFactory;
 import io.gsonfire.annotations.ExposeMethodResult;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -63,6 +64,7 @@ public class State {
     private List<Card> cardsPlayed;
     private transient Map<UUID, Card> masterCardList;
     private transient Map<Trigger, List<Effect>> effects;
+    private transient Map<Class, Phase> phases;
 
     /**
      * begins at 1, because initialization happens "at time 0"
@@ -112,7 +114,7 @@ public class State {
             player.setStructureDeck(structureDeck);
         }
         initialDraw();
-        StartPhase.getInstance().start(this);
+        setCurrentPhase(new StartPhase());
         //do other things here
         runQueuedEffects();
     }
@@ -305,8 +307,9 @@ public class State {
         return currentPhase;
     }
 
-    public void setCurrentPhase(Phase currentPhase) {
-        this.currentPhase = currentPhase;
+    public void setCurrentPhase(Phase phase) {
+        this.currentPhase = phase;
+        this.currentPhase.start(this);
     }
 
     public boolean isCombatEnded() {

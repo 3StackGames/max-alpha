@@ -62,7 +62,7 @@ public class Player {
         town = new Town(this);
         courtyard = new Courtyard(this);
 
-        resources = new ResourceList(Parameters.INITIAL_COLORLESS_MANA);
+        resources = new ResourceList(Parameters.INITIAL_COLORLESS_RESOURCES);
         castle = new Castle(baseMaxLife, this);
         
         status = Status.PLAYING;

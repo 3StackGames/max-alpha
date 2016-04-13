@@ -6,21 +6,12 @@ import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
 import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 
 public class EndPhase extends Phase {
-    protected static EndPhase instance;
 
-    protected EndPhase() {
+    public EndPhase() {
         super();
     }
 
-    public static EndPhase getInstance() {
-        if(instance == null) {
-            instance = new EndPhase();
-        }
-        return instance;
-    }
-
     public void start(State state) {
-        state.setCurrentPhase(instance);
         state.getPlayingPlayers().stream()
                 .forEach(player -> {
                     player.getField().getCards().stream()
@@ -34,9 +25,9 @@ public class EndPhase extends Phase {
     }
 
     public void end(State state) {
-    	//TODO: Hand size discard
+        //TODO: Hand size discard
         state.newTurn();
-        StartPhase.getInstance().start(state);
+        state.setCurrentPhase(new StartPhase());
         Event startPhaseStartEvent = new Event(state.getTime(), "END PHASE END");
         state.addEvent(startPhaseStartEvent, Trigger.ON_END_PHASE_END);
     }
