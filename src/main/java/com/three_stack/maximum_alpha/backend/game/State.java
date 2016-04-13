@@ -449,22 +449,6 @@ public class State {
         }
     }
 
-    public void setPlayerStatus(Player player, Status status) {
-        switch (status) {
-            case LOSE:
-                player.setStatus(Status.LOSE);
-                break;
-            case TIE:
-                player.setStatus(Status.TIE);
-                break;
-            case WIN:
-                player.setStatus(Status.WIN);
-                break;
-            default:
-                break;
-        }
-    }
-
     public void resolveDeaths() {
         for (Player player : players) {
             Field field = player.getField();

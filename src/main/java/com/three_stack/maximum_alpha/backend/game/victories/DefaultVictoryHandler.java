@@ -22,16 +22,16 @@ public class DefaultVictoryHandler implements VictoryHandler {
     	
     	if(deadPlayers.size() == players.size()) {
     		players.forEach((player) -> {
-    			state.setPlayerStatus(player, Status.TIE);
+    			player.setStatus(Status.TIE);
     		});
     	}
     	else {
     		deadPlayers.forEach((player) -> {
-    			state.setPlayerStatus(player, Status.LOSE);
+    			player.setStatus(Status.LOSE);
     		});
     		
 	    	if(state.getPlayingPlayers().size() == 1) {
-	    		state.setPlayerStatus(state.getPlayingPlayers().get(0), Status.WIN);
+	    		state.getPlayingPlayers().get(0).setStatus(Status.WIN);
 	    	}
     	}
 	}

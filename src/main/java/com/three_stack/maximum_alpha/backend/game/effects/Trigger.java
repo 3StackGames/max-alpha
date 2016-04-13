@@ -8,6 +8,7 @@ public enum Trigger {
     ON_DECLARE_ATTACK,
     ON_DECLARE_BLOCK,
     ON_DAMAGE,
+    ON_HEAL,
     ON_STRUCTURE_COMPLETE,
     ON_DEATH,
     ON_REFRESH,

@@ -1,14 +1,20 @@
 package com.three_stack.maximum_alpha.backend.game.cards;
 
-import com.three_stack.maximum_alpha.backend.game.*;
-import com.three_stack.maximum_alpha.backend.game.effects.Effect;
-import com.three_stack.maximum_alpha.backend.game.Time;
-import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
-import com.three_stack.maximum_alpha.backend.game.player.Player;
 import io.gsonfire.annotations.ExposeMethodResult;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
+
+import com.three_stack.maximum_alpha.backend.game.ResourceList;
+import com.three_stack.maximum_alpha.backend.game.State;
+import com.three_stack.maximum_alpha.backend.game.Time;
+import com.three_stack.maximum_alpha.backend.game.effects.Effect;
+import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
+import com.three_stack.maximum_alpha.backend.game.player.Player;
 
 public abstract class Card {
 	protected final UUID id;
@@ -86,7 +92,24 @@ public abstract class Card {
         }
 
         victims.stream()
-                .forEach(victim -> victim.die(time, state));
+                .map(victim -> victim.die(time, state))
+                .forEach (deathEvent -> state.addEvent(deathEvent, Trigger.ON_DEATH));
+    }
+    
+    public void heal(NonSpellCard target, int amount, Time time, State state) {
+        List<NonSpellCard> targets = new ArrayList<>();
+        targets.add(target);
+        heal(targets, amount, time, state);
+    }
+
+    public void heal(List<NonSpellCard> targets, int amount, Time time, State state) {
+        if(targets.size() < 1) {
+            throw new IllegalArgumentException("Must have at least one target");
+        }
+
+        targets.stream()
+                .map(target -> target.receiveHeal(amount, this, time, state))
+        		.forEach( healEvent -> state.addEvent(healEvent, Trigger.ON_HEAL));
     }
 
     @ExposeMethodResult("playable")

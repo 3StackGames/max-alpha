@@ -33,6 +33,7 @@ public class TargetStep extends Step {
             this.includes = (List<List<String>>) map.get("includes");
             checkIncludes();
             this.excludes = (List<List<String>>) map.get("excludes");
+            checkExcludes();
         }
     }
 
@@ -53,7 +54,7 @@ public class TargetStep extends Step {
                 .map(include -> include.stream().collect(Collectors.toList()))
                 .collect(Collectors.toList());
         this.excludes = otherTargetStep.excludes.stream()
-                .map(include -> include.stream().collect(Collectors.toList()))
+                .map(exclude -> exclude.stream().collect(Collectors.toList()))
                 .collect(Collectors.toList());
     }
 
@@ -74,6 +75,13 @@ public class TargetStep extends Step {
                 );
         if(!validBase) {
             throw new IllegalArgumentException("the first include must be a legal base. for example: CREATURE or STRUCTURE");
+        }
+    }
+    
+    //TODO: implement for real
+    private void checkExcludes() {
+        if(excludes == null || excludes.size() < 1 || excludes.get(0).size() < 1) {
+            excludes = new ArrayList<>();
         }
     }
 
