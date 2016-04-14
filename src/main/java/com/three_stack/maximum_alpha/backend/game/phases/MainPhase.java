@@ -20,10 +20,10 @@ public class MainPhase extends Phase {
 
     public void end(State state) {
         if(isCombatEnded()) {
-            state.setCurrentPhase(new EndPhase());
+            state.setCurrentPhase(EndPhase.class);
         }
         else {
-            state.setCurrentPhase(new AttackPhase());
+            state.setCurrentPhase(AttackPhase.class);
         }
     }
 

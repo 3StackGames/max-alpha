@@ -22,7 +22,7 @@ public class BlockPhase extends Phase {
     }
 
     public void end(State state) {
-        state.setCurrentPhase(new PreparationPhase());
+        state.setCurrentPhase(PreparationPhase.class);
         Event startPhaseStartEvent = new Event(state.getTime(), "BLOCK PHASE END");
         state.addEvent(startPhaseStartEvent, Trigger.ON_BLOCK_PHASE_END);
     }

@@ -12,8 +12,7 @@ import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.backend.game.effects.events.PlayerEvent;
 import com.three_stack.maximum_alpha.backend.game.effects.events.SingleCardEvent;
 import com.three_stack.maximum_alpha.backend.game.effects.prompts.Prompt;
-import com.three_stack.maximum_alpha.backend.game.phases.Phase;
-import com.three_stack.maximum_alpha.backend.game.phases.StartPhase;
+import com.three_stack.maximum_alpha.backend.game.phases.*;
 import com.three_stack.maximum_alpha.backend.game.player.*;
 import com.three_stack.maximum_alpha.backend.game.player.Player.Status;
 import com.three_stack.maximum_alpha.backend.game.utilities.DatabaseClientFactory;
@@ -45,6 +44,7 @@ public class State {
     private transient int currentTime = 1;
     private transient PriorityQueue<QueuedEffect> queuedEffects;
     private transient VictoryHandler victoryHandler;
+    private transient Map<Class, Phase> turnPhases;
 
     public State() {
         this.players = new ArrayList<>();
@@ -58,6 +58,21 @@ public class State {
                 return a.getEffect().getSource().getTimeEnteredZone().getValue() - b.getEffect().getSource().getTimeEnteredZone().getValue();
             }
         });
+        this.turnPhases = new HashMap<>();
+    }
+
+    /**
+     * Initialize turnPhases with clean phases for the new turn
+     */
+    private void setupTurn() {
+        this.turnPhases = new HashMap<>();
+        turnPhases.put(AttackPhase.class, new AttackPhase());
+        turnPhases.put(BlockPhase.class, new BlockPhase());
+        turnPhases.put(DamagePhase.class, new DamagePhase());
+        turnPhases.put(EndPhase.class, new EndPhase());
+        turnPhases.put(MainPhase.class, new MainPhase());
+        turnPhases.put(PreparationPhase.class, new PreparationPhase());
+        turnPhases.put(StartPhase.class, new StartPhase());
     }
 
     public void setupGame(Parameters parameters) {
@@ -87,7 +102,8 @@ public class State {
             player.setStructureDeck(structureDeck);
         }
         initialDraw();
-        setCurrentPhase(new StartPhase());
+        setupTurn();
+        setCurrentPhase(StartPhase.class);
         //do other things here
         runQueuedEffects();
     }
@@ -109,14 +125,10 @@ public class State {
         trackCardEffects(card);
     }
 
-    //@Todo: @Jason consider refactoring to streams - Jason
     private void trackCardEffects(Card card) {
         Map<Trigger, List<Effect>> effectsMap = card.getTriggerEffects();
         if (card.hasEffects() && !card.getTriggerEffects().isEmpty()) {
-            Iterator<Map.Entry<Trigger, List<Effect>>> iterator = effectsMap.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Map.Entry<Trigger, List<Effect>> entry = iterator.next();
-
+            for (Map.Entry<Trigger, List<Effect>> entry : effectsMap.entrySet()) {
                 for (Effect effect : entry.getValue()) {
                     effect.setSource(card);
                     addEffect(entry.getKey(), effect);
@@ -167,6 +179,7 @@ public class State {
             turn = 0;
         }
         players.forEach(Player::newTurn);
+        setupTurn();
     }
 
     public Card findCard(UUID id) {
@@ -279,9 +292,13 @@ public class State {
         return currentPhase;
     }
 
-    public void setCurrentPhase(Phase phase) {
-        this.currentPhase = phase;
-        this.currentPhase.start(this);
+    public void setCurrentPhase(Class phaseClass) {
+        if(turnPhases.containsKey(phaseClass)) {
+            this.currentPhase = turnPhases.get(phaseClass);
+            this.currentPhase.start(this);
+        } else {
+            System.out.println("Bad Phase Change!");
+        }
     }
 
     public int getTurn() {

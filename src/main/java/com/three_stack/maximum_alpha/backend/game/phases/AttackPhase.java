@@ -24,7 +24,7 @@ public class AttackPhase extends Phase {
     }
 
     public void end(State state) {
-        state.setCurrentPhase(new BlockPhase());
+        state.setCurrentPhase(BlockPhase.class);
     }
 
     @Override

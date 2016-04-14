@@ -27,7 +27,7 @@ public class EndPhase extends Phase {
     public void end(State state) {
         //TODO: Hand size discard
         state.newTurn();
-        state.setCurrentPhase(new StartPhase());
+        state.setCurrentPhase(StartPhase.class);
         Event startPhaseStartEvent = new Event(state.getTime(), "END PHASE END");
         state.addEvent(startPhaseStartEvent, Trigger.ON_END_PHASE_END);
     }

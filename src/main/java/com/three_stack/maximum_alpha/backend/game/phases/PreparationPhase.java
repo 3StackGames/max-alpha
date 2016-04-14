@@ -22,7 +22,7 @@ public class PreparationPhase extends Phase {
             state.getPlayersExcept(currentPlayer).stream()
                     .forEach(player -> player.castPreparedSpells(state));
 
-            state.setCurrentPhase(new DamagePhase());
+            state.setCurrentPhase(DamagePhase.class);
         }
     }
 

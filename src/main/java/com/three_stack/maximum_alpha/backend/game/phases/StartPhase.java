@@ -40,7 +40,7 @@ public class StartPhase extends Phase {
     }
 
     public void end(State state) {
-        state.setCurrentPhase(new MainPhase());
+        state.setCurrentPhase(MainPhase.class);
     }
 
     @Override
