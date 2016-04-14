@@ -44,8 +44,7 @@ public class DamagePhase extends Phase {
     }
 
     public void end(State state) {
-        state.setCombatEnded(true);
-        state.setCurrentPhase(new MainPhase());
+        state.setCurrentPhase(new MainPhase(true));
     }
 
     @Override

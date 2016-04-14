@@ -1,26 +1,8 @@
 package com.three_stack.maximum_alpha.backend.game;
 
-import com.three_stack.maximum_alpha.backend.game.cards.CardFactory;
-import io.gsonfire.annotations.ExposeMethodResult;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import org.bson.types.ObjectId;
-
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.Action;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
+import com.three_stack.maximum_alpha.backend.game.cards.CardFactory;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
 import com.three_stack.maximum_alpha.backend.game.effects.Effect;
@@ -32,30 +14,25 @@ import com.three_stack.maximum_alpha.backend.game.effects.events.SingleCardEvent
 import com.three_stack.maximum_alpha.backend.game.effects.prompts.Prompt;
 import com.three_stack.maximum_alpha.backend.game.phases.Phase;
 import com.three_stack.maximum_alpha.backend.game.phases.StartPhase;
-import com.three_stack.maximum_alpha.backend.game.player.Courtyard;
-import com.three_stack.maximum_alpha.backend.game.player.Field;
-import com.three_stack.maximum_alpha.backend.game.player.Graveyard;
-import com.three_stack.maximum_alpha.backend.game.player.MainDeck;
-import com.three_stack.maximum_alpha.backend.game.player.Player;
+import com.three_stack.maximum_alpha.backend.game.player.*;
 import com.three_stack.maximum_alpha.backend.game.player.Player.Status;
-import com.three_stack.maximum_alpha.backend.game.player.StructureDeck;
 import com.three_stack.maximum_alpha.backend.game.utilities.DatabaseClientFactory;
 import com.three_stack.maximum_alpha.backend.game.utilities.Serializer;
 import com.three_stack.maximum_alpha.backend.game.victories.VictoryHandler;
 import com.three_stack.maximum_alpha.backend.server.Connection;
 import com.three_stack.maximum_alpha.database_client.DatabaseClient;
 import com.three_stack.maximum_alpha.database_client.pojos.DBDeck;
+import io.gsonfire.annotations.ExposeMethodResult;
+import org.bson.types.ObjectId;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class State {
     private transient Parameters parameters;
     private List<Player> players;
     private List<Event> eventHistory;
     private Phase currentPhase;
-    /**
-     * Marks when combat has happened in Main Phase
-     * Default to false
-     */
-    private boolean combatEnded;
     //corresponds to player indexes in the list, starts at 0
     private int turn;
     //two players each taking 1 turn is turnCount + 2, starts at 0
@@ -64,12 +41,8 @@ public class State {
     private List<Card> cardsPlayed;
     private transient Map<UUID, Card> masterCardList;
     private transient Map<Trigger, List<Effect>> effects;
-    private transient Map<Class, Phase> phases;
-
-    /**
-     * begins at 1, because initialization happens "at time 0"
-     */
-    private transient int timer = 1;
+    //begins at 1, because initialization happens at time 0
+    private transient int currentTime = 1;
     private transient PriorityQueue<QueuedEffect> queuedEffects;
     private transient VictoryHandler victoryHandler;
 
@@ -188,7 +161,6 @@ public class State {
     }
 
     public void newTurn() {
-        combatEnded = false;
         turnCount++;
         turn++;
         if (turn >= players.size()) {
@@ -312,14 +284,6 @@ public class State {
         this.currentPhase.start(this);
     }
 
-    public boolean isCombatEnded() {
-        return combatEnded;
-    }
-
-    public void setCombatEnded(boolean combatEnded) {
-        this.combatEnded = combatEnded;
-    }
-
     public int getTurn() {
         return turn;
     }
@@ -396,7 +360,7 @@ public class State {
     }
 
     public Time getTime() {
-        return new Time(timer++);
+        return new Time(currentTime++);
     }
 
     /**
