@@ -1,7 +1,7 @@
 package com.three_stack.maximum_alpha.backend.game.cards;
 
-import com.three_stack.maximum_alpha.backend.game.ResourceList;
 import com.three_stack.maximum_alpha.backend.game.effects.Effect;
+import com.three_stack.maximum_alpha.backend.game.player.ResourceList;
 import com.three_stack.maximum_alpha.database_client.pojos.DBAbility;
 
 import java.util.List;

@@ -12,18 +12,17 @@ import com.three_stack.maximum_alpha.backend.game.Time;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.CardFactory;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
-import com.three_stack.maximum_alpha.backend.game.cards.NonSpellCard;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
 import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
+import com.three_stack.maximum_alpha.backend.game.effects.results.PlayerResult;
+import com.three_stack.maximum_alpha.backend.game.effects.results.PlayerStep;
 import com.three_stack.maximum_alpha.backend.game.effects.results.Result;
-import com.three_stack.maximum_alpha.backend.game.effects.results.TargetResult;
-import com.three_stack.maximum_alpha.backend.game.effects.results.TargetStep;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.utilities.DatabaseClientFactory;
 import com.three_stack.maximum_alpha.database_client.pojos.DBCard;
 import com.three_stack.maximum_alpha.database_client.pojos.DBResult;
 
-public class SpawnResult extends TargetResult {
+public class SpawnResult extends PlayerResult {
     //@Todo: specify owner
     //@Todo: Add deck
     //@Todo: @Jason move values to value object for consistency
@@ -35,8 +34,8 @@ public class SpawnResult extends TargetResult {
     protected int count;
     protected SpawnZone spawnZone;
     
-    public SpawnResult(List<TargetStep> targetSteps, DBCard cardTemplate, int count, SpawnZone spawnZone) {
-        super(targetSteps);
+    public SpawnResult(List<PlayerStep> playerSteps, DBCard cardTemplate, int count, SpawnZone spawnZone) {
+        super(playerSteps);
         this.cardTemplate = cardTemplate;
         this.count = count;
         this.spawnZone = spawnZone;
@@ -70,8 +69,7 @@ public class SpawnResult extends TargetResult {
 
     @Override
     public void resolve(State state, Card source, Event event, Map<String, Object> value) {
-        List<NonSpellCard> targets = (List<NonSpellCard>) value.get("targets");
-        List<Player> players = targets.stream().map(NonSpellCard::getController).collect(Collectors.toList());
+        List<Player> players = (List<Player>) value.get("players");
 
         for(Player player : players) {
             List<Card> cards = IntStream.range(0, count)

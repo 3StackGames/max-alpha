@@ -1,7 +1,6 @@
 package com.three_stack.maximum_alpha.backend.game.player;
 
 import com.three_stack.maximum_alpha.backend.game.Parameters;
-import com.three_stack.maximum_alpha.backend.game.ResourceList;
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.Time;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
@@ -128,8 +127,12 @@ public class Player {
         for(Card workerCard : town.getCards()) {
             Worker worker = (Worker) workerCard;
             ResourceList resourceChange = worker.work(state);
-            resources.add(resourceChange);
+            addResources(resourceChange);
         }
+    }
+    
+    public void addResources(ResourceList addition) {
+    	resources.add(addition);
     }
     
     public void pay(ResourceList cost) {

@@ -1,7 +1,7 @@
 package com.three_stack.maximum_alpha.backend.game.cards;
 
-import com.three_stack.maximum_alpha.backend.game.ResourceList;
 import com.three_stack.maximum_alpha.backend.game.State;
+import com.three_stack.maximum_alpha.backend.game.player.ResourceList;
 
 public interface Worker {
 	/**

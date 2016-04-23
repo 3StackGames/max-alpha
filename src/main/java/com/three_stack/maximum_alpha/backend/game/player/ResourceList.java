@@ -1,4 +1,4 @@
-package com.three_stack.maximum_alpha.backend.game;
+package com.three_stack.maximum_alpha.backend.game.player;
 
 import java.util.HashMap;
 import java.util.Map;

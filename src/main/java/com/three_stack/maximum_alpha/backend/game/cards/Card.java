@@ -9,12 +9,12 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import com.three_stack.maximum_alpha.backend.game.ResourceList;
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.Time;
 import com.three_stack.maximum_alpha.backend.game.effects.Effect;
 import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
+import com.three_stack.maximum_alpha.backend.game.player.ResourceList;
 
 public abstract class Card {
 	protected final UUID id;

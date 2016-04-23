@@ -4,9 +4,10 @@ import com.three_stack.maximum_alpha.backend.game.Time;
 import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
 import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.backend.game.effects.events.SourceTargetEvent;
+import com.three_stack.maximum_alpha.backend.game.player.ResourceList;
+
 import io.gsonfire.annotations.ExposeMethodResult;
 
-import com.three_stack.maximum_alpha.backend.game.ResourceList;
 import com.three_stack.maximum_alpha.backend.game.State;
 
 import java.util.ArrayList;
