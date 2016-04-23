@@ -32,7 +32,7 @@ public class ResourceResult extends PlayerResult {
         //this.count = (int) dbResult.getValue().get("count");
         Map<String, Integer> resourceMap = new HashMap<>();
         for(Color c : Color.values()) {
-        	Object o = dbResult.getValue().get(c.toString());
+        	Object o = dbResult.getValue().get(c.toString().toLowerCase());
         	if(o != null)
         		resourceMap.put(c.toString(), (int) o);
         }
