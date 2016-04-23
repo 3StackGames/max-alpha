@@ -5,7 +5,6 @@ import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.database_client.pojos.DBResult;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
