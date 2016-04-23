@@ -19,15 +19,12 @@ public class TargetStep extends Step {
     //number of targets the prompt should find
     protected List<List<String>> includes;
     protected List<List<String>> excludes;
-    protected boolean prompt;
     protected boolean self;
 
     @SuppressWarnings("unchecked")
-    public TargetStep(Map<String, Object> map) {
+    public TargetStep(Result result, Map<String, Object> map) {
+        super(result, map.containsKey("self") && ((boolean) map.get("self")));
         setup();
-        if(map.containsKey("self")) {
-            this.self = (boolean) map.get("self");
-        }
         if(!self) {
             this.prompt = (boolean) map.get("prompt");
             this.includes = (List<List<String>>) map.get("includes");
@@ -37,7 +34,8 @@ public class TargetStep extends Step {
         }
     }
 
-    public TargetStep(boolean self, boolean prompt, List<List<String>> includes, List<List<String>> excludes) {
+    public TargetStep(Result result, boolean prompt, boolean self, List<List<String>> includes, List<List<String>> excludes) {
+        super(result, prompt);
         setup();
         this.self = self;
         this.prompt = prompt;
@@ -60,7 +58,6 @@ public class TargetStep extends Step {
 
     private void setup() {
         this.self = false;
-        this.prompt = false;
         this.includes = new ArrayList<>();
         this.excludes = new ArrayList<>();
     }
@@ -87,11 +84,10 @@ public class TargetStep extends Step {
 
     @Override
     @SuppressWarnings("unchecked")
-    public boolean run(State state, Card source, Event event, Map<String, Object> value) {
+    public void run(State state, Card source, Event event, Map<String, Object> value) {
         if(self) {
             List<NonSpellCard> targets = (List<NonSpellCard>) value.get("targets");
             targets.add((NonSpellCard) source);
-            return false;
         } else {
             List<NonSpellCard> potentialTargets = getIncludedTargets(state, source.getController());
 
@@ -100,11 +96,9 @@ public class TargetStep extends Step {
                 String description = "Select a target";
                 Prompt prompt = new TargetPrompt(description, source, source.getController(), event, mandatory, value, potentialTargets);
                 state.addPrompt(prompt);
-                return true;
             } else {
                 List<NonSpellCard> targets = (List<NonSpellCard>) value.get("targets");
                 targets.addAll(potentialTargets);
-                return false;
             }
         }
     }

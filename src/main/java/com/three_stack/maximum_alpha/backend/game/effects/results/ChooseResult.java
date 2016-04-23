@@ -7,11 +7,11 @@ import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.backend.game.effects.prompts.ChoosePrompt;
 import com.three_stack.maximum_alpha.backend.game.effects.prompts.Prompt;
 import com.three_stack.maximum_alpha.backend.game.utilities.DatabaseClientFactory;
-import com.three_stack.maximum_alpha.database_client.DatabaseClient;
 import com.three_stack.maximum_alpha.database_client.pojos.DBCard;
 import com.three_stack.maximum_alpha.database_client.pojos.DBResult;
 import org.bson.types.ObjectId;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -23,13 +23,15 @@ public abstract class ChooseResult extends Result {
         protected List<DBCard> optionTemplates;
 
         @SuppressWarnings("unchecked")
-        public ChooseStep(Map<String, Object> map) {
+        public ChooseStep(Result result, Map<String, Object> map) {
+            super(result, true);
             List<ObjectId> optionIds = (List<ObjectId>) map.get("options");
             this.optionTemplates = optionIds.stream()
                     .map(DatabaseClientFactory::getCard)
                     .collect(Collectors.toList());
         }
-        protected ChooseStep() {
+        protected ChooseStep(Result result) {
+            super(result, true);
             //used for deep copying only
         }
 
@@ -40,7 +42,7 @@ public abstract class ChooseResult extends Result {
         }
 
         @Override
-        public boolean run(State state, Card source, Event event, Map<String, Object> value) {
+        public void run(State state, Card source, Event event, Map<String, Object> value) {
             //@Todo: make this based on the database description
             String description = "Select an option";
             List<Card> options = optionTemplates.stream()
@@ -52,7 +54,6 @@ public abstract class ChooseResult extends Result {
                     .collect(Collectors.toList());
             Prompt prompt = new ChoosePrompt(description, source, source.getController(), event, mandatory, value, options);
             state.addPrompt(prompt);
-            return true;
         }
     }
 
@@ -62,8 +63,11 @@ public abstract class ChooseResult extends Result {
         if(!dbResult.getValue().containsKey("card")) {
             throw new IllegalArgumentException("choose result must have options");
         }
-        ChooseStep chooseStep = new ChooseStep((Map<String, Object>) dbResult.getValue().get("card"));
-        getPreparationSteps().add(chooseStep);
+
+        List<Step> steps = new ArrayList<>();
+        ChooseStep chooseStep = new ChooseStep(this, (Map<String, Object>) dbResult.getValue().get("card"));
+        steps.add(chooseStep);
+        setSteps(steps);
     }
 
     public ChooseResult(Result other) {

@@ -9,6 +9,7 @@ import com.three_stack.maximum_alpha.backend.game.effects.Check;
 import com.three_stack.maximum_alpha.backend.game.effects.Effect;
 import com.three_stack.maximum_alpha.backend.game.effects.QueuedEffect;
 import com.three_stack.maximum_alpha.backend.game.effects.results.Result;
+import com.three_stack.maximum_alpha.backend.game.effects.results.Step;
 import com.three_stack.maximum_alpha.backend.game.effects.results.TargetStep;
 import com.three_stack.maximum_alpha.backend.game.effects.results.implementations.DealDamageResult;
 import com.three_stack.maximum_alpha.backend.game.phases.MainPhase;
@@ -78,7 +79,7 @@ public class ActivateAbilityActionTest {
 
         List<Result> results = new ArrayList<>();
 
-        List<TargetStep> targetSteps = new ArrayList<>();
+        List<Step> steps = new ArrayList<>();
 
         List<List<String>> includes = new ArrayList<>();
 
@@ -88,9 +89,10 @@ public class ActivateAbilityActionTest {
         includes.add(enemyCastle);
 
         List<List<String>> excludes = new ArrayList<>();
-        TargetStep targetStep = new TargetStep(false, false, includes, excludes);
-        targetSteps.add(targetStep);
-        Result result = new DealDamageResult(targetSteps, 1);
+        Result result = new DealDamageResult(steps, 1);
+        TargetStep targetStep = new TargetStep(result, false, false, includes, excludes);
+        steps.add(targetStep);
+
         results.add(result);
         Effect effect = new Effect(creature, checks, results);
         List<Effect> effects = new ArrayList<>();
@@ -111,7 +113,7 @@ public class ActivateAbilityActionTest {
 
     private void createState() {
         state = new State();
-        state.setCurrentPhase(new MainPhase());
+        state.setCurrentPhase(MainPhase.class);
         state.setPlayers(players);
     }
 }

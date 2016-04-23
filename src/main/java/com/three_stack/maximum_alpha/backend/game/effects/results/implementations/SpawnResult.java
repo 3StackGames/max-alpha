@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import com.three_stack.maximum_alpha.backend.game.effects.results.Step;
 import org.bson.types.ObjectId;
 
 import com.three_stack.maximum_alpha.backend.game.State;
@@ -35,8 +36,8 @@ public class SpawnResult extends TargetResult {
     protected int count;
     protected SpawnZone spawnZone;
     
-    public SpawnResult(List<TargetStep> targetSteps, DBCard cardTemplate, int count, SpawnZone spawnZone) {
-        super(targetSteps);
+    public SpawnResult(List<Step> steps, DBCard cardTemplate, int count, SpawnZone spawnZone) {
+        super(steps);
         this.cardTemplate = cardTemplate;
         this.count = count;
         this.spawnZone = spawnZone;

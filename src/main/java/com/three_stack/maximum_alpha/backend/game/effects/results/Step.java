@@ -9,8 +9,12 @@ import java.util.Map;
 public abstract class Step implements Comparable<Step> {
     protected int order;
     protected boolean mandatory;
+    protected Result result;
+    protected boolean prompt;
 
-    public Step() {
+    public Step(Result result, boolean prompt) {
+        this.result = result;
+        this.prompt = prompt;
         /**
          * If order isn't specified it'll go last
          */
@@ -18,21 +22,26 @@ public abstract class Step implements Comparable<Step> {
         mandatory = true;
     }
 
-    public Step(boolean mandatory) {
+    public Step(Result result, boolean prompt, boolean mandatory) {
+        this.prompt = prompt;
+        this.result = result;
         this.mandatory = mandatory;
         this.order = Integer.MAX_VALUE;
     }
 
-    public Step(boolean mandatory, int order) {
+    public Step(Result result, boolean prompt, boolean mandatory, int order) {
+        this.result = result;
+        this.prompt = prompt;
         this.order = order;
         this.mandatory = mandatory;
     }
 
     public Step(Step other) {
+        this.result = other.result;
+        this.prompt = other.prompt;
         this.order = other.order;
         this.mandatory = other.mandatory;
     }
-
 
     /**
      *
@@ -42,7 +51,7 @@ public abstract class Step implements Comparable<Step> {
      * @param value
      * @return whether a prompt has been created
      */
-    public abstract boolean run(State state, Card source, Event event, Map<String, Object> value);
+    public abstract void run(State state, Card source, Event event, Map<String, Object> value);
 
     @Override
     public int compareTo(Step o) {
@@ -67,5 +76,17 @@ public abstract class Step implements Comparable<Step> {
 
     public void setMandatory(boolean mandatory) {
         this.mandatory = mandatory;
+    }
+
+    public Result getResult() {
+        return result;
+    }
+
+    public void setPrompt(boolean prompt) {
+        this.prompt = prompt;
+    }
+
+    public boolean isPrompt() {
+        return prompt;
     }
 }

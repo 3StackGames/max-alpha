@@ -4,6 +4,7 @@ import com.three_stack.maximum_alpha.backend.game.effects.Check;
 import com.three_stack.maximum_alpha.backend.game.effects.Checks;
 import com.three_stack.maximum_alpha.backend.game.effects.Effect;
 import com.three_stack.maximum_alpha.backend.game.effects.results.Result;
+import com.three_stack.maximum_alpha.backend.game.effects.results.Step;
 import com.three_stack.maximum_alpha.backend.game.effects.results.TargetStep;
 import com.three_stack.maximum_alpha.backend.game.effects.results.implementations.BuffResult;
 import com.three_stack.maximum_alpha.backend.game.effects.results.implementations.DealDamageResult;
@@ -19,13 +20,14 @@ public class TagEffectFactory {
         checks.add(Checks.S_ON_FIELD);
         checks.add(Checks.C_TURN_PLAYER);
 
+        List<Step> steps = new ArrayList<>();
+        DealDamageResult dealDamageResult = new DealDamageResult(steps, damage);
         List<Result> results = new ArrayList<>();
-        List<TargetStep> targetSteps = new ArrayList<>();
         Map<String, Object> targetStepMap = new HashMap<>();
         targetStepMap.put("self", true);
-        TargetStep targetSelf = new TargetStep(targetStepMap);
-        targetSteps.add(targetSelf);
-        DealDamageResult dealDamageResult = new DealDamageResult(targetSteps, damage);
+        TargetStep targetSelf = new TargetStep(dealDamageResult, targetStepMap);
+        steps.add(targetSelf);
+
         results.add(dealDamageResult);
 
         Effect effect = new Effect(source, checks, results);
@@ -39,12 +41,14 @@ public class TagEffectFactory {
         checks.add(Checks.C_TURN_PLAYER);
 
         List<Result> results = new ArrayList<>();
-        List<TargetStep> targetSteps = new ArrayList<>();
+        List<Step> steps = new ArrayList<>();
         Map<String, Object> targetStepMap = new HashMap<>();
+        BuffResult buffResult = new BuffResult(steps, attackRate, healthRate);
+
         targetStepMap.put("self", true);
-        TargetStep targetSelf = new TargetStep(targetStepMap);
-        targetSteps.add(targetSelf);
-        BuffResult buffResult = new BuffResult(targetSteps, attackRate, healthRate);
+        TargetStep targetSelf = new TargetStep(buffResult, targetStepMap);
+        steps.add(targetSelf);
+
         results.add(buffResult);
 
         Effect effect = new Effect(source, checks, results);

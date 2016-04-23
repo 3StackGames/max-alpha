@@ -8,6 +8,7 @@ import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.NonSpellCard;
 import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.backend.game.effects.results.Result;
+import com.three_stack.maximum_alpha.backend.game.effects.results.Step;
 import com.three_stack.maximum_alpha.backend.game.effects.results.TargetResult;
 import com.three_stack.maximum_alpha.backend.game.effects.results.TargetStep;
 import com.three_stack.maximum_alpha.database_client.pojos.DBResult;
@@ -15,8 +16,8 @@ import com.three_stack.maximum_alpha.database_client.pojos.DBResult;
 public class DrawCardsResult extends TargetResult {
 	protected int count;
 
-    public DrawCardsResult(List<TargetStep> targetSteps, int count) {
-        super(targetSteps);
+    public DrawCardsResult(List<Step> steps, int count) {
+        super(steps);
         this.count = count;
     }
 

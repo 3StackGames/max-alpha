@@ -8,13 +8,14 @@ import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.NonSpellCard;
 import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.backend.game.effects.results.Result;
+import com.three_stack.maximum_alpha.backend.game.effects.results.Step;
 import com.three_stack.maximum_alpha.backend.game.effects.results.TargetResult;
 import com.three_stack.maximum_alpha.backend.game.effects.results.TargetStep;
 import com.three_stack.maximum_alpha.database_client.pojos.DBResult;
 
 public class DestroyResult extends TargetResult {
-	public DestroyResult(List<TargetStep> targetSteps) {
-        super(targetSteps);
+	public DestroyResult(List<Step> steps) {
+        super(steps);
     }
 
     public DestroyResult(DBResult dbResult) {

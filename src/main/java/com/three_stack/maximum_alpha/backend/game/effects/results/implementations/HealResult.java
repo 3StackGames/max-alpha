@@ -5,6 +5,7 @@ import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.NonSpellCard;
 import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.backend.game.effects.results.Result;
+import com.three_stack.maximum_alpha.backend.game.effects.results.Step;
 import com.three_stack.maximum_alpha.backend.game.effects.results.TargetResult;
 import com.three_stack.maximum_alpha.backend.game.effects.results.TargetStep;
 import com.three_stack.maximum_alpha.database_client.pojos.DBResult;
@@ -15,8 +16,8 @@ import java.util.Map;
 public class HealResult extends TargetResult {
     protected int heal;
 
-    public HealResult(List<TargetStep> targetSteps, int heal) {
-        super(targetSteps);
+    public HealResult(List<Step> steps, int heal) {
+        super(steps);
         this.heal = heal;
     }
 

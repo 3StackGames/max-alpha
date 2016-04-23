@@ -6,20 +6,26 @@ import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.backend.game.effects.results.Result;
 import com.three_stack.maximum_alpha.backend.game.effects.results.Step;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class QueuedEffect {
     protected Event triggeringEvent;
     protected Effect effect;
-    protected int resultIndex;
-    protected int stepIndex;
+    protected int promptStepIndex;
     /**
      * One value per result in an effect.
+     * key: result ID
+     * value: result's value map
      */
-    protected List<Map<String, Object>> values;
+    protected Map<UUID, Map<String, Object>> values;
 
+    /**
+     * Used to distinguish between when an effect is run normally vs during Preparation and Damage phase
+     */
     public enum Type {
         DEFAULT,
         PREPARE_ONLY,
@@ -36,19 +42,38 @@ public class QueuedEffect {
     }
 
     protected void setup(Event triggeringEvent, Effect effect, Type type) {
-        this.resultIndex = 0;
-        this.stepIndex = 0;
+        this.promptStepIndex = 0;
         this.triggeringEvent = triggeringEvent;
         this.effect = effect;
         this.type = type;
-
         this.values = effect.getResults().stream()
-                .map(Result::prepareNewValue)
-                .collect(Collectors.toList());
+                .collect(Collectors.toMap(
+                        Result::getId,
+                        Result::prepareNewValue
+                ));
     }
 
-    public boolean isDone() {
-        return resultIndex >= effect.getResults().size();
+    /**
+     * prompts should get run before the effect is resolved
+     * @param state
+     * @param source
+     * @param event
+     * @return
+     */
+    public boolean runPrompt(State state, Card source, Event event) {
+        if(!type.equals(Type.RESOLVE_ONLY)) {
+            List<Step> allPromptSteps = effect.getResults().stream()
+                    .map(Result::getPromptSteps)
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toList());
+            for(; promptStepIndex < allPromptSteps.size(); promptStepIndex++) {
+                Step promptStep = allPromptSteps.get(promptStepIndex);
+                promptStep.run(state, source, event, values.get(promptStep.getResult().getId()));
+                //prompt will always be created
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -58,21 +83,17 @@ public class QueuedEffect {
      * @param event
      * @return whether a prompt was created
      */
-    public boolean run(State state, Card source, Event event) {
-        for(; resultIndex < effect.getResults().size(); resultIndex++) {
+    public boolean runAutoTargetStepsAndResolve(State state, Card source, Event event) {
+        /**
+         * Handle all auto targeting and resolve
+         */
+        for(int resultIndex = 0; resultIndex < effect.getResults().size(); resultIndex++) {
             Result result = effect.getResults().get(resultIndex);
             if(!type.equals(Type.RESOLVE_ONLY)) {
-                for(; stepIndex < result.getPreparationSteps().size(); stepIndex++) {
-                    Step step = result.getPreparationSteps().get(stepIndex);
-                    boolean promptCreated = step.run(state, source, event, values.get(resultIndex));
-                    if(promptCreated) {
-                        //stop early since we need to wait for the prompt
-                        stepIndex++;
-                        return true;
-                    }
+                for(int autoTargetStepIndex = 0; autoTargetStepIndex < result.getPromptSteps().size(); autoTargetStepIndex++) {
+                    Step step = result.getPromptSteps().get(autoTargetStepIndex);
+                    step.run(state, source, event, values.get(result.getId()));
                 }
-                //not setting to zero in the for loop because run can halt early to wait for user prompt input and then resume later
-                stepIndex = 0;
             }
             if(!type.equals(Type.PREPARE_ONLY)) {
                 result.resolve(state, source, event, values.get(resultIndex));

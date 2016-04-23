@@ -9,9 +9,16 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public abstract class TargetResult extends Result{
-    public TargetResult(List<TargetStep> targetSteps) {
-        super();
-        preparationSteps.addAll(targetSteps);
+
+    private List<Step> generateTargetSteps(DBResult dbResult) {
+        List<Map<String, Object>> targetMaps = (List<Map<String, Object>>) dbResult.getValue().get("targets");
+        List<TargetStep> targetSteps = targetMaps.stream()
+                .map(targetMap -> new TargetStep(this, targetMap))
+                .collect(Collectors.toList());
+        return null;
+    }
+    public TargetResult(List<Step> steps) {
+        super(steps);
     }
 
     @SuppressWarnings("unchecked")
@@ -19,10 +26,10 @@ public abstract class TargetResult extends Result{
         super(dbResult);
         //parse targets to create steps (including prompts)
         List<Map<String, Object>> targetMaps = (List<Map<String, Object>>) dbResult.getValue().get("targets");
-        List<TargetStep> targetSteps = targetMaps.stream()
-                .map(TargetStep::new)
+        List<Step> targetSteps = targetMaps.stream()
+                .map(targetMap -> new TargetStep(this, targetMap))
                 .collect(Collectors.toList());
-        preparationSteps.addAll(targetSteps);
+        setSteps(targetSteps);
     }
 
     public TargetResult(Result other) {

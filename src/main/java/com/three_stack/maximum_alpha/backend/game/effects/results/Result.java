@@ -5,31 +5,40 @@ import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.database_client.pojos.DBResult;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 //@Todo: make this and all children immutable to avoid having to copy
 public abstract class Result {
-    protected List<Step> preparationSteps;
+    protected final UUID id;
+    protected List<Step> promptSteps;
+    protected List<Step> preResolveSteps;
 
+    /**
+     * When using this constructor, be sure to call setSteps later on
+     */
     public Result() {
-        this.preparationSteps = new ArrayList<>();
+        this.id = UUID.randomUUID();
+        this.promptSteps = new ArrayList<>();
+        this.preResolveSteps = new ArrayList<>();
     }
 
-    public Result(List<Step> preparationSteps) {
-        this.preparationSteps = preparationSteps;
+    public Result(List<Step> steps) {
+        this.id = UUID.randomUUID();
+        setSteps(steps);
     }
 
+    /**
+     * When using this constructor, be sure to call setSteps later on
+     * @param dbResult
+     */
     public Result(DBResult dbResult) {
-        preparationSteps = new ArrayList<>();
+        this.id = UUID.randomUUID();
     }
 
     public Result(Result other) {
-        this.preparationSteps = other.preparationSteps.stream()
+        this.id = UUID.randomUUID();
+        this.promptSteps = other.promptSteps.stream()
                 .map(step -> {
                     try {
                         return step.getClass().getConstructor(Step.class).newInstance(step);
@@ -38,6 +47,25 @@ public abstract class Result {
                         return null;
                     }
                 })
+                .collect(Collectors.toList());
+        this.preResolveSteps = other.preResolveSteps.stream()
+                .map(step -> {
+                    try {
+                        return step.getClass().getConstructor(Step.class).newInstance(step);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+
+    protected void setSteps(List<Step> steps) {
+        this.promptSteps = steps.stream()
+                .filter(Step::isPrompt)
+                .collect(Collectors.toList());
+        this.preResolveSteps = steps.stream()
+                .filter(step -> !step.isPrompt())
                 .collect(Collectors.toList());
     }
 
@@ -50,7 +78,15 @@ public abstract class Result {
         return new HashMap<>();
     }
 
-    public List<Step> getPreparationSteps() {
-        return preparationSteps;
+    public List<Step> getPromptSteps() {
+        return promptSteps;
+    }
+
+    public List<Step> getPreResolveSteps() {
+        return preResolveSteps;
+    }
+
+    public UUID getId() {
+        return id;
     }
 }

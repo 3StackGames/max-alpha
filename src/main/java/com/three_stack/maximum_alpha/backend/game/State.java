@@ -420,14 +420,14 @@ public class State {
         while (hasQueuedEffects()) {
             QueuedEffect queuedEffect = getQueuedEffects().peek();
             Event triggeringEvent = queuedEffect.getTriggeringEvent();
-            boolean promptAdded = queuedEffect.run(this, queuedEffect.getEffect().getSource(), triggeringEvent);
+            boolean promptAdded = queuedEffect.runPrompt(this, queuedEffect.getEffect().getSource(), triggeringEvent);
             if(promptAdded) {
                 //have to stop traversing the tree when a prompt is created so we can get the result
                 return;
             }
-            if(queuedEffect.isDone()) {
-                getQueuedEffects().remove();
-            }
+            queuedEffect.runAutoTargetStepsAndResolve(this, queuedEffect.getEffect().getSource(), triggeringEvent);
+            //remove this queued effect from the queue
+            getQueuedEffects().remove();
             //@Todo: check if the change of going from entire effect to single runnables affects the death resolver
             resolveDeaths();
         }
