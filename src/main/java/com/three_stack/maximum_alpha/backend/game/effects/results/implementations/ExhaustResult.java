@@ -8,6 +8,7 @@ import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.NonSpellCard;
 import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.backend.game.effects.results.Result;
+import com.three_stack.maximum_alpha.backend.game.effects.results.Step;
 import com.three_stack.maximum_alpha.backend.game.effects.results.TargetResult;
 import com.three_stack.maximum_alpha.backend.game.effects.results.TargetStep;
 import com.three_stack.maximum_alpha.database_client.pojos.DBResult;
@@ -16,8 +17,8 @@ public class ExhaustResult extends TargetResult {
 	boolean exhaust;
 	
 	//If exhaust == true, exhausts the creature, otherwise unexhausts
-	public ExhaustResult(List<TargetStep> targetSteps, boolean exhaust) {
-        super(targetSteps);
+	public ExhaustResult(List<Step> steps, boolean exhaust) {
+        super(steps);
         this.exhaust = exhaust;
     }
 

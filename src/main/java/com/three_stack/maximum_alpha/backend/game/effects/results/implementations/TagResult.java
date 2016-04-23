@@ -10,6 +10,7 @@ import com.three_stack.maximum_alpha.backend.game.cards.Tag;
 import com.three_stack.maximum_alpha.backend.game.cards.Tag.TagType;
 import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.backend.game.effects.results.Result;
+import com.three_stack.maximum_alpha.backend.game.effects.results.Step;
 import com.three_stack.maximum_alpha.backend.game.effects.results.TargetResult;
 import com.three_stack.maximum_alpha.backend.game.effects.results.TargetStep;
 import com.three_stack.maximum_alpha.database_client.pojos.DBResult;
@@ -19,8 +20,8 @@ public class TagResult extends TargetResult {
 	boolean remove;
 	
 	//If remove == true, removes the tag, else adds the tag
-	public TagResult(List<TargetStep> targetSteps, String tagName, int value, boolean remove) {
-        super(targetSteps);
+	public TagResult(List<Step> steps, String tagName, int value, boolean remove) {
+        super(steps);
         this.tag = new Tag(TagType.valueOf(tagName), value);
         this.remove = remove;
     }

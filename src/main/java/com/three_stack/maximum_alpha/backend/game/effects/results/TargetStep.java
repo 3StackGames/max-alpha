@@ -93,7 +93,7 @@ public class TargetStep extends Step {
 
             if(prompt) {
             	if(potentialTargets.size() == 0)
-            		return false;
+            		return;
                 //@Todo: make this based on the database description
                 String description = "Select a target";
                 Prompt prompt = new TargetPrompt(description, source, source.getController(), event, mandatory, value, potentialTargets);

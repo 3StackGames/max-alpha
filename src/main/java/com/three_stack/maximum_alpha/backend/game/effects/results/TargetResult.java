@@ -29,7 +29,6 @@ public abstract class TargetResult extends Result{
         List<Step> targetSteps = targetMaps.stream()
                 .map(targetMap -> new TargetStep(this, targetMap))
                 .collect(Collectors.toList());
-        setSteps(targetSteps);
     }
 
     public TargetResult(Result other) {
