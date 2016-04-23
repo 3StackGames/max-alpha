@@ -284,17 +284,25 @@ public abstract class NonSpellCard extends Card {
     }
 
     public void removeTag(Tag tag) {
-        tags.remove(tag);
-        List<UUID> tagEffectIds = tag.getEffectIds();
-        if(!tagEffectIds.isEmpty()) {
-            tagEffectIds.stream()
-                    .forEach( tagEffectId -> {
-                        triggerEffects.entrySet().stream()
-                                .forEach( triggerEffectEntry -> {
-                                    triggerEffectEntry.getValue().removeIf( effect -> effect.getId().equals(tagEffectId));
-                                });
-                    });
-        }
+    	List<Tag> removedTags = tags.stream().filter(t -> t.getType() == tag.getType()).collect(Collectors.toList());
+    	if(tag.getValue() != 0) {
+    		removedTags = removedTags.stream().filter(t -> t.getValue() == tag.getValue()).collect(Collectors.toList());
+    	}
+    	
+    	for(Tag t : removedTags) {
+	        List<UUID> tagEffectIds = t.getEffectIds();
+	        if(!tagEffectIds.isEmpty()) {
+	            tagEffectIds.stream()
+	                    .forEach( tagEffectId -> {
+	                        triggerEffects.entrySet().stream()
+	                                .forEach( triggerEffectEntry -> {
+	                                    triggerEffectEntry.getValue().removeIf( effect -> effect.getId().equals(tagEffectId));
+	                                });
+	                    });
+	        }
+	        
+	        tags.remove(t);
+    	} 
     }
 
     public List<CardClass> getClasses() {

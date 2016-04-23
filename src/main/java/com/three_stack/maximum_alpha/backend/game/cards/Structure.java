@@ -15,6 +15,7 @@ public class Structure extends NonSpellCard {
     public Structure(Structure other) {
         super(other);
         this.underConstruction = other.underConstruction;
+        this.attackable = other.attackable;
     }
 
     public boolean isUnderConstruction() {
