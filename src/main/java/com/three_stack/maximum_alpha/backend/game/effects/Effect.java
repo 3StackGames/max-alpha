@@ -8,7 +8,6 @@ import com.three_stack.maximum_alpha.backend.game.effects.results.ResultFactory;
 import com.three_stack.maximum_alpha.backend.game.phases.PreparationPhase;
 import com.three_stack.maximum_alpha.database_client.pojos.DBEffect;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;

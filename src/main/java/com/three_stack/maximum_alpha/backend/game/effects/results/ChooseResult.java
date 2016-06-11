@@ -7,7 +7,6 @@ import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.backend.game.effects.prompts.ChoosePrompt;
 import com.three_stack.maximum_alpha.backend.game.effects.prompts.Prompt;
 import com.three_stack.maximum_alpha.backend.game.utilities.DatabaseClientFactory;
-import com.three_stack.maximum_alpha.database_client.DatabaseClient;
 import com.three_stack.maximum_alpha.database_client.pojos.DBCard;
 import com.three_stack.maximum_alpha.database_client.pojos.DBResult;
 import org.bson.types.ObjectId;

@@ -2,10 +2,8 @@ package com.three_stack.maximum_alpha.backend.game.phases;
 
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
-import com.three_stack.maximum_alpha.backend.game.cards.Tag;
 import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
 import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
-import com.three_stack.maximum_alpha.backend.game.utilities.Utility;
 
 import java.util.Collection;
 import java.util.List;

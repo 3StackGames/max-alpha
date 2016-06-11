@@ -9,7 +9,6 @@ import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
 import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.backend.game.phases.MainPhase;
 import com.three_stack.maximum_alpha.backend.game.phases.PreparationPhase;
-import com.three_stack.maximum_alpha.backend.game.player.Player;
 
 public class PlayCardAction extends ExistingCardWithCostAction {
     
