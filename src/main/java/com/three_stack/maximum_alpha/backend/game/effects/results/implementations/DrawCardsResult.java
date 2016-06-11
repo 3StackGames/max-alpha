@@ -5,18 +5,18 @@ import java.util.Map;
 
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
-import com.three_stack.maximum_alpha.backend.game.cards.NonSpellCard;
 import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
+import com.three_stack.maximum_alpha.backend.game.effects.results.PlayerResult;
+import com.three_stack.maximum_alpha.backend.game.effects.results.PlayerStep;
 import com.three_stack.maximum_alpha.backend.game.effects.results.Result;
-import com.three_stack.maximum_alpha.backend.game.effects.results.TargetResult;
-import com.three_stack.maximum_alpha.backend.game.effects.results.TargetStep;
+import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.database_client.pojos.DBResult;
 
-public class DrawCardsResult extends TargetResult {
+public class DrawCardsResult extends PlayerResult {
 	protected int count;
 
-    public DrawCardsResult(List<TargetStep> targetSteps, int count) {
-        super(targetSteps);
+    public DrawCardsResult(List<PlayerStep> playerSteps, int count) {
+        super(playerSteps);
         this.count = count;
     }
 
@@ -41,11 +41,11 @@ public class DrawCardsResult extends TargetResult {
     @Override
     @SuppressWarnings("unchecked")
     public void resolve(State state, Card source, Event event, Map<String, Object> value) {
-        List<NonSpellCard> targets = (List<NonSpellCard>) value.get("targets");
+        List<Player> players = (List<Player>) value.get("players");
         int cardsToDraw = (int) value.get("count");
-        for(NonSpellCard target : targets) {
+        for(Player player : players) {
         	for(int i = 0; i < cardsToDraw; i++) {
-        		target.getController().draw(state.getTime(), state);
+        		player.draw(state.getTime(), state);
         	}
         }
     }

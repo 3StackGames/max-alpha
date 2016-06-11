@@ -21,6 +21,7 @@ final public class Tag {
         MUTATE,
         GUARD,
         GROWTH,
+        VIGILANCE,
         UNTARGETABLE
     }
     final private TagType type;

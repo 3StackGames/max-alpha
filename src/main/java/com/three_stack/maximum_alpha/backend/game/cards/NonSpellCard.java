@@ -8,15 +8,16 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import com.three_stack.maximum_alpha.backend.game.ResourceList;
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.Time;
+import com.three_stack.maximum_alpha.backend.game.cards.Tag.TagType;
 import com.three_stack.maximum_alpha.backend.game.effects.Effect;
 import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
 import com.three_stack.maximum_alpha.backend.game.effects.events.SingleCardEvent;
 import com.three_stack.maximum_alpha.backend.game.effects.events.SourceDamageTargetEvent;
 import com.three_stack.maximum_alpha.backend.game.effects.events.SourceHealTargetEvent;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
+import com.three_stack.maximum_alpha.backend.game.player.ResourceList;
 import com.three_stack.maximum_alpha.backend.game.utilities.Utility;
 
 public abstract class NonSpellCard extends Card {
@@ -284,17 +285,25 @@ public abstract class NonSpellCard extends Card {
     }
 
     public void removeTag(Tag tag) {
-        tags.remove(tag);
-        List<UUID> tagEffectIds = tag.getEffectIds();
-        if(!tagEffectIds.isEmpty()) {
-            tagEffectIds.stream()
-                    .forEach( tagEffectId -> {
-                        triggerEffects.entrySet().stream()
-                                .forEach( triggerEffectEntry -> {
-                                    triggerEffectEntry.getValue().removeIf( effect -> effect.getId().equals(tagEffectId));
-                                });
-                    });
-        }
+    	List<Tag> removedTags = tags.stream().filter(t -> t.getType() == tag.getType()).collect(Collectors.toList());
+    	if(tag.getValue() != 0) {
+    		removedTags = removedTags.stream().filter(t -> t.getValue() == tag.getValue()).collect(Collectors.toList());
+    	}
+    	
+    	for(Tag t : removedTags) {
+	        List<UUID> tagEffectIds = t.getEffectIds();
+	        if(!tagEffectIds.isEmpty()) {
+	            tagEffectIds.stream()
+	                    .forEach( tagEffectId -> {
+	                        triggerEffects.entrySet().stream()
+	                                .forEach( triggerEffectEntry -> {
+	                                    triggerEffectEntry.getValue().removeIf( effect -> effect.getId().equals(tagEffectId));
+	                                });
+	                    });
+	        }
+	        
+	        tags.remove(t);
+    	} 
     }
 
     public List<CardClass> getClasses() {
@@ -316,5 +325,14 @@ public abstract class NonSpellCard extends Card {
 
     public void setLegendaryLock(boolean legendaryLock) {
         this.legendaryLock = legendaryLock;
+    }
+    
+    public boolean hasTag(String tag) {
+    	for(Tag t : tags) {
+    		if(t.getType() == TagType.valueOf(tag))
+    			return true;
+    	}
+    	
+    	return false;
     }
 }
