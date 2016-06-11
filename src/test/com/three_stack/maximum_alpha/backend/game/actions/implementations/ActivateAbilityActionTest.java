@@ -111,7 +111,7 @@ public class ActivateAbilityActionTest {
 
     private void createState() {
         state = new State();
-        state.setCurrentPhase(new MainPhase());
+        state.setCurrentPhase(MainPhase.class);
         state.setPlayers(players);
     }
 }
