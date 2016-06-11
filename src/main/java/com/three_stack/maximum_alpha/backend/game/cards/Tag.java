@@ -20,7 +20,9 @@ final public class Tag {
         DEGENERATE,
         MUTATE,
         GUARD,
-        GROWTH
+        GROWTH,
+        VIGILANCE,
+        UNTARGETABLE
     }
     final private TagType type;
     final private Integer value;

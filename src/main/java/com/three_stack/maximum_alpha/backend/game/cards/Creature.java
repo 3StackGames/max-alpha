@@ -81,7 +81,8 @@ public class Creature extends NonSpellCard implements Worker {
             throw new IllegalStateException("must be attacking");
         }
         dealDamage(attackTarget, this.getCurrentAttack(), battleTime, state);
-        exhaust(exhaustTime, state);
+        if(!hasTag("VIGILANCE"))
+        	exhaust(exhaustTime, state);
         clearAttackTarget();
     }
 

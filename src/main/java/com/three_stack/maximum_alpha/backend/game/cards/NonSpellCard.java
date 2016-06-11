@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.Time;
+import com.three_stack.maximum_alpha.backend.game.cards.Tag.TagType;
 import com.three_stack.maximum_alpha.backend.game.effects.Effect;
 import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
 import com.three_stack.maximum_alpha.backend.game.effects.events.SingleCardEvent;
@@ -324,5 +325,14 @@ public abstract class NonSpellCard extends Card {
 
     public void setLegendaryLock(boolean legendaryLock) {
         this.legendaryLock = legendaryLock;
+    }
+    
+    public boolean hasTag(String tag) {
+    	for(Tag t : tags) {
+    		if(t.getType() == TagType.valueOf(tag))
+    			return true;
+    	}
+    	
+    	return false;
     }
 }

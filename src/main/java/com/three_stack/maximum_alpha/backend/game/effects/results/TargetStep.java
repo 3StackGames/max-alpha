@@ -150,7 +150,7 @@ public class TargetStep extends Step {
                                 .filter(includedTarget -> includedTarget.getController().equals(controllingPlayer));
                     }
 
-                    allIncludedTargets.addAll(includedTargetsStream.collect(Collectors.toList()));
+                    allIncludedTargets.addAll(includedTargetsStream.filter(target -> !target.hasTag("UNTARGETABLE")).collect(Collectors.toList()));
                 });
 
         return allIncludedTargets;
