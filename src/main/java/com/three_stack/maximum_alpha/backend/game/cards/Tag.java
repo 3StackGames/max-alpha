@@ -20,6 +20,7 @@ final public class Tag {
         DEGENERATE,
         MUTATE,
         GUARD,
+        AGGRESSIVE,
         GROWTH,
         VIGILANCE,
         UNTARGETABLE,

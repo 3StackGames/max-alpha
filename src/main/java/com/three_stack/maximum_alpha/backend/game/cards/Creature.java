@@ -20,8 +20,8 @@ public class Creature extends NonSpellCard implements Worker {
     protected transient final int defaultAttack;
     protected Structure attackTarget;
     protected transient List<String> reasonsCanNotAttack;
+    protected transient List<String> reasonsCanNotBlock;
     protected transient Creature blockTarget;
-    protected transient boolean canBlock;
     protected boolean summoningSickness;
     protected boolean summonedThisTurn;
     protected transient List<Creature> blockers;
@@ -43,7 +43,6 @@ public class Creature extends NonSpellCard implements Worker {
         attackTarget = null;
         reasonsCanNotAttack = new ArrayList<>();
         blockTarget = null;
-        canBlock = true;
         summoningSickness = true;
         buffAttack = 0;
         summonedThisTurn = true;
@@ -56,8 +55,8 @@ public class Creature extends NonSpellCard implements Worker {
         this.defaultAttack = otherCreature.defaultAttack;
         this.attackTarget = otherCreature.attackTarget;
         this.reasonsCanNotAttack = otherCreature.reasonsCanNotAttack;
+        this.reasonsCanNotBlock = otherCreature.reasonsCanNotBlock;
         this.blockTarget = otherCreature.blockTarget;
-        this.canBlock = otherCreature.canBlock;
         this.summoningSickness = otherCreature.summoningSickness;
         this.summonedThisTurn = otherCreature.summonedThisTurn;
         this.blockers = otherCreature.blockers;
@@ -180,7 +179,7 @@ public class Creature extends NonSpellCard implements Worker {
 		attackTarget = null;
 		blockTarget = null;
 		reasonsCanNotAttack = new ArrayList<>();
-		canBlock = true;
+		reasonsCanNotBlock = new ArrayList<>();
         summoningSickness = true;
 	}
 	
@@ -212,6 +211,9 @@ public class Creature extends NonSpellCard implements Worker {
             case GUARD:
                 reasonsCanNotAttack.add("GUARD");
                 break;
+            case AGGRESSIVE:
+            	reasonsCanNotBlock.add("AGGRESSIVE");
+            	break;
             default:
                 break;
         }
@@ -228,6 +230,10 @@ public class Creature extends NonSpellCard implements Worker {
                 break;
             case GUARD:
                 reasonsCanNotAttack.remove("GUARD");
+                break;
+            case AGGRESSIVE:
+            	reasonsCanNotBlock.remove("AGGRESSIVE");
+            	break;
             default:
                 break;
         }
@@ -244,7 +250,7 @@ public class Creature extends NonSpellCard implements Worker {
 
     @ExposeMethodResult("canBlock")
     public boolean canBlock() {
-        return canBlock && !exhausted && !isBlocking();
+        return reasonsCanNotBlock.isEmpty() && !exhausted && !isBlocking();
     }
 
     @ExposeMethodResult("canAttack")
@@ -309,10 +315,6 @@ public class Creature extends NonSpellCard implements Worker {
 
     public boolean isSummoningSickness() {
         return summoningSickness;
-    }
-
-    public void setCanBlock(boolean canBlock) {
-        this.canBlock = canBlock;
     }
 
     public List<Creature> getBlockers() {
