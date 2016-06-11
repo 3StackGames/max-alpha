@@ -15,13 +15,15 @@ public class Buff {
 	final Map<Trigger, List<Effect>> effects;
 	final transient Card source;
 	final boolean isAura;
+	final String name;
 	
-	public Buff(int attack, int health, Map<Trigger, List<Effect>> effects, Card source, boolean isAura) {
+	public Buff(int attack, int health, Map<Trigger, List<Effect>> effects, Card source, boolean isAura, String name) {
 		this.attackModifier = attack;
 		this.healthModifier = health;
 		this.effects = effects;
 		this.source = source;
 		this.isAura = isAura;
+		this.name = name;
 	}
 	
 	public boolean isAura() {
@@ -65,5 +67,9 @@ public class Buff {
 	@ExposeMethodResult("sourceId")
 	public UUID getSourceId() {
 		return source.getId();
+	}
+	
+	public String getName() {
+		return name;
 	}
 }

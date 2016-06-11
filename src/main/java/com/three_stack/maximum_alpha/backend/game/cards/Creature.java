@@ -1,6 +1,7 @@
 package com.three_stack.maximum_alpha.backend.game.cards;
 
 import com.three_stack.maximum_alpha.backend.game.Time;
+import com.three_stack.maximum_alpha.backend.game.cards.Tag.TagType;
 import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
 import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.backend.game.effects.events.SourceTargetEvent;
@@ -81,7 +82,7 @@ public class Creature extends NonSpellCard implements Worker {
             throw new IllegalStateException("must be attacking");
         }
         dealDamage(attackTarget, this.getCurrentAttack(), battleTime, state);
-        if(!hasTag("VIGILANCE"))
+        if(!hasTag(TagType.VIGILANCE))
         	exhaust(exhaustTime, state);
         clearAttackTarget();
     }

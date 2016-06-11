@@ -14,7 +14,8 @@ import com.three_stack.maximum_alpha.database_client.pojos.DBResult;
 import java.util.List;
 import java.util.Map;
 
-public class BuffResult extends TargetResult{
+//TODO: implement buff effects + name
+public class BuffResult extends TargetResult {
     protected int attack;
     protected int health;
 
@@ -40,7 +41,7 @@ public class BuffResult extends TargetResult{
     @Override
     public void resolve(State state, Card source, Event event, Map<String, Object> value) {
         List<NonSpellCard> targets = (List<NonSpellCard>) value.get("targets");
-        Buff buff = new Buff(attack, health, null, source, false);
+        Buff buff = new Buff(attack, health, null, source, false, null);
         Time buffTime = state.getTime();
         targets.stream()
                 .forEach(target -> target.addBuff(buff, buffTime, state));
