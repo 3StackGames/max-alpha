@@ -22,7 +22,8 @@ final public class Tag {
         GUARD,
         GROWTH,
         VIGILANCE,
-        UNTARGETABLE
+        UNTARGETABLE,
+        UNBLOCKABLE
     }
     final private TagType type;
     final private Integer value;

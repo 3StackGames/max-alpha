@@ -101,24 +101,6 @@ public class Creature extends NonSpellCard implements Worker {
         clearBlockTarget();
     }
 
-    public int getDefaultAttack() {
-        return defaultAttack;
-    }
-
-    //@Todo: work with arjun to make sure both this (currentAttack) and attack show up
-    @ExposeMethodResult("currentAttack")
-    public int getCurrentAttack() {
-        return getDefaultAttack() + buffAttack;
-    }
-
-    public void setSummoningSickness(boolean summoningSickness) {
-        this.summoningSickness = summoningSickness;
-    }
-
-    public Structure getAttackTarget() {
-        return attackTarget;
-    }
-
     public boolean isAttacking() {
         return attackTarget != null;
     }
@@ -126,6 +108,7 @@ public class Creature extends NonSpellCard implements Worker {
     public void clearAttackTarget() {
         attackTarget = null;
     }
+
     public void setAttackTarget(Structure structure, Time time, State state) {
         attackTarget = structure;
         SourceTargetEvent attackEvent = new SourceTargetEvent(time, "attack", this, structure);
@@ -134,24 +117,6 @@ public class Creature extends NonSpellCard implements Worker {
 
     public boolean isBlocked() {
         return !blockers.isEmpty();
-    }
-
-    @ExposeMethodResult("canAttack")
-    public boolean canAttack() {
-        return reasonsCanNotAttack.isEmpty() && !(exhausted || summoningSickness) && !isAttacking();
-    }
-
-    public Creature getBlockTarget() {
-        return blockTarget;
-    }
-
-    @ExposeMethodResult("blockTargetId")
-    public UUID getBlockTargetID() {
-        if(getBlockTarget() != null) {
-            return getBlockTarget().getId();
-        } else {
-            return null;
-        }
     }
 
     public boolean isBlocking() {
@@ -169,19 +134,6 @@ public class Creature extends NonSpellCard implements Worker {
         state.addEvent(blockEvent, Trigger.ON_DECLARE_BLOCK);
     }
 
-    @ExposeMethodResult("canBlock")
-    public boolean canBlock() {
-        return canBlock && !exhausted && !isBlocking();
-    }
-
-    public void setCanBlock(boolean canBlock) {
-        this.canBlock = canBlock;
-    }
-
-    public List<Creature> getBlockers() {
-        return blockers;
-    }
-
     public void resetCombat() {
         blockers = new ArrayList<>();
         blockableCreatures = new ArrayList<>();
@@ -190,6 +142,25 @@ public class Creature extends NonSpellCard implements Worker {
 
     public void addBlocker(Creature blocker) {
         blockers.add(blocker);
+    }
+
+    public boolean canBlock(Creature potentialAttacker) {
+        if(potentialAttacker.hasTag(Tag.TagType.UNBLOCKABLE)) {
+            return false;
+        } else if(potentialAttacker.hasTag(Tag.TagType.AIRBORNE)) {
+            return hasTag(Tag.TagType.AIRBORNE) || hasTag(Tag.TagType.ANTI_AIR);
+        }
+        return true;
+    }
+
+    /**
+     * Pass in all attackers. This method will automatically filter which creatures it can block and set them as blockable
+     * @param attackers
+     */
+    public void determineBlockableAttackers(List<Creature> attackers) {
+        this.blockableCreatures = attackers.stream()
+                .filter(this::canBlock)
+                .collect(Collectors.toList());
     }
 
 	@Override
@@ -261,6 +232,60 @@ public class Creature extends NonSpellCard implements Worker {
         }
     }
 
+    /**
+     * Serialization Methods
+     */
+
+    @ExposeMethodResult("currentAttack")
+    public int getCurrentAttack() {
+        return getDefaultAttack() + buffAttack;
+    }
+
+    @ExposeMethodResult("canBlock")
+    public boolean canBlock() {
+        return canBlock && !exhausted && !isBlocking();
+    }
+
+    @ExposeMethodResult("canAttack")
+    public boolean canAttack() {
+        return reasonsCanNotAttack.isEmpty() && !(exhausted || summoningSickness) && !isAttacking();
+    }
+
+    @ExposeMethodResult("blockTargetId")
+    public UUID getBlockTargetID() {
+        if(getBlockTarget() != null) {
+            return getBlockTarget().getId();
+        } else {
+            return null;
+        }
+    }
+
+    @ExposeMethodResult("blockableCreatureIds")
+    public List<UUID> getBlockableCreatureIds() {
+        return getBlockableCreatures().stream()
+                .map(Creature::getId)
+                .collect(Collectors.toList());
+    }
+
+    @ExposeMethodResult("attackableStructureIds")
+    public List<UUID> getAttackableStructureIds() {
+        return getAttackableStructures().stream()
+                .map(Structure::getId)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Auto-Generated Getters and Setters
+     */
+
+    public void setSummoningSickness(boolean summoningSickness) {
+        this.summoningSickness = summoningSickness;
+    }
+
+    public Structure getAttackTarget() {
+        return attackTarget;
+    }
+
     public boolean isSummonedThisTurn() {
         return summonedThisTurn;
     }
@@ -273,17 +298,6 @@ public class Creature extends NonSpellCard implements Worker {
         return blockableCreatures;
     }
 
-    public void setBlockableCreatures(List<Creature> blockableCreatures) {
-        this.blockableCreatures = blockableCreatures;
-    }
-
-    @ExposeMethodResult("blockableCreatureIds")
-    public List<UUID> getBlockableCreatureIds() {
-        return getBlockableCreatures().stream()
-                .map(Creature::getId)
-                .collect(Collectors.toList());
-    }
-
     public List<Structure> getAttackableStructures() {
         return attackableStructures;
     }
@@ -292,14 +306,23 @@ public class Creature extends NonSpellCard implements Worker {
         this.attackableStructures = attackableStructures;
     }
 
-    @ExposeMethodResult("attackableStructureIds")
-    public List<UUID> getAttackableStructureIds() {
-        return getAttackableStructures().stream()
-                .map(Structure::getId)
-                .collect(Collectors.toList());
-    }
-
     public boolean isSummoningSickness() {
         return summoningSickness;
+    }
+
+    public void setCanBlock(boolean canBlock) {
+        this.canBlock = canBlock;
+    }
+
+    public List<Creature> getBlockers() {
+        return blockers;
+    }
+
+    public Creature getBlockTarget() {
+        return blockTarget;
+    }
+
+    public int getDefaultAttack() {
+        return defaultAttack;
     }
 }

@@ -36,20 +36,9 @@ public class BlockPhase extends Phase {
         List<Creature> attackingCreatures = state.getTurnPlayer().getField().getCards().stream()
                 .filter(Creature::isAttacking)
                 .collect(Collectors.toList());
-        List<Creature> nonAirborneAttackingCreatures = attackingCreatures.stream()
-                .filter(creature -> !creature.hasTag(Tag.TagType.AIRBORNE))
-                .collect(Collectors.toList());
         state.getPlayersExcept(state.getTurnPlayer()).stream()
                 .map(player -> player.getField().getCards())
                 .flatMap(Collection::stream)
-                .forEach(creature -> {
-                    List<Creature> blockableCreatures;
-                    if(creature.hasTag(Tag.TagType.AIRBORNE) || creature.hasTag(Tag.TagType.ANTI_AIR)) {
-                        blockableCreatures = Utility.copy(attackingCreatures);
-                    } else {
-                        blockableCreatures = Utility.copy(nonAirborneAttackingCreatures);
-                    }
-                    creature.setBlockableCreatures(blockableCreatures);
-                });
+                .forEach(creature -> creature.determineBlockableAttackers(attackingCreatures));
     }
 }
