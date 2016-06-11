@@ -29,7 +29,6 @@ public class ResourceResult extends PlayerResult {
 
     public ResourceResult(DBResult dbResult) {
         super(dbResult);
-        //this.count = (int) dbResult.getValue().get("count");
         Map<String, Integer> resourceMap = new HashMap<>();
         for(Color c : Color.values()) {
         	Object o = dbResult.getValue().get(c.toString().toLowerCase());
