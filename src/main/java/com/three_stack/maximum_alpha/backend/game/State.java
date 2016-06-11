@@ -231,7 +231,81 @@ public class State {
         player.getCourtyard().getCards().forEach(creature -> creature.attemptRefresh(time, state));
     }
 
-    //For serialization
+    public List<Player> getPlayingPlayers() {
+        return players.stream().filter(player -> player.getStatus() == Status.PLAYING).collect(Collectors.toList());
+    }
+
+    public Event createSingleCardEvent(Card card, String type, Time time, Trigger trigger) {
+        Event event = new SingleCardEvent(time, type, card);
+        addEvent(event, trigger);
+        return event;
+    }
+
+    public Event createSinglePlayerEvent(Player player, String type, Time time, Trigger trigger) {
+        Event event = new PlayerEvent(time, type, player);
+        addEvent(event, trigger);
+        return event;
+    }
+
+    /**
+     * Traverses the "Effect Tree" and resolves them in BFS / Level-Order manner.
+     */
+    private void runQueuedEffects() {
+        while (hasQueuedEffects()) {
+            QueuedEffect queuedEffect = getQueuedEffects().peek();
+            Event triggeringEvent = queuedEffect.getTriggeringEvent();
+            boolean promptAdded = queuedEffect.run(this, queuedEffect.getEffect().getSource(), triggeringEvent);
+            if (promptAdded) {
+                //have to stop traversing the tree when a prompt is created so we can get the result
+                return;
+            }
+            if (queuedEffect.isDone()) {
+                getQueuedEffects().remove();
+            }
+            //@Todo: check if the change of going from entire effect to single runnables affects the death resolver
+            resolveDeaths();
+        }
+    }
+
+    public void resolveDeaths() {
+        for (Player player : players) {
+            Field field = player.getField();
+            Courtyard court = player.getCourtyard();
+            Graveyard grave = player.getGraveyard();
+            Time deathTime = getTime();
+            List<Creature> deadCreatures = field.getCards().stream()
+                    .filter(Creature::isDead).collect(Collectors.toList());
+            deadCreatures.forEach(deadCreature -> {
+                deadCreature.reset(this);
+                field.remove(deadCreature, getTime(), this);
+                deadCreature.die(deathTime, this);
+                grave.add(deadCreature, getTime(), this);
+            });
+
+            List<Structure> destroyedStructures = court.getCards().stream()
+                    .filter(Structure::isDead).collect(Collectors.toList());
+            destroyedStructures.forEach(destroyedStructure -> {
+                court.remove(destroyedStructure, getTime(), this);
+                destroyedStructure.die(deathTime, this);
+            });
+        }
+
+        victoryHandler.determineVictory(this);
+    }
+
+    /**
+     * Serialization Methods
+     */
+
+    @ExposeMethodResult("gameOver")
+    public boolean isGameOver() {
+        return getPlayingPlayers().size() == 0;
+    }
+
+    public String toString() {
+        generateCardList();
+        return Serializer.toJsonCard(this);
+    }
 
     public Map<UUID, Card> generateCardList() {
         //Gets all target from each player, then collects them into the map
@@ -261,44 +335,121 @@ public class State {
         return visibleCardMap;
     }
 
-    public boolean isPhase(Class phaseClass) {
-        return getCurrentPhase().getClass().equals(phaseClass);
-    }
-
-    public String toString() {
-        generateCardList();
-        return Serializer.toJsonCard(this);
-    }
-
-    //Getters and setters
-
-    public List<Player> getAllPlayers() {
-        return players;
-    }
-
-    public List<Player> getPlayingPlayers() {
-        return players.stream().filter(player -> player.getStatus() == Status.PLAYING).collect(Collectors.toList());
-    }
-
-    public List<Event> getEventHistory() {
-        return eventHistory;
-    }
-
-    public void setEventHistory(List<Event> eventHistory) {
-        this.eventHistory = eventHistory;
-    }
-
-    public Phase getCurrentPhase() {
-        return currentPhase;
-    }
+    /**
+     * Complex Custom Accessor Methods
+     */
 
     public void setCurrentPhase(Class phaseClass) {
-        if(turnPhases.containsKey(phaseClass)) {
+        if (turnPhases.containsKey(phaseClass)) {
             this.currentPhase = turnPhases.get(phaseClass);
             this.currentPhase.start(this);
         } else {
             System.out.println("Bad Phase Change!");
         }
+    }
+
+    public void addEffect(Trigger trigger, Effect effect) {
+        if (effects.containsKey(trigger)) {
+            effects.get(trigger).add(effect);
+        } else {
+            List<Effect> newEffects = new ArrayList<>();
+            newEffects.add(effect);
+            effects.put(trigger, newEffects);
+        }
+    }
+
+    public void removeEffect(Trigger trigger, Effect effect) {
+        if (effects.containsKey(trigger)) {
+            effects.get(trigger).remove(effect);
+            if (effects.get(trigger).size() == 0) {
+                effects.remove(trigger);
+            }
+        }
+    }
+
+    /**
+     * Call whenever an event is created to let the state know about the event.
+     * The trigger parameter is optional and can be null.
+     *
+     * @param event
+     * @param trigger
+     */
+    public void addEvent(Event event, Trigger trigger) {
+        eventHistory.add(event);
+        if (trigger == null) return;
+
+        List<Effect> effects = getEffects(trigger);
+        if (effects == null) {
+            return;
+        }
+
+        //add triggered triggerEffects to the queue of triggered triggerEffects
+        effects.stream()
+                .filter(effect -> effect.getChecks().parallelStream().allMatch(check -> check.run(this, effect, event)))
+                .forEach(effect -> effect.trigger(event, this));
+    }
+
+    /**
+     * Simple Custom Accessors
+     */
+    public boolean hasEffects(Trigger trigger) {
+        return effects.containsKey(trigger);
+    }
+
+    public void addQueuedEffect(QueuedEffect queuedEffect) {
+        queuedEffects.add(queuedEffect);
+    }
+
+    public boolean hasQueuedEffects() {
+        return !queuedEffects.isEmpty();
+    }
+
+    public Time getTime() {
+        return new Time(currentTime++);
+    }
+
+    public void addPrompt(Prompt prompt) {
+        promptQueue.add(prompt);
+    }
+
+    public Prompt getCurrentPrompt() {
+        return promptQueue.peek();
+    }
+
+    public void removePrompt() {
+        promptQueue.remove();
+    }
+
+    public boolean isPhase(Class phaseClass) {
+        return getCurrentPhase().getClass().equals(phaseClass);
+    }
+
+    /**
+     * Auto-Generated Getters and Setters Below Here
+     */
+
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(List<Player> players) {
+        this.players = players;
+    }
+
+    public PriorityQueue<QueuedEffect> getQueuedEffects() {
+        return queuedEffects;
+    }
+
+    public List<Card> getCardsPlayed() {
+        return cardsPlayed;
+    }
+
+    public void setCardsPlayed(List<Card> cardsPlayed) {
+        this.cardsPlayed = cardsPlayed;
+    }
+
+    public List<Effect> getEffects(Trigger trigger) {
+        return effects.get(trigger);
     }
 
     public int getTurn() {
@@ -317,158 +468,15 @@ public class State {
         this.turnCount = turnCount;
     }
 
-    public void addPrompt(Prompt prompt) {
-        promptQueue.add(prompt);
+    public List<Event> getEventHistory() {
+        return eventHistory;
     }
 
-    public Prompt getCurrentPrompt() {
-        return promptQueue.peek();
+    public void setEventHistory(List<Event> eventHistory) {
+        this.eventHistory = eventHistory;
     }
 
-    public void removePrompt() {
-        promptQueue.remove();
-    }
-
-    public List<Card> getCardsPlayed() {
-        return cardsPlayed;
-    }
-
-    public void setCardsPlayed(List<Card> cardsPlayed) {
-        this.cardsPlayed = cardsPlayed;
-    }
-
-    public List<Effect> getEffects(Trigger trigger) {
-        return effects.get(trigger);
-    }
-
-    public void addEffect(Trigger trigger, Effect effect) {
-        if (effects.containsKey(trigger)) {
-            effects.get(trigger).add(effect);
-        } else {
-            List<Effect> newEffects = new ArrayList<>();
-            newEffects.add(effect);
-            effects.put(trigger, newEffects);
-        }
-    }
-    
-    public void removeEffect(Trigger trigger, Effect effect) {
-        if (effects.containsKey(trigger)) {
-            effects.get(trigger).remove(effect);
-            if(effects.get(trigger).size() == 0) {
-            	effects.remove(trigger);
-            }
-        }
-    }
-
-    public boolean hasEffects(Trigger trigger) {
-        return effects.containsKey(trigger);
-    }
-
-    public void addQueuedEffect(QueuedEffect queuedEffect) {
-        queuedEffects.add(queuedEffect);
-    }
-
-    public PriorityQueue<QueuedEffect> getQueuedEffects() {
-        return queuedEffects;
-    }
-
-    public boolean hasQueuedEffects() {
-        return !queuedEffects.isEmpty();
-    }
-
-    public Time getTime() {
-        return new Time(currentTime++);
-    }
-
-    /**
-     * Call whenever an event is created to let the state know about the event.
-     * The trigger parameter is optional and can be null.
-     * @param event
-     * @param trigger
-     */
-    public void addEvent(Event event, Trigger trigger) {
-        eventHistory.add(event);
-        if(trigger == null) return;
-
-        List<Effect> effects = getEffects(trigger);
-        if (effects == null) {
-            return;
-        }
-
-        //add triggered triggerEffects to the queue of triggered triggerEffects
-        effects.stream()
-                .filter(effect -> effect.getChecks().parallelStream().allMatch(check -> check.run(this, effect, event)))
-                .forEach(effect -> effect.trigger(event, this));
-    }
-
-    public Event createSingleCardEvent(Card card, String type, Time time, Trigger trigger) {
-        Event event = new SingleCardEvent(time, type, card);
-        addEvent(event, trigger);
-        return event;
-    }
-
-    public Event createSinglePlayerEvent(Player player, String type, Time time, Trigger trigger) {
-        Event event = new PlayerEvent(time, type, player);
-        addEvent(event, trigger);
-        return event;
-    }
-
-    /**
-     * Traverses the "Effect Tree" and resolves them in BFS / Level-Order manner.
-     */
-    private void runQueuedEffects() {
-        while (hasQueuedEffects()) {
-            QueuedEffect queuedEffect = getQueuedEffects().peek();
-            Event triggeringEvent = queuedEffect.getTriggeringEvent();
-            boolean promptAdded = queuedEffect.run(this, queuedEffect.getEffect().getSource(), triggeringEvent);
-            if(promptAdded) {
-                //have to stop traversing the tree when a prompt is created so we can get the result
-                return;
-            }
-            if(queuedEffect.isDone()) {
-                getQueuedEffects().remove();
-            }
-            //@Todo: check if the change of going from entire effect to single runnables affects the death resolver
-            resolveDeaths();
-        }
-    }
-
-    public void resolveDeaths() {
-        for (Player player : players) {
-            Field field = player.getField();
-            Courtyard court = player.getCourtyard();
-            Graveyard grave = player.getGraveyard();
-            Time deathTime = getTime();
-            List<Creature> deadCreatures = field.getCards().stream()
-                    .filter(Creature::isDead).collect(Collectors.toList());
-            deadCreatures.forEach(deadCreature -> {
-            	deadCreature.reset(this);
-                field.remove(deadCreature, getTime(), this);
-                deadCreature.die(deathTime, this);
-                grave.add(deadCreature, getTime(), this);
-            });
-
-            List<Structure> destroyedStructures = court.getCards().stream()
-                    .filter(Structure::isDead).collect(Collectors.toList());
-            destroyedStructures.forEach(destroyedStructure -> {
-                court.remove(destroyedStructure, getTime(), this);
-                destroyedStructure.die(deathTime, this);
-            });
-        }
-
-        victoryHandler.determineVictory(this);
-    }
-
-    @ExposeMethodResult("gameOver")
-    public boolean isGameOver() {
-        return getPlayingPlayers().size() == 0;
-    }
-
-    public List<Player> getPlayers() {
-        return players;
-    }
-
-    public void setPlayers(List<Player> players) {
-        this.players = players;
+    public Phase getCurrentPhase() {
+        return currentPhase;
     }
 }

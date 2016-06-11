@@ -1,5 +1,6 @@
 package com.three_stack.maximum_alpha.backend.game;
 
+import com.three_stack.maximum_alpha.backend.game.player.ResourceList;
 import org.apache.commons.lang3.Validate;
 import org.junit.Before;
 import org.junit.Test;

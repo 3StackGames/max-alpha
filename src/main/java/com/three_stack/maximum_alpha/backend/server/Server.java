@@ -282,7 +282,7 @@ public class Server extends WebSocketServer {
     	State game = startedGames.get(gameCode); 	
     	String state = game.toString();
         
-    	List<Player> players = game.getAllPlayers();
+    	List<Player> players = game.getPlayers();
         for (Player player : players) {     	
             Message stateUpdate = new Message("State Update");
             stateUpdate.add("state", new JSONObject(state));

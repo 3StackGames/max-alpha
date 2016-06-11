@@ -22,7 +22,7 @@ public class Selectors {
      * Creatures
      */
     public static <T> List<T> creatures(State state) {
-        return state.getAllPlayers().stream()
+        return state.getPlayers().stream()
                 .map(Player::getField)
                 .map(Zone::getCards)
                 .flatMap(Collection::stream)
