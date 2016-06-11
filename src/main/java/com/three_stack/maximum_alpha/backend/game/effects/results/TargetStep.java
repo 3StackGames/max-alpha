@@ -3,6 +3,7 @@ package com.three_stack.maximum_alpha.backend.game.effects.results;
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.NonSpellCard;
+import com.three_stack.maximum_alpha.backend.game.cards.Tag.TagType;
 import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.backend.game.effects.prompts.Prompt;
 import com.three_stack.maximum_alpha.backend.game.effects.prompts.TargetPrompt;
@@ -150,7 +151,7 @@ public class TargetStep extends Step {
                                 .filter(includedTarget -> includedTarget.getController().equals(controllingPlayer));
                     }
 
-                    allIncludedTargets.addAll(includedTargetsStream.filter(target -> !target.hasTag("UNTARGETABLE")).collect(Collectors.toList()));
+                    allIncludedTargets.addAll(includedTargetsStream.filter(target -> !target.hasTag(TagType.UNTARGETABLE)).collect(Collectors.toList()));
                 });
 
         return allIncludedTargets;
