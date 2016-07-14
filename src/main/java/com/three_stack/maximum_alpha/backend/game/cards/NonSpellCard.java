@@ -1,7 +1,5 @@
 package com.three_stack.maximum_alpha.backend.game.cards;
 
-import io.gsonfire.annotations.ExposeMethodResult;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -19,6 +17,8 @@ import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.player.ResourceList;
 import com.three_stack.maximum_alpha.backend.game.utilities.Utility;
 
+import io.gsonfire.annotations.ExposeMethodResult;
+
 public abstract class NonSpellCard extends Card {
     protected final int health;
     protected int damageTaken;
@@ -28,7 +28,7 @@ public abstract class NonSpellCard extends Card {
     protected boolean refreshable;
 
     protected List<Buff> buffs;
-    private transient int buffHealth;
+    protected transient int buffHealth;
     protected List<Ability> abilities;
     protected List<Tag> tags;
     protected List<CardClass> classes;
@@ -78,7 +78,7 @@ public abstract class NonSpellCard extends Card {
         }
         return new SourceDamageTargetEvent(time, source, this, damage);
     }
-    
+
     public SourceHealTargetEvent receiveHeal(int heal, Card source, Time time, State state) {
         damageTaken = Math.max(damageTaken-heal, 0);
         return new SourceHealTargetEvent(time, source, this, heal);
@@ -98,13 +98,13 @@ public abstract class NonSpellCard extends Card {
     public int getMaxHealth() {
         return health + buffHealth;
     }
-    
+
     public void checkDeathGeneral(Time time, State state) {
         if(getCurrentHealth() <= 0) {
             die(time, state);
         }
     }
-    
+
     public void setDead(boolean dead) {
     	this.dead = dead;
     }
@@ -208,7 +208,7 @@ public abstract class NonSpellCard extends Card {
         buffHealth += buff.getHealthModifier();
         checkDeathGeneral(time, state);
     }
-    
+
     public void removeBuff(Buff buff, Time time, State state) {
     	int idx = buffs.indexOf(buff);
     	for(int i = buffs.size()-1; i >= idx; i--) {
@@ -221,17 +221,17 @@ public abstract class NonSpellCard extends Card {
 		}
 		buffs.remove(buff);
         buffHealth -= buff.getHealthModifier();
-        
+
     	checkDeathGeneral(time, state);
     }
-    
+
     public void reset(State state) {
     	buffReset(state); //do first
         this.refreshable = true;
         this.damageTaken = 0;
         this.exhausted = false;
     }
-    
+
     public void buffReset(State state) {
     	for(int i = buffs.size()-1; i >= 0; i--) {
     		Buff buff = buffs.get(i);
@@ -288,7 +288,7 @@ public abstract class NonSpellCard extends Card {
     	if(tag.getValue() != 0) {
     		removedTags = removedTags.stream().filter(t -> t.getValue() == tag.getValue()).collect(Collectors.toList());
     	}
-    	
+
     	for(Tag t : removedTags) {
 	        List<UUID> tagEffectIds = t.getEffectIds();
 	        if(!tagEffectIds.isEmpty()) {
@@ -300,9 +300,9 @@ public abstract class NonSpellCard extends Card {
 	                                });
 	                    });
 	        }
-	        
+
 	        tags.remove(t);
-    	} 
+    	}
     }
 
     public List<CardClass> getClasses() {
@@ -325,7 +325,7 @@ public abstract class NonSpellCard extends Card {
     public void setLegendaryLock(boolean legendaryLock) {
         this.legendaryLock = legendaryLock;
     }
-    
+
     //Refactor this if non-permanent nullify is needed
     public void nullify(State s) {
     	buffReset(s);

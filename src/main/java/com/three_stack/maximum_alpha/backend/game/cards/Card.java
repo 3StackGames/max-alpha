@@ -1,7 +1,5 @@
 package com.three_stack.maximum_alpha.backend.game.cards;
 
-import io.gsonfire.annotations.ExposeMethodResult;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,8 +14,10 @@ import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.player.ResourceList;
 
+import io.gsonfire.annotations.ExposeMethodResult;
+
 public abstract class Card {
-	protected final UUID id;
+	  protected final UUID id;
     protected transient Player controller;
     protected final String name;
     protected final ResourceList defaultCost;
@@ -95,7 +95,7 @@ public abstract class Card {
                 .map(victim -> victim.die(time, state))
                 .forEach (deathEvent -> state.addEvent(deathEvent, Trigger.ON_DEATH));
     }
-    
+
     public void heal(NonSpellCard target, int amount, Time time, State state) {
         List<NonSpellCard> targets = new ArrayList<>();
         targets.add(target);
@@ -202,8 +202,12 @@ public abstract class Card {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+          return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+          return false;
+        }
 
         Card card = (Card) o;
 

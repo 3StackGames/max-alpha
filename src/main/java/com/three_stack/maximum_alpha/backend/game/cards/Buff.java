@@ -7,69 +7,72 @@ import java.util.UUID;
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.effects.Effect;
 import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
+
 import io.gsonfire.annotations.ExposeMethodResult;
 
 public class Buff {
-	final int attackModifier;
-	final int healthModifier;
-	final Map<Trigger, List<Effect>> effects;
-	final transient Card source;
-	final boolean isAura;
-	final String name;
-	
-	public Buff(int attack, int health, Map<Trigger, List<Effect>> effects, Card source, boolean isAura, String name) {
-		this.attackModifier = attack;
-		this.healthModifier = health;
-		this.effects = effects;
-		this.source = source;
-		this.isAura = isAura;
-		this.name = name;
-	}
-	
-	public boolean isAura() {
-		return isAura;
-	}
+  	protected final int attackModifier;
+  	protected final int healthModifier;
+  	protected final Map<Trigger, List<Effect>> effects;
+  	protected final transient Card source;
+  	protected final boolean isAura;
+  	protected final String name;
 
-	public int getHealthModifier() {
-		return healthModifier;
-	}
+  	public Buff(int attack, int health, Map<Trigger, List<Effect>> effects, Card source, boolean isAura, String name) {
+  		this.attackModifier = attack;
+  		this.healthModifier = health;
+  		this.effects = effects;
+  		this.source = source;
+  		this.isAura = isAura;
+  		this.name = name;
+  	}
 
-	public Map<Trigger, List<Effect>> getEffects() {
-		return effects;
-	}
+  	public boolean isAura() {
+  		return isAura;
+  	}
 
-	public Card getSource() {
-		return source;
-	}
-	
-	public int getAttackModifier() {
-		return attackModifier;
-	}
-	
-	public void onAdd(NonSpellCard c, State s) {
-		if(effects != null)
-			for(Trigger t : effects.keySet()) {
-				for(Effect e : effects.get(t)) {
-					s.addEffect(t, e);
-				}
-			}
-	}
-	
-	public void onRemove(NonSpellCard c, State s) {
-		if(effects != null)
-			for(Trigger t : effects.keySet()) {
-				for(Effect e : effects.get(t)) {
-					s.removeEffect(t, e);
-				}
-			}
-	}
+  	public int getHealthModifier() {
+  		return healthModifier;
+  	}
 
-	@ExposeMethodResult("sourceId")
-	public UUID getSourceId() {
-		return source.getId();
-	}
-	
-	public String getName() {
-		return name;
-	}
+  	public Map<Trigger, List<Effect>> getEffects() {
+  		return effects;
+  	}
+
+  	public Card getSource() {
+  		return source;
+  	}
+
+  	public int getAttackModifier() {
+  		return attackModifier;
+  	}
+
+  	public void onAdd(NonSpellCard c, State s) {
+  		if(effects != null) {
+        for(Trigger t : effects.keySet()) {
+  				for(Effect e : effects.get(t)) {
+  					s.addEffect(t, e);
+  				}
+  			}
+      }
+  	}
+
+  	public void onRemove(NonSpellCard c, State s) {
+  		if(effects != null) {
+        for(Trigger t : effects.keySet()) {
+  				for(Effect e : effects.get(t)) {
+  					s.removeEffect(t, e);
+  				}
+  			}
+      }
+  	}
+
+  	@ExposeMethodResult("sourceId")
+  	public UUID getSourceId() {
+  		return source.getId();
+  	}
+
+  	public String getName() {
+  		return name;
+  	}
 }

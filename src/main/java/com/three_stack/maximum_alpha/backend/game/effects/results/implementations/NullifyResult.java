@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.three_stack.maximum_alpha.backend.game.State;
-import com.three_stack.maximum_alpha.backend.game.Time;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.NonSpellCard;
 import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
@@ -19,7 +18,7 @@ public class NullifyResult extends TargetResult {
     }
 
     public NullifyResult(DBResult dbResult) {
-        super(dbResult);  
+        super(dbResult);
     }
 
     public NullifyResult(Result other) {

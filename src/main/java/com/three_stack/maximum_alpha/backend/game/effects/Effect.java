@@ -1,5 +1,10 @@
 package com.three_stack.maximum_alpha.backend.game.effects;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
@@ -7,12 +12,6 @@ import com.three_stack.maximum_alpha.backend.game.effects.results.Result;
 import com.three_stack.maximum_alpha.backend.game.effects.results.ResultFactory;
 import com.three_stack.maximum_alpha.backend.game.phases.PreparationPhase;
 import com.three_stack.maximum_alpha.database_client.pojos.DBEffect;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class Effect {
     protected final UUID id;

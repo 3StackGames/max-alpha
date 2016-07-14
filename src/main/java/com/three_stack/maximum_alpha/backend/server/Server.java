@@ -14,6 +14,14 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import com.three_stack.maximum_alpha.backend.game.Parameters;
+import com.three_stack.maximum_alpha.backend.game.State;
+import com.three_stack.maximum_alpha.backend.game.actions.ActionService;
+import com.three_stack.maximum_alpha.backend.game.actions.abstracts.Action;
+import com.three_stack.maximum_alpha.backend.game.effects.prompts.Prompt;
+import com.three_stack.maximum_alpha.backend.game.player.Player;
+import com.three_stack.maximum_alpha.backend.game.utilities.Serializer;
+
 import org.bson.types.ObjectId;
 import org.java_websocket.WebSocket;
 import org.java_websocket.framing.Framedata;
@@ -21,18 +29,10 @@ import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 import org.json.JSONObject;
 
-import com.three_stack.maximum_alpha.backend.game.Parameters;
-import com.three_stack.maximum_alpha.backend.game.State;
-import com.three_stack.maximum_alpha.backend.game.actions.ActionService;
-import com.three_stack.maximum_alpha.backend.game.actions.abstracts.Action;
-import com.three_stack.maximum_alpha.backend.game.player.Player;
-import com.three_stack.maximum_alpha.backend.game.effects.prompts.Prompt;
-import com.three_stack.maximum_alpha.backend.game.utilities.Serializer;
-
 public class Server extends WebSocketServer {
 
-    final int ROOM_SIZE = 2;
-    static char code = 'a';
+    private static final int ROOM_SIZE = 2;
+    private static char code = 'a'; //Temporary room id
     ExecutorService executor = newBoundedFixedThreadPool(8);
 
     Map<String, List<Connection>> unstartedGames = new HashMap<>();
@@ -133,7 +133,7 @@ public class Server extends WebSocketServer {
             }
         }
     }
-    
+
     public void matchGame(List<Connection> players) {
     	String gameCode = nextCode();
     	unstartedGames.put(gameCode, players);
@@ -149,7 +149,7 @@ public class Server extends WebSocketServer {
 
         sendStateUpdate(gameCode);
     }
-    
+
     public void readyGame(String gameCode, ObjectId playerId, boolean ready) {
     	List<Connection> players = unstartedGames.get(gameCode);
     	if(!ready) {
@@ -166,11 +166,11 @@ public class Server extends WebSocketServer {
 	    	boolean allReady = true;
 	    	for(Connection player : players) {
 	    		if (player.playerId.equals(playerId)) {
-	    			player.setReady(true);    			
+	    			player.setReady(true);
 	    		}
 	    		allReady &= player.isReady();
 	    	}
-	    	
+
 	    	if(allReady) {
 	    		startGame(gameCode);
 	    	}
@@ -279,11 +279,11 @@ public class Server extends WebSocketServer {
     }
 
     public void sendStateUpdate(String gameCode) {
-    	State game = startedGames.get(gameCode); 	
+    	State game = startedGames.get(gameCode);
     	String state = game.toString();
-        
+
     	List<Player> players = game.getPlayers();
-        for (Player player : players) {     	
+        for (Player player : players) {
             Message stateUpdate = new Message("State Update");
             stateUpdate.add("state", new JSONObject(state));
             stateUpdate.add("gameCode", gameCode);
@@ -292,7 +292,7 @@ public class Server extends WebSocketServer {
             currentPlayer.put("playerId", player.getPlayerId());
             currentPlayer.put("playerIndex", players.indexOf(player));
             stateUpdate.add("currentPlayer", currentPlayer);
-            
+
             player.getConnection().socket.send(stateUpdate.toString());
         }
     }
@@ -302,7 +302,7 @@ public class Server extends WebSocketServer {
         message.add("message", serverMessage);
         socket.send(message.toString());
     }
-    
+
     public void sendGameFound(String gameCode) {
         for (Connection player : unstartedGames.get(gameCode)) {
         	Message gameFound = new Message("Game Found");
@@ -310,16 +310,16 @@ public class Server extends WebSocketServer {
             player.socket.send(gameFound.toString());
         }
     }
-    
+
     public void sendGameDeclined(String gameCode) {
         for (Connection player : unstartedGames.get(gameCode)) {
         	Message gameFound = new Message("Game Declined");
             player.socket.send(gameFound.toString());
         }
     }
-    
+
     public void sendPrompt(String gameCode) {
-    	State game = startedGames.get(gameCode); 
+    	State game = startedGames.get(gameCode);
     	Prompt prompt = game.getCurrentPrompt();
     	Message promptMessage = new Message("Player Prompt");
     	promptMessage.add("gameCode", gameCode);

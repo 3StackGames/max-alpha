@@ -9,10 +9,8 @@ import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
 import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.backend.game.phases.MainPhase;
 import com.three_stack.maximum_alpha.backend.game.phases.PreparationPhase;
-import com.three_stack.maximum_alpha.backend.game.player.Player;
 
 public class PlayCardAction extends ExistingCardWithCostAction {
-    
     @Override
     public void run(State state) {
         //find a in player's hand
@@ -30,24 +28,30 @@ public class PlayCardAction extends ExistingCardWithCostAction {
         }
     }
 
-	@Override
-	public boolean isValid(State state) {
+  	@Override
+  	public boolean isValid(State state) {
         if(!super.isValid(state)) {
             return false;
         }
 
         if(state.isPhase(MainPhase.class)) {
-            if(!isPlayerTurn(state)) return false;
+            if(!isPlayerTurn(state)) {
+              return false;
+            }
         } else if(state.isPhase(PreparationPhase.class)) {
-            if(!(card instanceof Spell)) return false;
-            if(player.isPreparationDone()) return false;
+            if(!(card instanceof Spell)) {
+              return false;
+            }
+            if(player.isPreparationDone()) {
+              return false;
+            }
         } else {
             return false;
         }
         boolean notInPrompt = notInPrompt(state);
-		boolean isPlayable = card.isPlayable();
+        boolean isPlayable = card.isPlayable();
         boolean inputCostSufficient = cost.hasResources(card.getCurrentCost());
 
-		return notInPrompt && inputCostSufficient && isPlayable;
-	}
+        return notInPrompt && inputCostSufficient && isPlayable;
+  	}
 }

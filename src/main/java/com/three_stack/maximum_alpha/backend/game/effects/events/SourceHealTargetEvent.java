@@ -4,7 +4,7 @@ import com.three_stack.maximum_alpha.backend.game.Time;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 
 public class SourceHealTargetEvent extends SourceTargetEvent {
-    protected int heal;
+    protected final int heal;
     protected static final String type = "HEAL";
 
     public SourceHealTargetEvent(Time time, Card source, Card target, int heal) {
@@ -14,9 +14,5 @@ public class SourceHealTargetEvent extends SourceTargetEvent {
 
     public int getHeal() {
         return heal;
-    }
-
-    public void setHeal(int heal) {
-        this.heal = heal;
     }
 }

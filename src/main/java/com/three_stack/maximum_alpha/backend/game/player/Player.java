@@ -1,5 +1,12 @@
 package com.three_stack.maximum_alpha.backend.game.player;
 
+import java.util.ArrayDeque;
+import java.util.Collection;
+import java.util.Deque;
+import java.util.HashSet;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import com.three_stack.maximum_alpha.backend.game.Parameters;
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.Time;
@@ -7,20 +14,17 @@ import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.Castle;
 import com.three_stack.maximum_alpha.backend.game.cards.Structure;
 import com.three_stack.maximum_alpha.backend.game.cards.Worker;
-import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
 import com.three_stack.maximum_alpha.backend.game.effects.QueuedEffect;
+import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
 import com.three_stack.maximum_alpha.backend.server.Connection;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 public class Player {
-    //@Todo: Actually retrieve their username
+    //TODO: Actually retrieve their username
     private static int usernameCounter = 0;
 
-    private String username;
+    private final String username;
 
-	private transient Connection connection;
+    private final transient Connection connection;
     private final UUID playerId;
 
     //Zones
@@ -41,7 +45,7 @@ public class Player {
     private Deque<QueuedEffect> preparationPhaseQueuedEffects;
     private boolean preparationDone;
 
-	public enum Status {
+    public enum Status {
     	WIN, LOSE, TIE, PLAYING
     }
 
@@ -63,51 +67,52 @@ public class Player {
 
         resources = new ResourceList(Parameters.INITIAL_COLORLESS_RESOURCES);
         castle = new Castle(baseMaxLife, this);
-        
+
         status = Status.PLAYING;
         preparationPhaseQueuedEffects = new ArrayDeque<>();
         preparationDone = false;
     }
-    
+
     public Collection<Card> getAllCards() {
     	Collection<Card> cards = new HashSet<>();
     	cards.addAll(mainDeck.getCards());
     	cards.addAll(hand.getCards());
     	cards.addAll(field.getCards());
     	cards.addAll(graveyard.getCards());
-        cards.addAll(town.getCards());
-        cards.addAll(courtyard.getCards());
-        cards.addAll(structureDeck.getCards());
+      cards.addAll(town.getCards());
+      cards.addAll(courtyard.getCards());
+      cards.addAll(structureDeck.getCards());
     	cards.add(castle);
-    	
+
     	return cards;
     }
-    
+
     public Collection<Card> getVisibleCards() {
     	Collection<Card> cards = new HashSet<>();
     	cards.addAll(field.getCards());
     	cards.addAll(graveyard.getCards());
-        cards.addAll(town.getCards());
-        cards.addAll(courtyard.getCards());
-        cards.addAll(structureDeck.getCards());
+      cards.addAll(town.getCards());
+      cards.addAll(courtyard.getCards());
+      cards.addAll(structureDeck.getCards());
     	cards.add(castle);
-        
-        return cards;	
+
+      return cards;
     }
-    
+
     public Collection<Card> getSelfVisibleCards() {
     	Collection<Card> cards = getVisibleCards();
     	cards.addAll(hand.getCards());
-    	
+
     	return cards;
     }
-    
+
     public Collection<Card> getTargets() {
-    	Collection<Card> targets = courtyard.getCards().stream().filter(structure -> !structure.isUnderConstruction()).collect(Collectors.toSet());
+    	Collection<Card> targets = courtyard.getCards().stream().
+    	    filter(structure -> !structure.isUnderConstruction()).collect(Collectors.toSet());
     	targets.add(castle);
     	return targets;
     }
-    
+
     public void completeStructures(Time time, State state) {
     	courtyard.getCards().stream().filter(Structure::isUnderConstruction).forEach((structure) -> {
     		structure.setUnderConstruction(false);
@@ -115,6 +120,7 @@ public class Player {
     	});
     }
 
+    //TODO: do we still need this?
     public void newTurn() {
     }
 
@@ -130,15 +136,15 @@ public class Player {
             addResources(resourceChange);
         }
     }
-    
+
     public void addResources(ResourceList addition) {
     	resources.add(addition);
     }
-    
+
     public void pay(ResourceList cost) {
         resources.lose(cost);
     }
-    
+
     public boolean hasResources(ResourceList other) {
         return resources.hasResources(other);
     }
@@ -169,16 +175,8 @@ public class Player {
         return username;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     public Connection getConnection() {
         return connection;
-    }
-
-    public void setConnection(Connection connection) {
-        this.connection = connection;
     }
 
     public UUID getPlayerId() {
@@ -220,7 +218,7 @@ public class Player {
     public void setResources(ResourceList resources) {
         this.resources = resources;
     }
-    
+
     public Castle getCastle() {
         return castle;
     }
@@ -248,8 +246,12 @@ public class Player {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+          return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+          return false;
+        }
 
         Player player = (Player) o;
 
@@ -261,7 +263,7 @@ public class Player {
     public int hashCode() {
         return playerId != null ? playerId.hashCode() : 0;
     }
-   
+
     public Status getStatus() {
 		return status;
 	}

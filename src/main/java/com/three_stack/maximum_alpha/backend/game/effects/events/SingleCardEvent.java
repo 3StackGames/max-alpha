@@ -1,13 +1,14 @@
 package com.three_stack.maximum_alpha.backend.game.effects.events;
 
-import com.three_stack.maximum_alpha.backend.game.Time;
-import com.three_stack.maximum_alpha.backend.game.cards.Card;
-import io.gsonfire.annotations.ExposeMethodResult;
-
 import java.util.UUID;
 
+import com.three_stack.maximum_alpha.backend.game.Time;
+import com.three_stack.maximum_alpha.backend.game.cards.Card;
+
+import io.gsonfire.annotations.ExposeMethodResult;
+
 public class SingleCardEvent extends Event {
-    protected transient Card card;
+    protected transient final Card card;
 
     public SingleCardEvent(Time time, String type, Card card) {
         super(time, type);
@@ -16,10 +17,6 @@ public class SingleCardEvent extends Event {
 
     public Card getCard() {
         return card;
-    }
-
-    public void setCard(Card card) {
-        this.card = card;
     }
 
     @ExposeMethodResult("cardId")

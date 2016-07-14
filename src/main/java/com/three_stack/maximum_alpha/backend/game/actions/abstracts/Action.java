@@ -1,16 +1,15 @@
 package com.three_stack.maximum_alpha.backend.game.actions.abstracts;
 
+import java.util.UUID;
+
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
-
-import java.util.UUID;
 
 /**
  * Always player Input
  */
 public abstract class Action {
     protected UUID playerId;
-
     protected transient Player player;
 
     public abstract void run(State state);
@@ -39,18 +38,4 @@ public abstract class Action {
     public boolean notInPrompt(State state) {
         return state.getCurrentPrompt() == null;
     }
-
-    /**
-     * Auto-Generated Getters and Setters Below
-     */
-
-    public UUID getPlayerId() {
-        return playerId;
-    }
-
-    public void setPlayerId(UUID playerId) {
-        this.playerId = playerId;
-    }
-    
-
 }

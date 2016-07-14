@@ -1,5 +1,11 @@
 package com.three_stack.maximum_alpha.backend.game.cards;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.Time;
 import com.three_stack.maximum_alpha.backend.game.cards.Tag.TagType;
 import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
@@ -8,13 +14,6 @@ import com.three_stack.maximum_alpha.backend.game.effects.events.SourceTargetEve
 import com.three_stack.maximum_alpha.backend.game.player.ResourceList;
 
 import io.gsonfire.annotations.ExposeMethodResult;
-
-import com.three_stack.maximum_alpha.backend.game.State;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class Creature extends NonSpellCard implements Worker {
     protected transient final int defaultAttack;
@@ -25,7 +24,7 @@ public class Creature extends NonSpellCard implements Worker {
     protected boolean summoningSickness;
     protected boolean summonedThisTurn;
     protected transient List<Creature> blockers;
-    private transient int buffAttack;
+    protected transient int buffAttack;
     /**
      * Creatures this creature can block.
      * IMPORTANT: Only used and/or reliable during block phase.
@@ -82,8 +81,9 @@ public class Creature extends NonSpellCard implements Worker {
             throw new IllegalStateException("must be attacking");
         }
         dealDamage(attackTarget, this.getCurrentAttack(), battleTime, state);
-        if(!hasTag(TagType.VIGILANCE))
-        	exhaust(exhaustTime, state);
+        if(!hasTag(TagType.VIGILANCE)) {
+          exhaust(exhaustTime, state);
+        }
         clearAttackTarget();
     }
 
@@ -183,19 +183,19 @@ public class Creature extends NonSpellCard implements Worker {
 		canBlock = true;
         summoningSickness = true;
 	}
-	
+
 	@Override
 	public void addBuff(Buff buff, Time time, State state) {
 		super.addBuff(buff, time, state);
 		buffAttack += buff.getAttackModifier();
 	}
-	
+
 	@Override
 	public void removeBuff(Buff buff, Time time, State state) {
 		super.removeBuff(buff, time, state);
 		buffAttack -= buff.getAttackModifier();
 	}
-	
+
 	@Override
 	public void buffReset(State state) {
 		super.buffReset(state);
