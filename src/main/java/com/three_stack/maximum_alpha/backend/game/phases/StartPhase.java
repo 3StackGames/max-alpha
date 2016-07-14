@@ -20,12 +20,12 @@ public class StartPhase extends Phase {
      * 5. Refresh Cards
      * @param state
      */
+    @Override
     public void start(State state) {
-        //@Todo: structure complete
         state.completeStructures();
         //resources generated
         state.gatherResources();
-        //@Todo: triggerEffects
+        //@TODO: triggerEffects
         //begin turn triggers
         Event startPhaseStartEvent = new Event(state.getTime(), "START PHASE START");
         state.addEvent(startPhaseStartEvent, Trigger.ON_START_PHASE_START);
@@ -33,12 +33,13 @@ public class StartPhase extends Phase {
         state.turnPlayerDraw();
         //refresh
         state.refreshTurnPlayerCards(state.getTime(), state);
-        
+
         state.getTurnPlayer().setHasAssignedOrPulled(false);
 
         end(state);
     }
 
+    @Override
     public void end(State state) {
         state.setCurrentPhase(MainPhase.class);
     }

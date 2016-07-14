@@ -2,11 +2,10 @@ package com.three_stack.maximum_alpha.backend.game.actions.implementations;
 
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.Action;
-import com.three_stack.maximum_alpha.backend.game.effects.prompts.Prompt;
 
 /**
  * @Deprecated: Not implemented after Refactor
- * @Todo: implement
+ * TODO: implement
  */
 public class SkipStepAction extends Action {
 

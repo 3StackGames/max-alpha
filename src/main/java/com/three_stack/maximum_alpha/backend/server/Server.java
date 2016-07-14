@@ -196,7 +196,7 @@ public class Server extends WebSocketServer {
         }
     }
 
-    //todo: make real code generation
+    //TODO: make real code generation
     public static String nextCode() {
         return Character.toString(code++);
     }
@@ -215,7 +215,7 @@ public class Server extends WebSocketServer {
         matchmaking.run();
     }
 
-    //TODO
+    //TODO: cleanup stuff?
     public void close() throws IOException, InterruptedException {
     	super.stop();
     }
@@ -323,7 +323,6 @@ public class Server extends WebSocketServer {
     	Prompt prompt = game.getCurrentPrompt();
     	Message promptMessage = new Message("Player Prompt");
     	promptMessage.add("gameCode", gameCode);
-        //@Todo: consider renaming to just prompt. unless steps come back
     	promptMessage.add("prompt", new JSONObject(Serializer.toJson(prompt)));
     	prompt.getPlayer().getConnection().socket.send(promptMessage.toString());
     }

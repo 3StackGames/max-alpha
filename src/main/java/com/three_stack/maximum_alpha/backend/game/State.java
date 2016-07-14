@@ -284,7 +284,7 @@ public class State {
             if (queuedEffect.isDone()) {
                 getQueuedEffects().remove();
             }
-            //@Todo: check if the change of going from entire effect to single runnables affects the death resolver
+            //@TODO: check if the change of going from entire effect to single runnables affects the death resolver
             resolveDeaths();
         }
     }
