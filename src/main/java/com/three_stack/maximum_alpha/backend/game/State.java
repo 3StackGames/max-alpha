@@ -97,13 +97,13 @@ public class State {
         turnPhases.put(StartPhase.class, new StartPhase());
     }
 
-    public void setupGame(Parameters parameters) {
+    public void setupGame(List<Connection> connections, Parameters parameters) {
         this.parameters = parameters;
         victoryHandler = parameters.victoryHandler;
 
-        for (Connection connection : parameters.players) {
+        for (Connection connection : connections) {
             //initialize player
-            Player player = new Player(connection, parameters.TOTAL_HEALTH);
+            Player player = new Player(connection, parameters);
             players.add(player);
             //load decks
             DatabaseClient client = DatabaseClientFactory.create();
@@ -161,7 +161,7 @@ public class State {
 
     private void initialDraw() {
         for (Player player : players) {
-            for (int i = 0; i < parameters.INITIAL_DRAW_SIZE; i++) {
+            for (int i = 0; i < parameters.initialHandSize; i++) {
                 player.draw(getTime(), this);
             }
         }

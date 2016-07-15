@@ -41,6 +41,7 @@ public class Player {
     private ResourceList resources;
     private boolean hasAssignedOrPulled;
     private Status status;
+    private int maxHandSize = 10;
 
     private Deque<QueuedEffect> preparationPhaseQueuedEffects;
     private boolean preparationDone;
@@ -49,7 +50,7 @@ public class Player {
     	WIN, LOSE, TIE, PLAYING
     }
 
-    public Player(Connection connection, int baseMaxLife) {
+    public Player(Connection connection, Parameters parameters) {
         username = "Player " + usernameCounter++;
 
         this.connection = connection;
@@ -65,8 +66,8 @@ public class Player {
         town = new Town(this);
         courtyard = new Courtyard(this);
 
-        resources = new ResourceList(Parameters.INITIAL_COLORLESS_RESOURCES);
-        castle = new Castle(baseMaxLife, this);
+        resources = new ResourceList(parameters.initialResources);
+        castle = new Castle(parameters.maxHealth, this);
 
         status = Status.PLAYING;
         preparationPhaseQueuedEffects = new ArrayDeque<>();
@@ -187,14 +188,6 @@ public class Player {
         return hand;
     }
 
-    public MainDeck getMainDeck() {
-        return mainDeck;
-    }
-
-    public void setMainDeck(MainDeck mainDeck) {
-        this.mainDeck = mainDeck;
-    }
-
     public Field getField() {
         return field;
     }
@@ -223,8 +216,12 @@ public class Player {
         return castle;
     }
 
-    public void setCastle(Castle castle) {
-        this.castle = castle;
+    public MainDeck getMainDeck() {
+        return mainDeck;
+    }
+
+    public void setMainDeck(MainDeck mainDeck) {
+        this.mainDeck = mainDeck;
     }
 
     public StructureDeck getStructureDeck() {
@@ -233,6 +230,22 @@ public class Player {
 
     public void setStructureDeck(StructureDeck structureDeck) {
         this.structureDeck = structureDeck;
+    }
+
+    public Status getStatus() {
+      return status;
+    }
+  
+    public void setStatus(Status status) {
+      this.status = status;
+    } 
+  
+    public int getMaxHandSize() {
+      return maxHandSize;
+    }
+  
+    public void setMaxHandSize(int maxHandSize) {
+      this.maxHandSize = maxHandSize;
     }
 
     //TODO: add support for triggerEffects which give extra assigns/pulls? or should those be separate triggerEffects
@@ -263,12 +276,4 @@ public class Player {
     public int hashCode() {
         return playerId != null ? playerId.hashCode() : 0;
     }
-
-    public Status getStatus() {
-		return status;
-	}
-
-	public void setStatus(Status status) {
-		this.status = status;
-	}
 }
