@@ -28,13 +28,11 @@ public class DestroyResult extends TargetResult {
     @Override
     public Map<String, Object> prepareNewValue() {
         Map<String, Object> value =  super.prepareNewValue();
-        //do nothing for now
         return value;
     }
 
 	@Override
-	public void resolve(State state, Card source, Event event,
-			Map<String, Object> value) {
+	public void resolve(State state, Card source, Event event, Map<String, Object> value) {
         List<NonSpellCard> targets = (List<NonSpellCard>) value.get("targets");
         source.kill(targets, state.getTime(), state);
 	}

@@ -389,6 +389,11 @@ public class State {
             }
         }
     }
+    
+    //TODO: reset phases, end of turn/beginning of turn effects, etc.
+    public void changeTurn(Player p) {
+        this.turn = players.indexOf(p);
+    }
 
     /**
      * Call whenever an event is created to let the state know about the event.
@@ -463,11 +468,6 @@ public class State {
 
     public List<Effect> getEffects(Trigger trigger) {
         return effects.get(trigger);
-    }
-
-    //TODO: additional things
-    public void setTurn(Player p) {
-        this.turn = players.indexOf(p);
     }
 
     public int getTurnCount() {

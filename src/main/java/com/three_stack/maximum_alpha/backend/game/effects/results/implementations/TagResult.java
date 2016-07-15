@@ -44,7 +44,7 @@ public class TagResult extends TargetResult {
 
     @Override
     public Map<String, Object> prepareNewValue() {
-        Map<String, Object> value =  super.prepareNewValue();
+        Map<String, Object> value = super.prepareNewValue();
         value.put("tag", tag);
         value.put("remove", remove);
         return value;

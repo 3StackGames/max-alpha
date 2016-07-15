@@ -116,7 +116,7 @@ public class PlayerStep extends Step {
                         	allIncludedPlayers.addAll(state.getPlayingPlayers());
                             break;
                         case "ALLY":
-                        	//TODO add ally functionality?
+                        	//TODO add ally functionality? (not for MVP)
                         	break;
                         default:
                             throw new IllegalStateException("Include term isn't recognized");

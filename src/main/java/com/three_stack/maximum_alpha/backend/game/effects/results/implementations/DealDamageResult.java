@@ -33,7 +33,7 @@ public class DealDamageResult extends TargetResult {
 
     @Override
     public Map<String, Object> prepareNewValue() {
-        Map<String, Object> value =  super.prepareNewValue();
+        Map<String, Object> value = super.prepareNewValue();
         value.put("damage", damage);
         return value;
     }

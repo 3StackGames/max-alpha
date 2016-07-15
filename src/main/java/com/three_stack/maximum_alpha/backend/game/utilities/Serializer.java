@@ -35,7 +35,9 @@ public class Serializer {
     	return gsonCard.toJson(object);
     }
     
-    //TODO: fix
+    /**
+     * Converts cards into classes which only hold their IDs.
+     */
     public static class CardExclStrat implements ExclusionStrategy {
 
         public boolean shouldSkipClass(Class<?> arg0) {

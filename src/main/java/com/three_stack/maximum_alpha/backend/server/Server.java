@@ -215,7 +215,7 @@ public class Server extends WebSocketServer {
         matchmaking.run();
     }
 
-    //TODO: cleanup stuff?
+    //TODO: determine what else needs to be closed/cleaned up
     public void close() throws IOException, InterruptedException {
     	super.stop();
     }
