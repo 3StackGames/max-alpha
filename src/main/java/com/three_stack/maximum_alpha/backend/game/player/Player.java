@@ -23,7 +23,6 @@ public class Player {
     private static int usernameCounter = 0;
 
     private final String username;
-
     private final transient Connection connection;
     private final UUID playerId;
 

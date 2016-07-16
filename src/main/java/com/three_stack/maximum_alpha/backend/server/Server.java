@@ -21,6 +21,7 @@ import com.three_stack.maximum_alpha.backend.game.actions.abstracts.Action;
 import com.three_stack.maximum_alpha.backend.game.effects.prompts.Prompt;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.utilities.Serializer;
+import com.three_stack.maximum_alpha.backend.server.Message.ServerEvent;
 
 import org.bson.types.ObjectId;
 import org.java_websocket.WebSocket;
@@ -222,12 +223,12 @@ public class Server extends WebSocketServer {
 
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
-        sendServerMessage(conn, "you connected! yay");
+        sendServerMessage(conn, "Connected to server.");
     }
 
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-    	System.out.println("player disconnected");
+    	System.out.println("Player disconnected.");
     }
 
     @Override
@@ -272,7 +273,7 @@ public class Server extends WebSocketServer {
     }
 
     public void sendError(WebSocket socket, String code, String message) {
-        Message error = new Message("Error");
+        Message error = new Message(ServerEvent.ERROR);
         error.add("code", code);
         error.add("message", message);
         socket.send(error.toString());
@@ -284,7 +285,7 @@ public class Server extends WebSocketServer {
 
     	List<Player> players = game.getPlayers();
         for (Player player : players) {
-            Message stateUpdate = new Message("State Update");
+            Message stateUpdate = new Message(ServerEvent.UPDATE);
             stateUpdate.add("state", new JSONObject(state));
             stateUpdate.add("gameCode", gameCode);
             stateUpdate.add("cardList", new JSONObject(Serializer.toJson(game.generateVisibleCardList(player))));
@@ -298,14 +299,14 @@ public class Server extends WebSocketServer {
     }
 
     public void sendServerMessage(WebSocket socket, String serverMessage) {
-        Message message = new Message("Server Message");
+        Message message = new Message(ServerEvent.MESSAGE);
         message.add("message", serverMessage);
         socket.send(message.toString());
     }
 
     public void sendGameFound(String gameCode) {
         for (Connection player : unstartedGames.get(gameCode)) {
-        	Message gameFound = new Message("Game Found");
+        	Message gameFound = new Message(ServerEvent.FOUND);
         	gameFound.add("gameCode", gameCode);
             player.socket.send(gameFound.toString());
         }
@@ -313,7 +314,7 @@ public class Server extends WebSocketServer {
 
     public void sendGameDeclined(String gameCode) {
         for (Connection player : unstartedGames.get(gameCode)) {
-        	Message gameFound = new Message("Game Declined");
+        	Message gameFound = new Message(ServerEvent.DECLINED);
             player.socket.send(gameFound.toString());
         }
     }
@@ -321,7 +322,7 @@ public class Server extends WebSocketServer {
     public void sendPrompt(String gameCode) {
     	State game = startedGames.get(gameCode);
     	Prompt prompt = game.getCurrentPrompt();
-    	Message promptMessage = new Message("Player Prompt");
+    	Message promptMessage = new Message(ServerEvent.PROMPT);
     	promptMessage.add("gameCode", gameCode);
     	promptMessage.add("prompt", new JSONObject(Serializer.toJson(prompt)));
     	prompt.getPlayer().getConnection().socket.send(promptMessage.toString());

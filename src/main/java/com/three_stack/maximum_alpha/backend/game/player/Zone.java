@@ -46,6 +46,10 @@ public abstract class Zone<T extends Card> {
     public List<T> getCards() {
         return Collections.unmodifiableList(cards);
     }
+    
+    public int size() {
+        return cards.size();
+    }
 
     public void add(T card, Time time, State state) {
         card.setTimeEnteredZone(time);

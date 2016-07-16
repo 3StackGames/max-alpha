@@ -4,6 +4,7 @@ import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
 import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
+import com.three_stack.maximum_alpha.backend.game.player.Player;
 
 public class EndPhase extends Phase {
 
@@ -25,7 +26,10 @@ public class EndPhase extends Phase {
     }
 
     public void end(State state) {
-        //TODO: Hand size discard
+        Player currentPlayer = state.getTurnPlayer();
+        if(currentPlayer.getMaxHandSize() < currentPlayer.getHand().size()) {
+          //TODO: DISCARD
+        }
         state.newTurn();
         state.setCurrentPhase(StartPhase.class);
         Event startPhaseStartEvent = new Event(state.getTime(), "END PHASE END");
