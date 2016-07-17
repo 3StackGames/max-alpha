@@ -1,14 +1,19 @@
 package com.three_stack.maximum_alpha.backend.game.player;
 
-import com.three_stack.maximum_alpha.backend.game.State;
-import com.three_stack.maximum_alpha.backend.game.Time;
-import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
-import io.gsonfire.annotations.ExposeMethodResult;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.three_stack.maximum_alpha.backend.game.State;
+import com.three_stack.maximum_alpha.backend.game.Time;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
+import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
+
+import io.gsonfire.annotations.ExposeMethodResult;
 
 /**
  * Handles common zone operations. Any operations that modify the zone should be marked protected though. Only implementaitons should modify since triggers will occur.
@@ -40,6 +45,10 @@ public abstract class Zone<T extends Card> {
      */
     public List<T> getCards() {
         return Collections.unmodifiableList(cards);
+    }
+    
+    public int size() {
+        return cards.size();
     }
 
     public void add(T card, Time time, State state) {
@@ -110,12 +119,12 @@ public abstract class Zone<T extends Card> {
         return cards.subList(fromIndex, toIndex);
     }
 
-    //@Todo: Error Handling
+    //@TODO: Error Handling
     public boolean contains(T card) {
         return cards.contains(card);
     }
 
-    //@Todo: Error Handling
+    //@TODO: Error Handling
     public boolean containsAll(Collection<T> cards) {
         return cards.containsAll(cards);
     }

@@ -7,7 +7,6 @@ import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
 import com.three_stack.maximum_alpha.backend.game.phases.MainPhase;
 
 public class AssignCardAction extends ExistingCardAction {
-
     @Override
     public void run(State state) {
         Creature assignCreature = (Creature) player.getHand().takeCard(cardId, state.getTime(), state);

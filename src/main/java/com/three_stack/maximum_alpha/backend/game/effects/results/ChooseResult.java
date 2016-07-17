@@ -1,5 +1,9 @@
 package com.three_stack.maximum_alpha.backend.game.effects.results;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.CardFactory;
@@ -9,11 +13,8 @@ import com.three_stack.maximum_alpha.backend.game.effects.prompts.Prompt;
 import com.three_stack.maximum_alpha.backend.game.utilities.DatabaseClientFactory;
 import com.three_stack.maximum_alpha.database_client.pojos.DBCard;
 import com.three_stack.maximum_alpha.database_client.pojos.DBResult;
-import org.bson.types.ObjectId;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import org.bson.types.ObjectId;
 
 public abstract class ChooseResult extends Result {
     public class ChooseStep extends Step {

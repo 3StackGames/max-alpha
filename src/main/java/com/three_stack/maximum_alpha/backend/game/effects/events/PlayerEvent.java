@@ -1,11 +1,10 @@
 package com.three_stack.maximum_alpha.backend.game.effects.events;
 
 import com.three_stack.maximum_alpha.backend.game.Time;
-import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 
 public class PlayerEvent extends Event {
-    protected Player player;
+    protected final Player player;
 
     public PlayerEvent(Time time, String type, Player player) {
         super(time, type);
@@ -14,9 +13,5 @@ public class PlayerEvent extends Event {
 
     public Player getPlayer() {
         return player;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
     }
 }

@@ -15,14 +15,14 @@ public class PromptTargetAction extends ExistingCardAction {
         state.removePrompt();
     }
 
-	@Override
-	public boolean isValid(State state) {
-		Prompt prompt = state.getCurrentPrompt();
-		boolean hasPrompt = (prompt != null);
-        if(!hasPrompt) return false;
-		boolean isValidStepInput = prompt.isValidInput(card);
-		boolean isCorrectPlayer = (player == prompt.getPlayer());
-		
-		return isValidStepInput && isCorrectPlayer;
-	}
+    @Override
+    public boolean isValid(State state) {
+      	Prompt prompt = state.getCurrentPrompt();
+      	boolean hasPrompt = (prompt != null);
+            if(!hasPrompt) return false;
+      	boolean isValidStepInput = prompt.isValidInput(card);
+      	boolean isCorrectPlayer = (player == prompt.getPlayer());
+      	
+      	return isValidStepInput && isCorrectPlayer;
+    }
 }

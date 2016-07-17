@@ -1,5 +1,7 @@
 package com.three_stack.maximum_alpha.backend.game.actions.implementations;
 
+import java.util.UUID;
+
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.ExistingCardWithCostAction;
 import com.three_stack.maximum_alpha.backend.game.cards.Ability;
@@ -8,8 +10,6 @@ import com.three_stack.maximum_alpha.backend.game.cards.NonSpellCard;
 import com.three_stack.maximum_alpha.backend.game.effects.QueuedEffect;
 import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.backend.game.phases.MainPhase;
-
-import java.util.UUID;
 
 public class ActivateAbilityAction extends ExistingCardWithCostAction {
     protected UUID abilityId;
@@ -40,11 +40,15 @@ public class ActivateAbilityAction extends ExistingCardWithCostAction {
         boolean correctPhase = state.isPhase(MainPhase.class);
         boolean playerTurn = isPlayerTurn(state);
         boolean playerOwnsCard = card.getController().equals(player);
-        if(!(card instanceof NonSpellCard)) return false;
+        if(!(card instanceof NonSpellCard)) {
+          return false;
+        }
 
         NonSpellCard nonSpellCard = (NonSpellCard) card;
         Ability ability = nonSpellCard.getAbility(abilityId);
-        if(ability == null) return false;
+        if(ability == null) {
+          return false;
+        }
 
         boolean inputCostSufficient = cost.hasResources(ability.getCost());
 
@@ -70,32 +74,5 @@ public class ActivateAbilityAction extends ExistingCardWithCostAction {
 
         nonSpellCard = (NonSpellCard) card;
         ability = nonSpellCard.getAbility(abilityId);
-    }
-
-    /**
-     * Auto-Generated Getters and Setters Below
-     */
-    public UUID getAbilityId() {
-        return abilityId;
-    }
-
-    public void setAbilityId(UUID abilityId) {
-        this.abilityId = abilityId;
-    }
-
-    public Ability getAbility() {
-        return ability;
-    }
-
-    public void setAbility(Ability ability) {
-        this.ability = ability;
-    }
-
-    public NonSpellCard getNonSpellCard() {
-        return nonSpellCard;
-    }
-
-    public void setNonSpellCard(NonSpellCard nonSpellCard) {
-        this.nonSpellCard = nonSpellCard;
     }
 }

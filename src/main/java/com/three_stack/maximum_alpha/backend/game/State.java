@@ -1,5 +1,17 @@
 package com.three_stack.maximum_alpha.backend.game;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.Action;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.CardFactory;
@@ -12,20 +24,31 @@ import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.backend.game.effects.events.PlayerEvent;
 import com.three_stack.maximum_alpha.backend.game.effects.events.SingleCardEvent;
 import com.three_stack.maximum_alpha.backend.game.effects.prompts.Prompt;
-import com.three_stack.maximum_alpha.backend.game.phases.*;
-import com.three_stack.maximum_alpha.backend.game.player.*;
+import com.three_stack.maximum_alpha.backend.game.phases.AttackPhase;
+import com.three_stack.maximum_alpha.backend.game.phases.BlockPhase;
+import com.three_stack.maximum_alpha.backend.game.phases.DamagePhase;
+import com.three_stack.maximum_alpha.backend.game.phases.EndPhase;
+import com.three_stack.maximum_alpha.backend.game.phases.MainPhase;
+import com.three_stack.maximum_alpha.backend.game.phases.Phase;
+import com.three_stack.maximum_alpha.backend.game.phases.PreparationPhase;
+import com.three_stack.maximum_alpha.backend.game.phases.StartPhase;
+import com.three_stack.maximum_alpha.backend.game.player.Courtyard;
+import com.three_stack.maximum_alpha.backend.game.player.Field;
+import com.three_stack.maximum_alpha.backend.game.player.Graveyard;
+import com.three_stack.maximum_alpha.backend.game.player.MainDeck;
+import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.player.Player.Status;
+import com.three_stack.maximum_alpha.backend.game.player.StructureDeck;
 import com.three_stack.maximum_alpha.backend.game.utilities.DatabaseClientFactory;
 import com.three_stack.maximum_alpha.backend.game.utilities.Serializer;
 import com.three_stack.maximum_alpha.backend.game.victories.VictoryHandler;
 import com.three_stack.maximum_alpha.backend.server.Connection;
 import com.three_stack.maximum_alpha.database_client.DatabaseClient;
 import com.three_stack.maximum_alpha.database_client.pojos.DBDeck;
-import io.gsonfire.annotations.ExposeMethodResult;
+
 import org.bson.types.ObjectId;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import io.gsonfire.annotations.ExposeMethodResult;
 
 public class State {
     private transient Parameters parameters;
@@ -37,7 +60,6 @@ public class State {
     //two players each taking 1 turn is turnCount + 2, starts at 0
     private int turnCount;
     private transient Queue<Prompt> promptQueue;
-    private List<Card> cardsPlayed;
     private transient Map<UUID, Card> masterCardList;
     private transient Map<Trigger, List<Effect>> effects;
     //begins at 1, because initialization happens at time 0
@@ -75,13 +97,13 @@ public class State {
         turnPhases.put(StartPhase.class, new StartPhase());
     }
 
-    public void setupGame(Parameters parameters) {
+    public void setupGame(List<Connection> connections, Parameters parameters) {
         this.parameters = parameters;
         victoryHandler = parameters.victoryHandler;
 
-        for (Connection connection : parameters.players) {
+        for (Connection connection : connections) {
             //initialize player
-            Player player = new Player(connection, parameters.TOTAL_HEALTH);
+            Player player = new Player(connection, parameters);
             players.add(player);
             //load decks
             DatabaseClient client = DatabaseClientFactory.create();
@@ -139,7 +161,7 @@ public class State {
 
     private void initialDraw() {
         for (Player player : players) {
-            for (int i = 0; i < parameters.INITIAL_DRAW_SIZE; i++) {
+            for (int i = 0; i < parameters.initialHandSize; i++) {
                 player.draw(getTime(), this);
             }
         }
@@ -262,7 +284,7 @@ public class State {
             if (queuedEffect.isDone()) {
                 getQueuedEffects().remove();
             }
-            //@Todo: check if the change of going from entire effect to single runnables affects the death resolver
+            //@TODO: check if the change of going from entire effect to single runnables affects the death resolver
             resolveDeaths();
         }
     }
@@ -302,6 +324,7 @@ public class State {
         return getPlayingPlayers().size() == 0;
     }
 
+    @Override
     public String toString() {
         generateCardList();
         return Serializer.toJsonCard(this);
@@ -366,6 +389,11 @@ public class State {
             }
         }
     }
+    
+    //TODO: reset phases, end of turn/beginning of turn effects, etc.
+    public void changeTurn(Player p) {
+        this.turn = players.indexOf(p);
+    }
 
     /**
      * Call whenever an event is created to let the state know about the event.
@@ -376,7 +404,9 @@ public class State {
      */
     public void addEvent(Event event, Trigger trigger) {
         eventHistory.add(event);
-        if (trigger == null) return;
+        if (trigger == null) {
+          return;
+        }
 
         List<Effect> effects = getEffects(trigger);
         if (effects == null) {
@@ -432,48 +462,20 @@ public class State {
         return players;
     }
 
-    public void setPlayers(List<Player> players) {
-        this.players = players;
-    }
-
     public PriorityQueue<QueuedEffect> getQueuedEffects() {
         return queuedEffects;
-    }
-
-    public List<Card> getCardsPlayed() {
-        return cardsPlayed;
-    }
-
-    public void setCardsPlayed(List<Card> cardsPlayed) {
-        this.cardsPlayed = cardsPlayed;
     }
 
     public List<Effect> getEffects(Trigger trigger) {
         return effects.get(trigger);
     }
 
-    public int getTurn() {
-        return turn;
-    }
-
-    public void setTurn(int turn) {
-        this.turn = turn;
-    }
-
     public int getTurnCount() {
         return turnCount;
     }
 
-    public void setTurnCount(int turnCount) {
-        this.turnCount = turnCount;
-    }
-
     public List<Event> getEventHistory() {
         return eventHistory;
-    }
-
-    public void setEventHistory(List<Event> eventHistory) {
-        this.eventHistory = eventHistory;
     }
 
     public Phase getCurrentPhase() {

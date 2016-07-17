@@ -1,16 +1,17 @@
 package com.three_stack.maximum_alpha.backend.game.utilities;
 
-import com.three_stack.maximum_alpha.database_client.DatabaseClient;
-import com.three_stack.maximum_alpha.database_client.pojos.DBCard;
-import org.bson.types.ObjectId;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import com.three_stack.maximum_alpha.database_client.DatabaseClient;
+import com.three_stack.maximum_alpha.database_client.pojos.DBCard;
+
+import org.bson.types.ObjectId;
 
 public class DatabaseClientFactory {
     /**
      * Cache cards to reduce mongo calls
-     * //@Todo: move this somewhere more appropriate
+     * TODO: move this somewhere more appropriate
      */
     public static Map<ObjectId, DBCard> cardCache;
 

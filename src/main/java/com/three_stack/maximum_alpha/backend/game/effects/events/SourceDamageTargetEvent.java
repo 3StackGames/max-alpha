@@ -4,7 +4,7 @@ import com.three_stack.maximum_alpha.backend.game.Time;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 
 public class SourceDamageTargetEvent extends SourceTargetEvent {
-    protected int damage;
+    protected final int damage;
     protected static final String type = "DAMAGE";
 
     public SourceDamageTargetEvent(Time time, Card source, Card target, int damage) {
@@ -14,9 +14,5 @@ public class SourceDamageTargetEvent extends SourceTargetEvent {
 
     public int getDamage() {
         return damage;
-    }
-
-    public void setDamage(int damage) {
-        this.damage = damage;
     }
 }

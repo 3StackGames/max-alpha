@@ -6,7 +6,6 @@ import com.three_stack.maximum_alpha.backend.game.effects.prompts.ChoosePrompt;
 import com.three_stack.maximum_alpha.backend.game.effects.prompts.Prompt;
 
 public class ChoosePromptTargetAction extends CardAction {
-
     @Override
     public void setup(State state) {
         super.setup(state);
@@ -29,7 +28,9 @@ public class ChoosePromptTargetAction extends CardAction {
     public boolean isValid(State state) {
         Prompt prompt = state.getCurrentPrompt();
         boolean hasPrompt = (prompt != null);
-        if(!hasPrompt) return false;
+        if(!hasPrompt) {
+          return false;
+        }
         boolean isValidStepInput = prompt.isValidInput(card);
         boolean isCorrectPlayer = (player == prompt.getPlayer());
 

@@ -16,11 +16,11 @@ import com.three_stack.maximum_alpha.backend.game.player.ResourceList.Color;
 import com.three_stack.maximum_alpha.database_client.pojos.DBResult;
 
 public class ResourceResult extends PlayerResult {
-	protected ResourceList resources;
-	protected boolean set;
+  	protected ResourceList resources;
+  	protected boolean set;
 
-	//if set == true, sets the player's resources to the new set of resources. 
-	//Otherwise, adds the new set of resources to the player's current resources.
+  	//if set == true, sets the player's resources to the new set of resources. 
+  	//Otherwise, adds the new set of resources to the player's current resources.
     public ResourceResult(List<PlayerStep> playerSteps, ResourceList resources, boolean set) {
         super(playerSteps);
         this.resources = resources;

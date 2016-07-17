@@ -1,13 +1,13 @@
 package com.three_stack.maximum_alpha.backend.game.phases;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.three_stack.maximum_alpha.backend.game.State;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
 import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
 import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class BlockPhase extends Phase {
     public BlockPhase() {
@@ -15,10 +15,12 @@ public class BlockPhase extends Phase {
     }
 
 
+    @Override
     public void start(State state) {
         setBlockableCreatures(state);
     }
 
+    @Override
     public void end(State state) {
         state.setCurrentPhase(PreparationPhase.class);
         Event startPhaseStartEvent = new Event(state.getTime(), "BLOCK PHASE END");

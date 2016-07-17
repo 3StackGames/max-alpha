@@ -12,7 +12,6 @@ import com.three_stack.maximum_alpha.database_client.pojos.DBResult;
 import java.util.Map;
 
 public class ChooseCardResult extends ChooseResult {
-
     public ChooseCardResult(DBResult dbResult) {
         super(dbResult);
     }
