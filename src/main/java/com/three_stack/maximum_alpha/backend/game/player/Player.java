@@ -3,7 +3,9 @@ package com.three_stack.maximum_alpha.backend.game.player;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -44,6 +46,8 @@ public class Player {
 
     private Deque<QueuedEffect> preparationPhaseQueuedEffects;
     private boolean preparationDone;
+    
+    private Map<String, Integer> attributeCount;
 
     public enum Status {
     	WIN, LOSE, TIE, PLAYING
@@ -71,6 +75,8 @@ public class Player {
         status = Status.PLAYING;
         preparationPhaseQueuedEffects = new ArrayDeque<>();
         preparationDone = false;
+        
+        attributeCount = new HashMap<String, Integer>();
     }
 
     public Collection<Card> getAllCards() {
@@ -245,6 +251,14 @@ public class Player {
   
     public void setMaxHandSize(int maxHandSize) {
       this.maxHandSize = maxHandSize;
+    }
+    
+    public int getAttributeCount(String attribute) {
+      return attributeCount.get(attribute);
+    }
+    
+    public void setAttributeCount(String attribute, int count) {
+      attributeCount.put(attribute, count);
     }
 
     //TODO: add support for triggerEffects which give extra assigns/pulls? or should those be separate triggerEffects

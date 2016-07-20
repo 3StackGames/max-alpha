@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class TargetStep extends Step {
-    //@Todo: don't require a base
+    //TODO: don't require a base
     protected static final List<String> filterBases = Arrays.asList("CREATURE", "STRUCTURE", "CASTLE");
 
     //number of targets the prompt should find
