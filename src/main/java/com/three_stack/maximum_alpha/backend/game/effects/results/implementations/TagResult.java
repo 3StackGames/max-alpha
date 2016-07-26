@@ -12,41 +12,44 @@ import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.backend.game.effects.results.Result;
 import com.three_stack.maximum_alpha.backend.game.effects.results.TargetResult;
 import com.three_stack.maximum_alpha.backend.game.effects.results.TargetStep;
+import com.three_stack.maximum_alpha.backend.game.utilities.ValueExpression;
 import com.three_stack.maximum_alpha.database_client.pojos.DBResult;
 
 public class TagResult extends TargetResult {
-	Tag tag;
+	String tagName;
 	boolean remove;
+	ValueExpression valueE;
 	
 	//If remove == true, removes the tag, else adds the tag
-	public TagResult(List<TargetStep> targetSteps, String tagName, int value, boolean remove) {
+	public TagResult(List<TargetStep> targetSteps, String tagName, ValueExpression valueE, boolean remove) {
         super(targetSteps);
-        this.tag = new Tag(TagType.valueOf(tagName), value);
+        this.tagName = tagName;
         this.remove = remove;
+        this.valueE = valueE;
     }
 
     public TagResult(DBResult dbResult) {
-        super(dbResult);  
-        String tagName = (String) dbResult.getValue().get("tag");
-        int value = 0;
+        super(dbResult);
         if(dbResult.getValue().get("value") != null)
-        	value = (int) dbResult.getValue().get("value");
-        this.tag = new Tag(TagType.valueOf(tagName), value);
+        	valueE = new ValueExpression(dbResult.getValue().get("value"));
+        this.tagName = (String) dbResult.getValue().get("tag");
         this.remove = (boolean) dbResult.getValue().get("remove");
     }
 
     public TagResult(Result other) {
         super(other);
         TagResult otherResult = (TagResult) other;
-        this.tag = otherResult.tag;
+        this.tagName = otherResult.tagName;
         this.remove = otherResult.remove;
+        this.valueE = otherResult.valueE;
     }
 
     @Override
     public Map<String, Object> prepareNewValue() {
         Map<String, Object> value = super.prepareNewValue();
-        value.put("tag", tag);
+        value.put("tagName", tagName);
         value.put("remove", remove);
+        value.put("valueE", valueE);
         return value;
     }
 
@@ -54,6 +57,11 @@ public class TagResult extends TargetResult {
 	public void resolve(State state, Card source, Event event,
 			Map<String, Object> value) {
         List<NonSpellCard> targets = (List<NonSpellCard>) value.get("targets");
+        int valueAmount = 0;
+        if (valueE != null)
+          valueAmount = valueE.eval(state);
+        Tag tag = new Tag(TagType.valueOf(tagName), valueAmount);
+        
         if(remove) {
 	        for(NonSpellCard target : targets) {
 	        	target.removeTag(tag);

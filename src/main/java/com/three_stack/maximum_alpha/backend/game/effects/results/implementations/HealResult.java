@@ -7,22 +7,23 @@ import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.backend.game.effects.results.Result;
 import com.three_stack.maximum_alpha.backend.game.effects.results.TargetResult;
 import com.three_stack.maximum_alpha.backend.game.effects.results.TargetStep;
+import com.three_stack.maximum_alpha.backend.game.utilities.ValueExpression;
 import com.three_stack.maximum_alpha.database_client.pojos.DBResult;
 
 import java.util.List;
 import java.util.Map;
 
 public class HealResult extends TargetResult {
-    protected int heal;
+    protected ValueExpression heal;
 
-    public HealResult(List<TargetStep> targetSteps, int heal) {
+    public HealResult(List<TargetStep> targetSteps, ValueExpression heal) {
         super(targetSteps);
         this.heal = heal;
     }
 
     public HealResult(DBResult dbResult) {
         super(dbResult);
-        this.heal = (int) dbResult.getValue().get("heal");
+        this.heal = new ValueExpression(dbResult.getValue().get("heal"));
     }
 
     public HealResult(Result other) {
@@ -42,7 +43,7 @@ public class HealResult extends TargetResult {
     @SuppressWarnings("unchecked")
     public void resolve(State state, Card source, Event event, Map<String, Object> value) {
         List<NonSpellCard> targets = (List<NonSpellCard>) value.get("targets");
-        int heal = (int) value.get("heal");
+        int heal = ((ValueExpression) value.get("heal")).eval(state);
         source.heal(targets, heal, state.getTime(), state);
     }
 }

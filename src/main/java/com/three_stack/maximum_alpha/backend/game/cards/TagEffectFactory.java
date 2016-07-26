@@ -12,6 +12,7 @@ import com.three_stack.maximum_alpha.backend.game.effects.results.Result;
 import com.three_stack.maximum_alpha.backend.game.effects.results.TargetStep;
 import com.three_stack.maximum_alpha.backend.game.effects.results.implementations.BuffResult;
 import com.three_stack.maximum_alpha.backend.game.effects.results.implementations.DealDamageResult;
+import com.three_stack.maximum_alpha.backend.game.utilities.ValueExpression;
 
 public class TagEffectFactory {
     public static Effect createDegenerateEffect(int damage, Card source) {
@@ -25,7 +26,7 @@ public class TagEffectFactory {
         targetStepMap.put("self", true);
         TargetStep targetSelf = new TargetStep(targetStepMap);
         targetSteps.add(targetSelf);
-        DealDamageResult dealDamageResult = new DealDamageResult(targetSteps, damage);
+        DealDamageResult dealDamageResult = new DealDamageResult(targetSteps, new ValueExpression(damage));
         results.add(dealDamageResult);
 
         Effect effect = new Effect(source, checks, results);
@@ -44,7 +45,7 @@ public class TagEffectFactory {
         targetStepMap.put("self", true);
         TargetStep targetSelf = new TargetStep(targetStepMap);
         targetSteps.add(targetSelf);
-        BuffResult buffResult = new BuffResult(targetSteps, attackRate, healthRate);
+        BuffResult buffResult = new BuffResult(targetSteps, new ValueExpression(attackRate), new ValueExpression(healthRate));
         results.add(buffResult);
 
         Effect effect = new Effect(source, checks, results);

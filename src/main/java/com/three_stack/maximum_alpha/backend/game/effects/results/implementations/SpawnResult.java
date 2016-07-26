@@ -19,6 +19,7 @@ import com.three_stack.maximum_alpha.backend.game.effects.results.PlayerStep;
 import com.three_stack.maximum_alpha.backend.game.effects.results.Result;
 import com.three_stack.maximum_alpha.backend.game.player.Player;
 import com.three_stack.maximum_alpha.backend.game.utilities.DatabaseClientFactory;
+import com.three_stack.maximum_alpha.backend.game.utilities.ValueExpression;
 import com.three_stack.maximum_alpha.database_client.pojos.DBCard;
 import com.three_stack.maximum_alpha.database_client.pojos.DBResult;
 
@@ -31,10 +32,10 @@ public class SpawnResult extends PlayerResult {
     }
 
     protected DBCard cardTemplate;
-    protected int count;
+    protected ValueExpression count;
     protected SpawnZone spawnZone;
     
-    public SpawnResult(List<PlayerStep> playerSteps, DBCard cardTemplate, int count, SpawnZone spawnZone) {
+    public SpawnResult(List<PlayerStep> playerSteps, DBCard cardTemplate, ValueExpression count, SpawnZone spawnZone) {
         super(playerSteps);
         this.cardTemplate = cardTemplate;
         this.count = count;
@@ -55,7 +56,7 @@ public class SpawnResult extends PlayerResult {
         }
         ObjectId cardId = (ObjectId) resultValue.get("card");
         cardTemplate = DatabaseClientFactory.getCard(cardId);
-        count = (int) resultValue.get("count");
+        count = new ValueExpression(resultValue.get("count"));
         spawnZone = SpawnZone.valueOf((String) resultValue.get("zone"));
     }
 
@@ -72,7 +73,7 @@ public class SpawnResult extends PlayerResult {
         List<Player> players = (List<Player>) value.get("players");
 
         for(Player player : players) {
-            List<Card> cards = IntStream.range(0, count)
+            List<Card> cards = IntStream.range(0, count.eval(state))
                     .mapToObj(index -> CardFactory.create(cardTemplate))
                     .collect(Collectors.toList());
 	        state.trackCardEffectsAndMarkController(cards, player);

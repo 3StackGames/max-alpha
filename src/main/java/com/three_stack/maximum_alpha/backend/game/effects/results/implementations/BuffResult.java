@@ -9,6 +9,7 @@ import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
 import com.three_stack.maximum_alpha.backend.game.effects.results.Result;
 import com.three_stack.maximum_alpha.backend.game.effects.results.TargetResult;
 import com.three_stack.maximum_alpha.backend.game.effects.results.TargetStep;
+import com.three_stack.maximum_alpha.backend.game.utilities.ValueExpression;
 import com.three_stack.maximum_alpha.database_client.pojos.DBResult;
 
 import java.util.List;
@@ -16,10 +17,10 @@ import java.util.Map;
 
 //TODO: implement buff effects + name
 public class BuffResult extends TargetResult {
-    protected int attack;
-    protected int health;
+    protected ValueExpression attack;
+    protected ValueExpression health;
 
-    public BuffResult(List<TargetStep> targetSteps, int attack, int health) {
+    public BuffResult(List<TargetStep> targetSteps, ValueExpression attack, ValueExpression health) {
         super(targetSteps);
         this.attack = attack;
         this.health = health;
@@ -27,8 +28,8 @@ public class BuffResult extends TargetResult {
 
     public BuffResult(DBResult dbResult) {
         super(dbResult);
-        this.attack = (int) dbResult.getValue().get("attack");
-        this.health = (int) dbResult.getValue().get("health");
+        this.attack = new ValueExpression(dbResult.getValue().get("attack"));
+        this.health = new ValueExpression(dbResult.getValue().get("health"));
     }
 
     public BuffResult(Result other) {
@@ -46,7 +47,7 @@ public class BuffResult extends TargetResult {
     @Override
     public void resolve(State state, Card source, Event event, Map<String, Object> value) {
         List<NonSpellCard> targets = (List<NonSpellCard>) value.get("targets");
-        Buff buff = new Buff(attack, health, null, source, false, null);
+        Buff buff = new Buff(attack.eval(state), health.eval(state), null, source, false, null);
         Time buffTime = state.getTime();
         targets.stream()
                 .forEach(target -> target.addBuff(buff, buffTime, state));
