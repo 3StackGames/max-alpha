@@ -1,5 +1,7 @@
 package com.three_stack.maximum_alpha.backend.game;
 
+import io.gsonfire.annotations.ExposeMethodResult;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -12,7 +14,12 @@ import java.util.Queue;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.bson.types.ObjectId;
+
 import com.three_stack.maximum_alpha.backend.game.actions.abstracts.Action;
+import com.three_stack.maximum_alpha.backend.game.attributes.Attribute;
+import com.three_stack.maximum_alpha.backend.game.attributes.DamageTakenAttribute;
+import com.three_stack.maximum_alpha.backend.game.attributes.SpellsCastAttribute;
 import com.three_stack.maximum_alpha.backend.game.cards.Card;
 import com.three_stack.maximum_alpha.backend.game.cards.CardFactory;
 import com.three_stack.maximum_alpha.backend.game.cards.Creature;
@@ -21,7 +28,6 @@ import com.three_stack.maximum_alpha.backend.game.effects.Effect;
 import com.three_stack.maximum_alpha.backend.game.effects.QueuedEffect;
 import com.three_stack.maximum_alpha.backend.game.effects.Trigger;
 import com.three_stack.maximum_alpha.backend.game.effects.events.Event;
-import com.three_stack.maximum_alpha.backend.game.effects.events.PlayerEvent;
 import com.three_stack.maximum_alpha.backend.game.effects.events.SingleCardEvent;
 import com.three_stack.maximum_alpha.backend.game.effects.prompts.Prompt;
 import com.three_stack.maximum_alpha.backend.game.phases.AttackPhase;
@@ -46,10 +52,6 @@ import com.three_stack.maximum_alpha.backend.server.Connection;
 import com.three_stack.maximum_alpha.database_client.DatabaseClient;
 import com.three_stack.maximum_alpha.database_client.pojos.DBDeck;
 
-import org.bson.types.ObjectId;
-
-import io.gsonfire.annotations.ExposeMethodResult;
-
 public class State {
     private transient Parameters parameters;
     private List<Player> players;
@@ -67,6 +69,7 @@ public class State {
     private transient PriorityQueue<QueuedEffect> queuedEffects;
     private transient VictoryHandler victoryHandler;
     private transient Map<Class, Phase> turnPhases;
+    private transient Map<String, Attribute> attributes;
 
     public State() {
         this.players = new ArrayList<>();
@@ -81,6 +84,11 @@ public class State {
             }
         });
         this.turnPhases = new HashMap<>();
+        this.attributes = new HashMap<>();
+        
+        //TODO: better way/place of doing this?
+        attributes.put("DamageTaken", new DamageTakenAttribute());
+        attributes.put("SpellsCast", new SpellsCastAttribute());
     }
 
     /**
@@ -263,12 +271,6 @@ public class State {
         return event;
     }
 
-    public Event createSinglePlayerEvent(Player player, String type, Time time, Trigger trigger) {
-        Event event = new PlayerEvent(time, type, player);
-        addEvent(event, trigger);
-        return event;
-    }
-
     /**
      * Traverses the "Effect Tree" and resolves them in BFS / Level-Order manner.
      */
@@ -407,6 +409,10 @@ public class State {
         if (trigger == null) {
           return;
         }
+        
+        for (Attribute a : attributes.values()) {
+        	a.addEvent(trigger, event, this);
+        }
 
         List<Effect> effects = getEffects(trigger);
         if (effects == null) {
@@ -480,5 +486,9 @@ public class State {
 
     public Phase getCurrentPhase() {
         return currentPhase;
+    }
+    
+    public Attribute getAttribute(String name) {
+    	return attributes.get(name);
     }
 }

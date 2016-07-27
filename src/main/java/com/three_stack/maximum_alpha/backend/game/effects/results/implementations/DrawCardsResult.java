@@ -43,7 +43,7 @@ public class DrawCardsResult extends PlayerResult {
     @SuppressWarnings("unchecked")
     public void resolve(State state, Card source, Event event, Map<String, Object> value) {
         List<Player> players = (List<Player>) value.get("players");
-        int cardsToDraw = ((ValueExpression) value.get("count")).eval(state);
+        int cardsToDraw = ((ValueExpression) value.get("count")).eval(state, source);
         for(Player player : players) {
         	for(int i = 0; i < cardsToDraw; i++) {
         		player.draw(state.getTime(), state);

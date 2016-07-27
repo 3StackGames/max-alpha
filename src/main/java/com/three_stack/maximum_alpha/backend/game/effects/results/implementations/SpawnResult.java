@@ -73,7 +73,7 @@ public class SpawnResult extends PlayerResult {
         List<Player> players = (List<Player>) value.get("players");
 
         for(Player player : players) {
-            List<Card> cards = IntStream.range(0, count.eval(state))
+            List<Card> cards = IntStream.range(0, count.eval(state, source))
                     .mapToObj(index -> CardFactory.create(cardTemplate))
                     .collect(Collectors.toList());
 	        state.trackCardEffectsAndMarkController(cards, player);

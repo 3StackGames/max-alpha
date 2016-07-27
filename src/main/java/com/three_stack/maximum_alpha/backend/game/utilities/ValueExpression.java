@@ -1,12 +1,17 @@
 package com.three_stack.maximum_alpha.backend.game.utilities;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.three_stack.maximum_alpha.backend.game.State;
+import com.three_stack.maximum_alpha.backend.game.attributes.Attribute;
+import com.three_stack.maximum_alpha.backend.game.attributes.Attribute.Filter;
+import com.three_stack.maximum_alpha.backend.game.cards.Card;
+import com.udojava.evalex.Expression;
 
 //TODO: move to better location
-//TODO: something else - forgot what
 public class ValueExpression {
 
 	private Object value;
@@ -15,8 +20,8 @@ public class ValueExpression {
 		this.value = value;
 	}
 
-	public int eval(State state) {
-		if (value.getClass() == int.class) {
+	public int eval(State state, Card source) {
+		if (value instanceof Integer) {
 			return (int) value;
 		}
 
@@ -31,18 +36,18 @@ public class ValueExpression {
 			switch (type) {
 				case "attribute": 
 					String attributeName = (String) variable.get("attribute");
-					Attribute attribute = state.getAttributes().get(attributeName);         
+					Attribute attribute = state.getAttribute(attributeName);         
 					List<String> filterNames = (List<String>) variable.get("filters");
 					List<Filter> filters = filterNames.stream().
 						map(filter -> Filter.valueOf(filter)).collect(Collectors.toList());
 					
-					expression.with(variableName++, attribute.process(filters));
+					expression.with(Character.toString(variableName++), new BigDecimal(attribute.getValue(filters, source)));
 					break;
 				default:
 					break;
 			}
 		}
 
-		return expression.eval();
+		return expression.eval().intValueExact();
 	}
 }

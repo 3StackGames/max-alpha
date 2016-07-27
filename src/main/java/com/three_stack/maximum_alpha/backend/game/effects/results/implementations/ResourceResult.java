@@ -63,7 +63,7 @@ public class ResourceResult extends PlayerResult {
         Map<String, Integer> resourceValues = 
             resources.entrySet().stream()
               .collect(Collectors.toMap(e -> e.getKey(),
-                                        e -> e.getValue().eval(state)
+                                        e -> e.getValue().eval(state, source)
             ));
         ResourceList resourceList = new ResourceList(resourceValues);
         

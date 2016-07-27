@@ -44,6 +44,6 @@ public class DealDamageResult extends TargetResult {
     public void resolve(State state, Card source, Event event, Map<String, Object> value) {
         List<NonSpellCard> targets = (List<NonSpellCard>) value.get("targets");
         ValueExpression damage = (ValueExpression) value.get("damage");
-        source.dealDamage(targets, damage.eval(state), state.getTime(), state);
+        source.dealDamage(targets, damage.eval(state, source), state.getTime(), state);
     }
 }

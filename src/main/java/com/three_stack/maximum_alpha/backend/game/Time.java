@@ -1,6 +1,6 @@
 package com.three_stack.maximum_alpha.backend.game;
 
-public class Time {
+public class Time implements Comparable<Time> {
     protected final int value;
     protected static final Time setup;
 
@@ -38,4 +38,9 @@ public class Time {
     public int hashCode() {
         return value;
     }
+
+	@Override
+	public int compareTo(Time o) {
+		return Integer.compare(this.value, o.value);
+	}
 }

@@ -43,7 +43,7 @@ public class HealResult extends TargetResult {
     @SuppressWarnings("unchecked")
     public void resolve(State state, Card source, Event event, Map<String, Object> value) {
         List<NonSpellCard> targets = (List<NonSpellCard>) value.get("targets");
-        int heal = ((ValueExpression) value.get("heal")).eval(state);
+        int heal = ((ValueExpression) value.get("heal")).eval(state, source);
         source.heal(targets, heal, state.getTime(), state);
     }
 }

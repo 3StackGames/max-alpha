@@ -18,11 +18,12 @@ public class PlayCardAction extends ExistingCardWithCostAction {
 
         player.pay(cost);
 
-        Event playEvent = state.createSingleCardEvent(card, "play", state.getTime(), Trigger.ON_PLAY);
 
         if(card instanceof Creature) {
+            state.createSingleCardEvent(card, "playCreature", state.getTime(), Trigger.ON_PLAY);
             player.getField().add((Creature) card, state.getTime(), state);
         } else if(card instanceof Spell) {
+            Event playEvent = state.createSingleCardEvent(card, "playSpell", state.getTime(), Trigger.ON_PLAY);
             Spell spell = (Spell) card;
             spell.cast(playEvent, state);
         }

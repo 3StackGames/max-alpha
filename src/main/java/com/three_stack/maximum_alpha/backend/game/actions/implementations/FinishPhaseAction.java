@@ -8,7 +8,6 @@ import com.three_stack.maximum_alpha.backend.game.phases.PreparationPhase;
 public class FinishPhaseAction extends Action {
     @Override
     public void run(State state) {
-        state.createSinglePlayerEvent(player, "end turn", state.getTime(), null);
         if(state.isPhase(PreparationPhase.class)) {
             player.setPreparationDone(true);
         }

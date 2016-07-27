@@ -59,7 +59,7 @@ public class TagResult extends TargetResult {
         List<NonSpellCard> targets = (List<NonSpellCard>) value.get("targets");
         int valueAmount = 0;
         if (valueE != null)
-          valueAmount = valueE.eval(state);
+          valueAmount = valueE.eval(state, source);
         Tag tag = new Tag(TagType.valueOf(tagName), valueAmount);
         
         if(remove) {
